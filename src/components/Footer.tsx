@@ -32,7 +32,7 @@ const Footer = () => (
           <h4 className="font-display italic text-accent mb-[18px] text-[1rem]">OoohMy</h4>
           <ul className="space-y-[10px] list-none">
             {[
-              { label: "Our Story", to: "/#newsletter" },
+              { label: "Our Story", to: "/our-story" },
               { label: "No Judgment Policy", to: "/#best-sellers" },
               { label: "Affiliates", to: "/#categories" },
               { label: "Press", to: "/#newsletter" },
