@@ -14,6 +14,11 @@ const CartPage = lazy(() => import("./pages/CartPage.tsx"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage.tsx"));
 const AllProductsPage = lazy(() => import("./pages/AllProductsPage.tsx"));
 const OurStoryPage = lazy(() => import("./pages/OurStoryPage.tsx"));
+const NoJudgmentPage = lazy(() => import("./pages/NoJudgmentPage.tsx"));
+const AffiliatesPage = lazy(() => import("./pages/AffiliatesPage.tsx"));
+const PressPage = lazy(() => import("./pages/PressPage.tsx"));
+const FaqPage = lazy(() => import("./pages/FaqPage.tsx"));
+const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient();
@@ -96,6 +101,11 @@ const App = () => (
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/products" element={<AllProductsPage />} />
               <Route path="/our-story" element={<OurStoryPage />} />
+              <Route path="/no-judgment" element={<NoJudgmentPage />} />
+              <Route path="/affiliates" element={<AffiliatesPage />} />
+              <Route path="/press" element={<PressPage />} />
+              <Route path="/faq" element={<FaqPage />} />
+              <Route path="/contact" element={<ContactPage />} />
               <Route path="/category/:categorySlug" element={<CategoryPage />} />
               <Route path="/category/:categorySlug/product/:productSlug" element={<ProductPage />} />
               <Route path="*" element={<NotFound />} />

@@ -33,9 +33,9 @@ const Footer = () => (
           <ul className="space-y-[10px] list-none">
             {[
               { label: "Our Story", to: "/our-story" },
-              { label: "No Judgment Policy", to: "/#best-sellers" },
-              { label: "Affiliates", to: "/#categories" },
-              { label: "Press", to: "/#newsletter" },
+              { label: "No Judgment Policy", to: "/no-judgment" },
+              { label: "Affiliates", to: "/affiliates" },
+              { label: "Press", to: "/press" },
             ].map((item) => (
               <li key={item.label}>
                 <Link to={item.to} className="font-serif italic text-[0.82rem] text-white/35 hover:text-accent transition-colors no-underline">
@@ -50,10 +50,10 @@ const Footer = () => (
           <h4 className="font-display italic text-accent mb-[18px] text-[1rem]">Help</h4>
           <ul className="space-y-[10px] list-none">
             {[
-              { label: "Discreet Shipping", to: "/checkout" },
-              { label: "Returns", to: "/cart" },
-              { label: "FAQ", to: "/#newsletter" },
-              { label: "Contact", to: "/#newsletter" },
+              { label: "Discreet Shipping", to: "/faq" },
+              { label: "Returns", to: "/faq" },
+              { label: "FAQ", to: "/faq" },
+              { label: "Contact", to: "/contact" },
             ].map((item) => (
               <li key={item.label}>
                 <Link to={item.to} className="font-serif italic text-[0.82rem] text-white/35 hover:text-accent transition-colors no-underline">
