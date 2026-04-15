@@ -80,6 +80,10 @@ export default {
           him: "hsl(var(--cat-him))",
           newbie: "hsl(var(--cat-newbie))",
           browsing: "hsl(var(--cat-browsing))",
+          "just-in": "hsl(var(--cat-just-in))",
+          solo: "hsl(var(--cat-solo))",
+          "push-it": "hsl(var(--cat-push-it))",
+          playtime: "hsl(var(--cat-playtime))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
