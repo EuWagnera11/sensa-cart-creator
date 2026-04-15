@@ -16,7 +16,7 @@ const SatireBanners = () => (
           />
           <div className="absolute bottom-6 left-0 right-0 flex justify-center z-10">
             <Link
-              to="/#categories"
+              to="/category/newbie"
               className="cta-primary text-cream no-underline inline-block px-9 py-3.5 text-[1.05rem] font-bold shadow-[4px_4px_0_hsl(var(--dark))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[7px_7px_0_hsl(var(--dark))]"
             >
               Just a peek →
@@ -36,7 +36,7 @@ const SatireBanners = () => (
           />
           <div className="absolute bottom-6 left-0 right-0 flex justify-center z-10">
             <Link
-              to="/#best-sellers"
+              to="/category/push-it"
               className="yellow-texture-fill border-[3px] border-dark px-9 py-3.5 font-display italic text-[1.05rem] font-bold shadow-[4px_4px_0_hsl(var(--dark))] rounded-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[7px_7px_0_hsl(var(--dark))] transition-all no-underline inline-block"
             >
               Why not? →
