@@ -37,10 +37,10 @@ const Hero = () => (
       </p>
 
       <div className="flex gap-3.5 mt-9 flex-wrap" style={{ animation: "slideUp .5s ease both .4s" }}>
-        <Link to="/#best-sellers" className="cta-primary no-underline">
+        <Link to="/products" className="cta-primary no-underline">
           Discover the secret →
         </Link>
-        <Link to="/#newsletter" className="cta-secondary no-underline">
+        <Link to="/our-story" className="cta-secondary no-underline">
           Our Story
         </Link>
       </div>
