@@ -5,10 +5,10 @@ import bondageImg from "@/assets/promos/new-to-bondage.webp";
 import maleToysImg from "@/assets/promos/male-toys.webp";
 
 const promos = [
-  { bg: "bg-neon-mint", emoji: "✨", name: "Just In", sub: '"Fresh trouble. No warnings."', badge: "Just In", isNew: false, to: "/category/browsing", image: newInImg, cta: "Take a look →" },
-  { bg: "bg-neon-purple", emoji: "🎀", name: "Just you", sub: '"No audience needed."', badge: "Solo", isNew: true, to: "/category/undressed", image: lingerieImg, cta: "Start here →" },
+  { bg: "bg-neon-mint", emoji: "✨", name: "Just In", sub: '"Fresh trouble. No warnings."', badge: "Just In", isNew: false, to: "/category/oops", image: newInImg, cta: "Take a look →" },
+  { bg: "bg-neon-purple", emoji: "🎀", name: "Just you", sub: '"No audience needed."', badge: "Solo", isNew: true, to: "/category/buzz", image: lingerieImg, cta: "Start here →" },
   { bg: "bg-neon-orange", emoji: "🔗", name: "Push it", sub: '"A little further tonight."', badge: "Hot", isNew: false, to: "/category/tied", image: bondageImg, cta: "Try it →" },
-  { bg: "bg-dark", emoji: "🌶️", name: "Playtime", sub: '"You make the rules."', badge: "Play", isNew: true, to: "/category/him", image: maleToysImg, cta: "Explore →" },
+  { bg: "bg-dark", emoji: "🌶️", name: "Playtime", sub: '"You make the rules."', badge: "Play", isNew: true, to: "/category/duo", image: maleToysImg, cta: "Explore →" },
 ];
 
 const PromoGrid = () => (
