@@ -87,7 +87,7 @@ const Products = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Link to="/category/oops" className="cta-secondary no-underline" style={{ borderColor: "rgba(255,255,255,.2)", boxShadow: "4px 4px 0 rgba(255,255,255,.1)" }}>
+          <Link to="/products" className="cta-secondary no-underline" style={{ borderColor: "rgba(255,255,255,.2)", boxShadow: "4px 4px 0 rgba(255,255,255,.1)" }}>
             View all products →
           </Link>
         </div>
