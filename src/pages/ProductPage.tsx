@@ -5,8 +5,8 @@ import Navbar from "@/components/Navbar";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
-import { ArrowLeft, ShoppingCart, Truck, Shield, RotateCcw, Star, Heart, Package, Clock } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, ShoppingCart, Truck, Shield, RotateCcw, Star, Heart, Package, Clock, Check, ChevronDown } from "lucide-react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 
@@ -16,6 +16,10 @@ const ProductPage = () => {
   const category = getCategoryBySlug(categorySlug || "");
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState<"description" | "details" | "reviews">("description");
+  const [liked, setLiked] = useState(false);
+  const [imageZoom, setImageZoom] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const imgRef = useRef<HTMLDivElement>(null);
   const { addItem, setIsOpen } = useCart();
 
   if (!product || !category) {
@@ -36,8 +40,9 @@ const ProductPage = () => {
     );
   }
 
-  const relatedProducts = getProductsByCategory(categorySlug || "").filter(p => p.id !== product.id).slice(0, 3);
+  const relatedProducts = getProductsByCategory(categorySlug || "").filter(p => p.id !== product.id).slice(0, 4);
   const productImg = getProductImage(product.name);
+  const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
 
   const handleAddToCart = () => {
     addItem(product, qty);
@@ -47,9 +52,17 @@ const ProductPage = () => {
     });
   };
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!imgRef.current) return;
+    const rect = imgRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPos({ x, y });
+  };
+
   const tabs = [
     { id: "description" as const, label: "Description" },
-    { id: "details" as const, label: "Details & Features" },
+    { id: "details" as const, label: "Details & Specs" },
     { id: "reviews" as const, label: `Reviews (${product.reviews})` },
   ];
 
@@ -84,19 +97,35 @@ const ProductPage = () => {
       </div>
 
       {/* Main Product Section */}
-      <div className="bg-parch paper-bg px-4 sm:px-6 lg:px-12 py-8 lg:py-16">
+      <div className="bg-parch paper-bg px-4 sm:px-6 lg:px-12 py-8 lg:py-14">
         <div className="max-w-[1440px] mx-auto">
           <Link to={`/category/${categorySlug}`} className="inline-flex items-center gap-2 font-display italic text-sm text-muted-foreground hover:text-primary transition-colors no-underline mb-4 lg:mb-6">
             <ArrowLeft size={16} /> Back to {category.name}
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-12">
-            {/* LEFT — Image Gallery */}
-            <div>
-              {/* Main image */}
-              <div className="relative aspect-square overflow-hidden border-[3px] border-dark rounded-sm bg-surface mb-2 sm:mb-3" style={{ boxShadow: "var(--shadow-brutal)" }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
+            {/* LEFT — Image */}
+            <div className="space-y-3">
+              {/* Main image with zoom on hover */}
+              <div
+                ref={imgRef}
+                className="relative aspect-square overflow-hidden border-[3px] border-dark rounded-sm bg-surface cursor-crosshair"
+                style={{ boxShadow: "var(--shadow-brutal)" }}
+                onMouseEnter={() => setImageZoom(true)}
+                onMouseLeave={() => setImageZoom(false)}
+                onMouseMove={handleMouseMove}
+              >
                 {productImg ? (
-                  <img src={productImg} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+                  <img
+                    src={productImg}
+                    alt={product.name}
+                    loading="eager"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-300"
+                    style={imageZoom ? {
+                      transform: "scale(2)",
+                      transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                    } : {}}
+                  />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-[10rem]" style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,.2))" }}>{product.emoji}</span>
@@ -112,11 +141,18 @@ const ProductPage = () => {
                 {/* Wishlist */}
                 <button
                   type="button"
-                  className="absolute top-4 left-4 w-10 h-10 bg-cream/90 border-2 border-dark rounded-full flex items-center justify-center shadow-[2px_2px_0_hsl(var(--dark))] z-10 hover:bg-accent transition-colors"
-                  onClick={() => toast("Coming soon! 💛")}
+                  className={`absolute top-4 left-4 w-10 h-10 border-2 border-dark rounded-full flex items-center justify-center shadow-[2px_2px_0_hsl(var(--dark))] z-10 transition-all ${liked ? "bg-primary" : "bg-cream/90 hover:bg-accent"}`}
+                  onClick={() => { setLiked(!liked); toast(liked ? "Removed from wishlist" : "Saved to wishlist 💛"); }}
                 >
-                  <Heart size={18} className="text-foreground" />
+                  <Heart size={18} className={liked ? "fill-cream text-cream" : "text-foreground"} />
                 </button>
+
+                {/* Zoom hint */}
+                {!imageZoom && productImg && (
+                  <div className="absolute bottom-3 right-3 bg-dark/60 text-cream text-[0.6rem] font-display italic px-2.5 py-1 rounded-sm z-10 backdrop-blur-sm">
+                    🔍 Hover to zoom
+                  </div>
+                )}
               </div>
 
               {/* Thumbnail strip */}
@@ -124,10 +160,10 @@ const ProductPage = () => {
                 {[0, 1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className={`aspect-square overflow-hidden border-[3px] rounded-sm ${i === 0 ? "border-primary" : "border-dark/20"} bg-surface`}
+                    className={`aspect-square overflow-hidden border-[3px] rounded-sm cursor-pointer transition-all ${i === 0 ? "border-primary shadow-[2px_2px_0_hsl(var(--primary))]" : "border-dark/20 hover:border-dark/50"} bg-surface`}
                   >
                     {productImg ? (
-                      <img src={productImg} alt={`${product.name} view ${i + 1}`} className="w-full h-full object-cover opacity-90" />
+                      <img src={productImg} alt={`${product.name} view ${i + 1}`} loading="eager" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-parch">
                         <span className="text-2xl">{product.emoji}</span>
@@ -140,84 +176,111 @@ const ProductPage = () => {
 
             {/* RIGHT — Product Info */}
             <div className="flex flex-col">
-              <div className="font-display italic text-[0.72rem] text-muted-foreground mb-1 tracking-wide uppercase">{product.collection} · {product.category}</div>
-              
-              <h1 className="font-display font-black italic text-foreground leading-none mb-3" style={{ fontSize: "clamp(2.2rem,3.5vw,3.2rem)" }}>
+              {/* Collection badge */}
+              <div className="flex items-center gap-2 mb-3">
+                <span className="bg-dark text-cream font-display italic text-[0.6rem] font-bold px-3 py-1 rounded-sm tracking-wider uppercase">{product.collection}</span>
+                <span className="text-[0.68rem] text-muted-foreground font-serif italic">{product.category}</span>
+              </div>
+
+              <h1 className="font-display font-black italic text-foreground leading-[0.95] mb-4" style={{ fontSize: "clamp(2.4rem,4vw,3.5rem)" }}>
                 {product.name}
               </h1>
 
-              {/* Rating */}
-              <div className="flex items-center gap-2 mb-5">
+              {/* Rating — larger, more prominent */}
+              <div className="flex items-center gap-3 mb-5 pb-5 border-b-2 border-dark/10">
                 <div className="flex gap-0.5">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={16} className={i < Math.floor(product.rating) ? "fill-accent text-accent" : "text-muted-foreground/30"} />
+                    <Star key={i} size={18} className={i < Math.floor(product.rating) ? "fill-accent text-accent" : "text-muted-foreground/30"} />
                   ))}
                 </div>
-                <span className="font-display font-bold text-sm text-foreground">{product.rating}</span>
+                <span className="font-display font-bold text-base text-foreground">{product.rating}</span>
                 <span className="font-serif italic text-sm text-muted-foreground">({product.reviews.toLocaleString()} reviews)</span>
-              </div>
-
-              <p className="font-serif italic text-lg text-muted-foreground leading-relaxed mb-2">{product.description}</p>
-              <p className="text-sm text-foreground/70 leading-relaxed mb-6">{product.longDescription}</p>
-
-              {/* Price */}
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-5 sm:mb-6 pb-5 sm:pb-6 border-b-2 border-dark/10">
-                <span className="font-display font-black text-[2rem] sm:text-[2.5rem] text-primary leading-none">€{product.price}</span>
-                {product.originalPrice && (
-                  <>
-                    <span className="font-serif italic text-lg sm:text-xl text-muted-foreground line-through">€{product.originalPrice}</span>
-                    <span className="bg-accent text-foreground font-display italic text-xs font-bold px-3 py-1 border-2 border-dark rounded-full">
-                      -{Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
-                    </span>
-                  </>
+                {product.reviews > 100 && (
+                  <span className="bg-accent/30 text-foreground/70 font-display italic text-[0.6rem] font-bold px-2 py-0.5 rounded-full border border-dark/10">
+                    Best Seller
+                  </span>
                 )}
               </div>
 
-              {/* Qty + Add to Cart */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5 sm:mb-6">
-                <div className="flex items-center border-[3px] border-dark rounded-sm overflow-hidden shadow-[3px_3px_0_hsl(var(--dark))] self-start">
-                  <button type="button" onClick={() => setQty(Math.max(1, qty - 1))} className="px-4 py-3 bg-cream text-foreground font-bold hover:bg-parch transition-colors text-lg">−</button>
-                  <span className="px-5 py-3 bg-cream text-foreground font-display font-bold text-lg min-w-[50px] text-center">{qty}</span>
-                  <button type="button" onClick={() => setQty(qty + 1)} className="px-4 py-3 bg-cream text-foreground font-bold hover:bg-parch transition-colors text-lg">+</button>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleAddToCart}
-                  className="red-texture-fill flex-1 border-[3px] border-dark px-5 py-3 font-display italic text-[0.95rem] sm:text-[1.05rem] font-bold shadow-[5px_5px_0_hsl(var(--dark))] rounded-sm hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[8px_8px_0_hsl(var(--dark))] transition-all flex items-center justify-center gap-2"
-                >
-                  <ShoppingCart size={20} /> Add to Bag — €{(product.price * qty).toFixed(2)}
-                </button>
-              </div>
+              {/* Short description */}
+              <p className="font-serif italic text-lg text-muted-foreground leading-relaxed mb-2">{product.description}</p>
+              <p className="text-sm text-foreground/70 leading-relaxed mb-6">{product.longDescription}</p>
 
-              {/* Trust badges */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mb-5 sm:mb-6">
-                {[
-                  { icon: <Truck size={16} />, text: "Free Shipping", sub: "Orders €50+" },
-                  { icon: <Package size={16} />, text: "Discreet Box", sub: "No branding" },
-                  { icon: <RotateCcw size={16} />, text: "30d Returns", sub: "No questions" },
-                  { icon: <Clock size={16} />, text: "Fast Delivery", sub: "2-4 days" },
-                ].map((badge, i) => (
-                  <div key={i} className="flex flex-col items-center gap-0.5 bg-cream border-2 border-dark/15 rounded-sm p-2.5 text-center">
-                    <span className="text-primary">{badge.icon}</span>
-                    <span className="font-display italic text-[0.62rem] font-bold text-foreground leading-tight">{badge.text}</span>
-                    <span className="text-[0.55rem] text-muted-foreground">{badge.sub}</span>
+              {/* Key features quick list */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-6">
+                {product.features.slice(0, 4).map((feature, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Check size={14} className="text-primary shrink-0" strokeWidth={3} />
+                    <span className="text-[0.8rem] text-foreground/80">{feature}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Stock indicator */}
+              {/* Price block — sticky feel */}
+              <div className="bg-cream border-[3px] border-dark rounded-sm p-5 mb-6" style={{ boxShadow: "var(--shadow-brutal)" }}>
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <span className="font-display font-black text-[2.5rem] text-primary leading-none">€{product.price}</span>
+                  {product.originalPrice && (
+                    <>
+                      <span className="font-serif italic text-xl text-muted-foreground line-through">€{product.originalPrice}</span>
+                      <span className="bg-accent text-foreground font-display italic text-xs font-bold px-3 py-1 border-2 border-dark rounded-full animate-pulse">
+                        -{discount}% OFF
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                {/* Qty + Add to Cart */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div className="flex items-center border-[3px] border-dark rounded-sm overflow-hidden shadow-[3px_3px_0_hsl(var(--dark))] self-start">
+                    <button type="button" onClick={() => setQty(Math.max(1, qty - 1))} className="px-4 py-3 bg-parch text-foreground font-bold hover:bg-accent transition-colors text-lg">−</button>
+                    <span className="px-5 py-3 bg-white text-foreground font-display font-bold text-lg min-w-[50px] text-center">{qty}</span>
+                    <button type="button" onClick={() => setQty(qty + 1)} className="px-4 py-3 bg-parch text-foreground font-bold hover:bg-accent transition-colors text-lg">+</button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    className="red-texture-fill flex-1 border-[3px] border-dark px-6 py-3.5 font-display italic text-[1.05rem] font-bold shadow-[5px_5px_0_hsl(var(--dark))] rounded-sm hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[8px_8px_0_hsl(var(--dark))] transition-all flex items-center justify-center gap-2"
+                  >
+                    <ShoppingCart size={20} /> Add to Bag — €{(product.price * qty).toFixed(2)}
+                  </button>
+                </div>
+
+                {/* Urgency cue */}
+                {product.originalPrice && (
+                  <p className="text-[0.72rem] text-primary font-display italic font-bold mt-3 flex items-center gap-1">
+                    🔥 Sale ends soon — limited stock
+                  </p>
+                )}
+              </div>
+
+              {/* Trust row — horizontal compact */}
+              <div className="grid grid-cols-4 gap-2 mb-5">
+                {[
+                  { icon: <Truck size={15} />, text: "Free Ship €50+" },
+                  { icon: <Package size={15} />, text: "Discreet Box" },
+                  { icon: <RotateCcw size={15} />, text: "30d Returns" },
+                  { icon: <Clock size={15} />, text: "2-4 Day Ship" },
+                ].map((badge, i) => (
+                  <div key={i} className="flex flex-col items-center gap-1 py-2.5 text-center">
+                    <span className="text-primary">{badge.icon}</span>
+                    <span className="font-display italic text-[0.6rem] font-bold text-foreground/70 leading-tight">{badge.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Stock */}
               <div className="flex items-center gap-2 text-sm">
-                <span className={`w-2.5 h-2.5 rounded-full ${product.inStock ? "bg-green-500" : "bg-red-500"}`} />
+                <span className={`w-2.5 h-2.5 rounded-full ${product.inStock ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
                 <span className="font-display italic text-foreground text-[0.82rem]">
-                  {product.inStock ? "In Stock — Ready to ship" : "Out of Stock"}
+                  {product.inStock ? "In Stock — Ships today if ordered before 3 PM" : "Out of Stock"}
                 </span>
               </div>
             </div>
           </div>
 
           {/* Tabs Section */}
-          <div className="mt-10 sm:mt-14 border-[3px] border-dark bg-cream rounded-sm" style={{ boxShadow: "var(--shadow-brutal)" }}>
-            {/* Tab header */}
+          <div className="mt-12 sm:mt-16 border-[3px] border-dark bg-cream rounded-sm" style={{ boxShadow: "var(--shadow-brutal)" }}>
             <div className="flex border-b-[3px] border-dark overflow-x-auto scrollbar-none">
               {tabs.map((tab) => (
                 <button
@@ -235,7 +298,6 @@ const ProductPage = () => {
               ))}
             </div>
 
-            {/* Tab content */}
             <div className="p-4 sm:p-6 lg:p-10">
               {activeTab === "description" && (
                 <div className="max-w-3xl">
@@ -280,8 +342,8 @@ const ProductPage = () => {
 
               {activeTab === "reviews" && (
                 <div>
-                  <div className="flex items-center gap-4 mb-8">
-                    <div className="text-center">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
+                    <div className="text-center shrink-0">
                       <div className="font-display font-black text-5xl text-primary">{product.rating}</div>
                       <div className="flex gap-0.5 justify-center mt-1">
                         {[...Array(5)].map((_, i) => (
@@ -290,7 +352,7 @@ const ProductPage = () => {
                       </div>
                       <div className="font-serif italic text-xs text-muted-foreground mt-1">{product.reviews.toLocaleString()} reviews</div>
                     </div>
-                    <div className="flex-1 space-y-1.5">
+                    <div className="flex-1 w-full space-y-1.5">
                       {[5, 4, 3, 2, 1].map((stars) => {
                         const pct = stars === 5 ? 72 : stars === 4 ? 18 : stars === 3 ? 6 : stars === 2 ? 3 : 1;
                         return (
@@ -298,7 +360,7 @@ const ProductPage = () => {
                             <span className="font-display text-xs w-3 text-right">{stars}</span>
                             <Star size={10} className="fill-accent text-accent" />
                             <div className="flex-1 h-2.5 bg-dark/10 rounded-full overflow-hidden">
-                              <div className="h-full bg-accent rounded-full" style={{ width: `${pct}%` }} />
+                              <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${pct}%` }} />
                             </div>
                             <span className="text-[0.65rem] text-muted-foreground w-8 text-right">{pct}%</span>
                           </div>
@@ -307,17 +369,24 @@ const ProductPage = () => {
                     </div>
                   </div>
 
-                  {/* Sample reviews */}
                   <div className="space-y-4">
                     {[
-                      { name: "Sarah M.", rating: 5, text: "Best purchase I've ever made. The quality is amazing and the packaging was super discreet. Highly recommend! 🔥", date: "2 weeks ago" },
-                      { name: "Ana R.", rating: 5, text: "Exceeded all my expectations. Arrived fast and the product is even better than described.", date: "1 month ago" },
-                      { name: "Guest", rating: 4, text: "Great product, just wish there were more color options. But the quality is top-notch.", date: "2 months ago" },
+                      { name: "Sarah M.", rating: 5, text: "Best purchase I've ever made. The quality is amazing and the packaging was super discreet. Highly recommend! 🔥", date: "2 weeks ago", verified: true },
+                      { name: "Ana R.", rating: 5, text: "Exceeded all my expectations. Arrived fast and the product is even better than described.", date: "1 month ago", verified: true },
+                      { name: "Guest", rating: 4, text: "Great product, just wish there were more colour options. But the quality is top-notch.", date: "2 months ago", verified: false },
                     ].map((review, i) => (
                       <div key={i} className="bg-parch border-2 border-dark/10 rounded-sm p-5">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
+                            <span className="w-8 h-8 bg-primary/10 border-2 border-dark/10 rounded-full flex items-center justify-center font-display font-bold text-xs text-primary">
+                              {review.name[0]}
+                            </span>
                             <span className="font-display italic font-bold text-sm text-foreground">{review.name}</span>
+                            {review.verified && (
+                              <span className="flex items-center gap-0.5 text-[0.6rem] text-green-700 font-bold">
+                                <Check size={10} strokeWidth={3} /> Verified
+                              </span>
+                            )}
                             <div className="flex gap-0.5">
                               {[...Array(5)].map((_, j) => (
                                 <Star key={j} size={11} className={j < review.rating ? "fill-accent text-accent" : "text-muted-foreground/30"} />
@@ -326,7 +395,7 @@ const ProductPage = () => {
                           </div>
                           <span className="text-[0.68rem] text-muted-foreground">{review.date}</span>
                         </div>
-                        <p className="font-serif italic text-sm text-foreground/80 leading-relaxed">{review.text}</p>
+                        <p className="font-serif italic text-sm text-foreground/80 leading-relaxed ml-10">{review.text}</p>
                       </div>
                     ))}
                   </div>
@@ -342,43 +411,35 @@ const ProductPage = () => {
               <h2 className="font-display font-black italic text-foreground leading-none mb-8" style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)" }}>
                 More from {category.name}.
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {relatedProducts.map((rp) => (
-                  <div
+                  <Link
                     key={rp.id}
-                    className="group bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0_hsl(var(--dark))] hover:z-[2]"
+                    to={`/category/${categorySlug}/product/${rp.slug}`}
+                    className="group bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_hsl(var(--dark))] no-underline"
                     style={{ boxShadow: "var(--shadow-brutal)" }}
                   >
-                    <Link to={`/category/${categorySlug}/product/${rp.slug}`} className="block no-underline">
-                      <div className="relative aspect-square overflow-hidden bg-surface">
-                        {getProductImage(rp.name) ? (
-                          <img src={getProductImage(rp.name)} alt={rp.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center bg-parch">
-                            <span className="text-6xl">{rp.emoji}</span>
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-                    <div className="p-5">
-                      <h3 className="font-display font-black italic text-lg text-foreground group-hover:text-primary transition-colors mb-1">{rp.name}</h3>
-                      <p className="font-serif italic text-sm text-muted-foreground mb-3 line-clamp-1">{rp.description}</p>
+                    <div className="relative aspect-square overflow-hidden bg-surface">
+                      {getProductImage(rp.name) ? (
+                        <img src={getProductImage(rp.name)} alt={rp.name} loading="eager" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-parch">
+                          <span className="text-5xl">{rp.emoji}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-display font-black italic text-base text-foreground group-hover:text-primary transition-colors mb-0.5 truncate">{rp.name}</h3>
+                      <p className="font-serif italic text-xs text-muted-foreground mb-2 line-clamp-1">{rp.description}</p>
                       <div className="flex items-center justify-between">
-                        <span className="font-display font-black text-xl text-primary">€{rp.price}</span>
-                        <button
-                          type="button"
-                          className="bg-cream text-foreground border-2 border-dark px-4 py-1.5 font-display italic text-[0.78rem] font-bold rounded-full transition-colors hover:bg-accent shadow-[2px_2px_0_hsl(var(--dark))]"
-                          onClick={() => {
-                            addItem(rp, 1);
-                            setIsOpen(true);
-                            toast.success(`${rp.name} added to bag ✨`);
-                          }}
-                        >
-                          Add 🛒
-                        </button>
+                        <span className="font-display font-black text-lg text-primary">€{rp.price}</span>
+                        <span className="flex items-center gap-0.5 text-[0.65rem] text-muted-foreground">
+                          <Star size={10} className="fill-accent text-accent" />
+                          {rp.rating}
+                        </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
