@@ -1,20 +1,20 @@
-import ooohMyImg from "@/assets/products/the-ooohmy-one-full.jpg";
-import whisperImg from "@/assets/products/whisper.jpg";
-import thunderImg from "@/assets/products/thunder.jpg";
-import pocketRocketImg from "@/assets/products/pocket-rocket.jpg";
-import togetherImg from "@/assets/products/the-together-full.jpg";
-import dateNightImg from "@/assets/products/date-night.jpg";
-import longDistanceImg from "@/assets/products/long-distance.jpg";
-import hotStuffImg from "@/assets/products/hot-stuff-full.jpg";
-import silkImg from "@/assets/products/silk.jpg";
-import naturalImg from "@/assets/products/natural.jpg";
-import starterRopesImg from "@/assets/products/starter-ropes.jpg";
-import directorsKitImg from "@/assets/products/directors-kit.jpg";
-import silkBlindfoldImg from "@/assets/products/silk-blindfold.jpg";
-import setUpImg from "@/assets/products/the-set-up-full.jpg";
-import curiousKitImg from "@/assets/products/curious-kit.jpg";
-import redAlertImg from "@/assets/products/red-alert-set.jpg";
-import ringKingImg from "@/assets/products/ring-king.jpg";
+import ooohMyImg from "@/assets/products/the-ooohmy-one-full.webp";
+import whisperImg from "@/assets/products/whisper.webp";
+import thunderImg from "@/assets/products/thunder.webp";
+import pocketRocketImg from "@/assets/products/pocket-rocket.webp";
+import togetherImg from "@/assets/products/the-together-full.webp";
+import dateNightImg from "@/assets/products/date-night.webp";
+import longDistanceImg from "@/assets/products/long-distance.webp";
+import hotStuffImg from "@/assets/products/hot-stuff-full.webp";
+import silkImg from "@/assets/products/silk.webp";
+import naturalImg from "@/assets/products/natural.webp";
+import starterRopesImg from "@/assets/products/starter-ropes.webp";
+import directorsKitImg from "@/assets/products/directors-kit.webp";
+import silkBlindfoldImg from "@/assets/products/silk-blindfold.webp";
+import setUpImg from "@/assets/products/the-set-up-full.webp";
+import curiousKitImg from "@/assets/products/curious-kit.webp";
+import redAlertImg from "@/assets/products/red-alert-set.webp";
+import ringKingImg from "@/assets/products/ring-king.webp";
 
 // Map product names to their images (products share images across categories)
 const imageByName: Record<string, string> = {

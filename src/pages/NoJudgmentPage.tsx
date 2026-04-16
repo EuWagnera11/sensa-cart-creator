@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import heroImg from "@/assets/pages/no-judgment-hero.jpg";
+import heroImg from "@/assets/pages/no-judgment-hero.webp";
 
 const pledges = [
   { icon: HeartHandshake, title: "No shame. Ever.", text: "We believe pleasure is personal, natural and nothing to whisper about. Every product, every order, every interaction — judgement-free.", color: "bg-primary" },
