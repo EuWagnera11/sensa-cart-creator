@@ -45,7 +45,7 @@ const TrustBar = () => (
                 backgroundSize: "12px 12px",
               }}
             />
-            <img src={item.img} alt="" className="relative w-10 h-10 object-contain mx-auto mb-4" loading="eager" />
+            <img src={item.img} alt="" className="relative w-14 h-14 object-contain mx-auto mb-4" loading="eager" />
             <div className="relative font-display font-black text-[1rem] text-foreground leading-tight">{item.title}</div>
             <div className="relative font-serif italic text-[0.82rem] text-foreground/50 leading-snug mt-2">{item.sub}</div>
           </div>
