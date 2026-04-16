@@ -11,22 +11,20 @@ const trustItems = [
 const TrustBar = () => (
   <div className="bg-background paper-bg py-5 sm:py-10 lg:py-14 px-4 lg:px-12 border-b-4 border-dark">
     <div className="max-w-[1200px] mx-auto">
-      {/* Mobile — compact horizontal */}
-      <div className="grid grid-cols-3 gap-3 sm:hidden">
-        {trustMobile.map((item) => (
-          <div key={item.title} className="flex items-center gap-2.5 justify-center">
-            <img src={item.img} alt="" className="w-7 h-7 object-contain" loading="eager" />
-            <div>
-              <div className="font-display font-black text-[0.8rem] text-foreground leading-tight">{item.title}</div>
-              <div className="font-serif italic text-[0.62rem] text-foreground/50 leading-snug mt-0.5">{item.sub}</div>
-            </div>
+      {/* Mobile — vertical stack, full copy */}
+      <div className="grid grid-cols-3 gap-2 sm:hidden">
+        {trustItems.map((item) => (
+          <div key={item.title} className="flex flex-col items-center text-center px-1">
+            <img src={item.img} alt="" className="w-9 h-9 object-contain mb-2" loading="eager" />
+            <div className="font-display font-black text-[0.7rem] text-foreground leading-tight">{item.title}</div>
+            <div className="font-serif italic text-[0.58rem] text-foreground/50 leading-snug mt-1">{item.sub}</div>
           </div>
         ))}
       </div>
 
       {/* Desktop — cards with texture & shadow */}
       <div className="hidden sm:grid grid-cols-3 gap-6">
-        {trustDesktop.map((item) => (
+        {trustItems.map((item) => (
           <div
             key={item.title}
             className="relative flex-col text-center bg-parch border-[3px] border-dark/15 rounded-lg px-6 py-8 overflow-hidden"
