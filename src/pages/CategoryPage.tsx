@@ -132,6 +132,8 @@ const CategoryPage = () => {
                         <img
                           src={getProductImage(product.name)}
                           alt={product.name}
+                          loading="eager"
+                          decoding="async"
                           className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
