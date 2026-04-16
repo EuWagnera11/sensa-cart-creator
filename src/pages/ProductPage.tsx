@@ -192,8 +192,12 @@ const ProductPage = () => {
                     `}
                   >
                     <Link to={`/category/${categorySlug}/product/${rp.slug}`} className="block no-underline">
-                      <div className="bg-parch border-[3px] border-dark rounded-sm h-32 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                        <span className="text-5xl">{rp.emoji}</span>
+                      <div className="bg-parch border-[3px] border-dark rounded-sm h-32 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors overflow-hidden">
+                        {getProductImage(rp.name) ? (
+                          <img src={getProductImage(rp.name)} alt={rp.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-5xl">{rp.emoji}</span>
+                        )}
                       </div>
                       <h3 className="font-display font-black italic text-lg text-foreground group-hover:text-primary transition-colors">{rp.name}</h3>
                       <p className="font-serif italic text-sm text-muted-foreground mb-2">{rp.description}</p>
