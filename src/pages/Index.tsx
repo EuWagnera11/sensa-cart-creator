@@ -8,12 +8,13 @@ import SatireBanners from "@/components/SatireBanners";
 import NewArrivals from "@/components/NewArrivals";
 import Products from "@/components/Products";
 import PromoGrid from "@/components/PromoGrid";
-
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const Index = () => (
   <>
+    <SEOHead />
     <AnnounceBanner />
     <Navbar />
     <Hero />

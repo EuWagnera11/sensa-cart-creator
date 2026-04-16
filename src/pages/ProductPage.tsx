@@ -4,6 +4,7 @@ import { getProductImage } from "@/data/productImages";
 import Navbar from "@/components/Navbar";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { ArrowLeft, ShoppingCart, Truck, Shield, RotateCcw, Star, Heart, Package, Clock } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import SEOHead from "@/components/SEOHead";
 import { useCart } from "@/context/CartContext";
 import { categories, products } from "@/data/products";
 
