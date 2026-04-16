@@ -1,36 +1,44 @@
 
 
-## Footer Redesign — Estilo KaBuM adaptado para OoohMy
+## Footer Redesign — Estilo KaBuM compacto
 
-Inspirado no footer das screenshots (KaBuM), vamos criar um footer com seções empilhadas bem definidas, adaptado ao nicho europeu de pleasure products.
+Comparing the current footer (image 53) with the KaBuM reference (images 54-56), the main issues are:
+- Each section takes too much vertical space with excessive padding and centering
+- On desktop, the newsletter should be a **single horizontal bar** (label + input + button in one row)
+- Support info (hours + contact button) should be more compact, possibly inline
+- Links grid spacing is too generous
+- Overall too much vertical breathing room between sections
 
-### Estrutura (de cima para baixo)
+### Changes to `src/components/Footer.tsx`
 
-1. **Newsletter** — Título "OoohMy News" + subtítulo "Get exclusive offers" + campo de email + botão "SUBSCRIBE" (estilo do brand, primary color)
+**1. Newsletter bar — horizontal on desktop**
+- Desktop: single row with "OoohMy News" label on left, subtitle, then input + button on right (like KaBuM's top bar)
+- Mobile: stacked but tighter (reduce py from 5 to 3)
 
-2. **Atendimento / Support** — Centralizado, com horário (Mon–Fri, 10:00–18:00 CET) + botão "CONTACT US" em destaque (accent color, estilo bold)
+**2. Support section — compact**
+- Combine hours + button into a single tight row on desktop
+- Reduce padding (py-4 → py-2)
 
-3. **Info blocks** — Dois blocos:
-   - **Discreet Shipping**: 🇪🇺 Ships across Europe, plain packaging
-   - **Based in Ireland**: 🇮🇪 Registered brand, all prices include VAT
+**3. Info blocks — reduce padding**
+- py-3 → py-2, smaller emoji, tighter text
 
-4. **Social Media** — Row de ícones (Instagram, TikTok, Twitter/X) centralizados
+**4. Links grid — tighter**
+- Reduce py-4 → py-3, gap-3 → gap-2
+- Slightly larger font for readability but less spacing between items
 
-5. **Logo + Legal** — Logo OoohMy centralizado + texto legal (registered brand, VAT, GDPR) + links Privacy/Terms/Cookies
+**5. Social — inline with text on desktop**
+- Like KaBuM: "Social:" label + icons in a row on desktop
+- Reduce py-3 → py-2
 
-6. **Payment badges** — VISA, MC, PAYPAL, MBWAY, KLARNA em row
+**6. Logo + Legal + Payment + Copyright — merge into fewer sections**
+- Combine logo, legal text, privacy links, payment badges, and copyright into one or two compact sections to reduce total section count
+- Remove redundant borders
 
-7. **Copyright** — Linha final com © 2026
+**7. Overall**
+- Reduce all vertical padding by ~40%
+- On desktop (sm+), use flex-row layouts for newsletter and support
+- Keep mobile centered but much tighter
 
-### Design
-- Background `bg-dark`, border-top `primary`
-- Seções separadas por `border-b border-white/[0.08]`
-- Tudo centralizado no mobile (text-center)
-- Desktop: layout mais horizontal onde faz sentido
-- Fontes e cores do brand (display, serif italic, primary/accent)
-- Newsletter input com estilo dark, border branca sutil
-- Compacto mas informativo
-
-### Arquivo editado
-- `src/components/Footer.tsx` — rewrite completo
+### File edited
+- `src/components/Footer.tsx` — rewrite for compactness
 
