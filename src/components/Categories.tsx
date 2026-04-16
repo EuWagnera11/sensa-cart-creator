@@ -28,12 +28,12 @@ const Categories = () => (
     </div>
 
     <div className="bg-dark">
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-2 lg:grid-cols-3">
         {categoriesDisplay.map((cat, index) => (
           <Link
             key={cat.slug}
             to={`/category/${cat.slug}`}
-            className={`relative cat-card p-6 lg:px-7 lg:py-9 overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:z-[2] group no-underline border-dark flex flex-col justify-end min-h-[220px] xl:min-h-[260px] ${index % 3 !== 2 ? "border-r-4" : ""} ${index < 3 ? "border-b-4" : ""}`}
+            className={`relative cat-card p-5 lg:px-7 lg:py-9 overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:z-[2] group no-underline border-dark flex flex-col justify-end min-h-[180px] sm:min-h-[220px] xl:min-h-[260px] odd:border-r-4 lg:odd:border-r-0 ${index % 3 !== 2 ? "lg:border-r-4" : ""} ${index < 4 ? "border-b-4" : ""} lg:border-b-0 ${index < 3 ? "lg:border-b-4" : ""}`}
             style={{ boxShadow: "0 0 0 transparent" }}
           >
             <img
