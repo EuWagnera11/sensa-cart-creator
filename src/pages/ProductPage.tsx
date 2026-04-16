@@ -55,6 +55,20 @@ const ProductPage = () => {
 
   return (
     <>
+      <SEOHead
+        title={product.name}
+        description={product.description.replace(/"/g, "")}
+        type="product"
+        product={{
+          name: product.name,
+          price: product.price,
+          description: product.longDescription,
+          availability: product.inStock ? "InStock" : "OutOfStock",
+          rating: product.rating,
+          reviewCount: product.reviews,
+          category: product.category,
+        }}
+      />
       <AnnounceBanner />
       <Navbar />
 

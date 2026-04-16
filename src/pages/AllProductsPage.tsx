@@ -29,6 +29,7 @@ const AllProductsPage = () => {
 
   return (
     <>
+      <SEOHead title="All Products" description="Browse our full collection of vibrators, lubes, bondage gear & more. Discreet shipping, zero judgement." />
       <AnnounceBanner />
       <Navbar />
 

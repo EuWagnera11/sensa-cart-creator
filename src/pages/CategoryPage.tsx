@@ -46,6 +46,10 @@ const CategoryPage = () => {
 
   return (
     <>
+      <SEOHead
+        title={`${category.name} — ${category.desc}`}
+        description={`Explore ${category.desc.toLowerCase()} na OoohMy. ${category.collection}. Envio discreto.`}
+      />
       <AnnounceBanner />
       <Navbar />
 
