@@ -246,7 +246,7 @@ const NewArrivals = () => {
   return (
     <section id="new-arrivals" className="bg-cream paper-bg">
       {/* Banner rotativo */}
-      <div className="relative w-full overflow-hidden border-y-[3px] border-dark">
+      <div className="relative w-full overflow-hidden border-t-[3px] border-dark">
         <div
           className="flex transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${current * 100}%)` }}
