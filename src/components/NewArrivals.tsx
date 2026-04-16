@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
+import { useCarousel } from "@/hooks/useCarousel";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
 import banner3 from "@/assets/banners/new-arrivals-3.webp";
@@ -192,85 +193,30 @@ const newProducts = [
   },
 ];
 
+const ACTIVE_WIDTH = 280;
 const CARD_WIDTH = 220;
-const GAP = 16;
-const CARD_STEP = CARD_WIDTH + GAP;
-const AUTO_SCROLL_SPEED = 60;
 
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
   const { addItem, setIsOpen } = useCart();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<number>();
-  const lastTimeRef = useRef<number | null>(null);
-  const offsetRef = useRef(0);
 
-  const next = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
+  const {
+    activeIndex,
+    next: nextProduct,
+    prev: prevProduct,
+    goTo,
+    pause,
+    resume,
+    getCardStyle,
+    getSignedOffset,
+  } = useCarousel({ itemCount: newProducts.length, autoPlayInterval: 4000, visibleCount: 5 });
+
+  const nextBanner = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
 
   useEffect(() => {
-    const id = setInterval(next, 4500);
+    const id = setInterval(nextBanner, 4500);
     return () => clearInterval(id);
-  }, [next]);
-
-  const cycleWidth = newProducts.length * CARD_STEP;
-  const marqueeProducts = [...newProducts, ...newProducts];
-
-  const applyOffset = useCallback((offset: number) => {
-    if (!trackRef.current) return;
-    trackRef.current.style.transform = `translate3d(-${offset}px, 0, 0)`;
-  }, []);
-
-  const setOffset = useCallback(
-    (nextOffset: number) => {
-      const wrappedOffset = ((nextOffset % cycleWidth) + cycleWidth) % cycleWidth;
-      offsetRef.current = wrappedOffset;
-      applyOffset(wrappedOffset);
-    },
-    [applyOffset, cycleWidth],
-  );
-
-  const nextProduct = useCallback(() => {
-    const snappedOffset = Math.round(offsetRef.current / CARD_STEP) * CARD_STEP;
-    lastTimeRef.current = null;
-    setOffset(snappedOffset + CARD_STEP);
-  }, [setOffset]);
-
-  const prevProduct = useCallback(() => {
-    const snappedOffset = Math.round(offsetRef.current / CARD_STEP) * CARD_STEP;
-    lastTimeRef.current = null;
-    setOffset(snappedOffset - CARD_STEP);
-  }, [setOffset]);
-
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    applyOffset(offsetRef.current);
-
-    if (prefersReducedMotion.matches) {
-      return;
-    }
-
-    const animate = (time: number) => {
-      if (lastTimeRef.current === null) {
-        lastTimeRef.current = time;
-        frameRef.current = requestAnimationFrame(animate);
-        return;
-      }
-
-      const delta = time - lastTimeRef.current;
-      lastTimeRef.current = time;
-      setOffset(offsetRef.current + (delta * AUTO_SCROLL_SPEED) / 1000);
-      frameRef.current = requestAnimationFrame(animate);
-    };
-
-    frameRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (frameRef.current !== undefined) {
-        cancelAnimationFrame(frameRef.current);
-      }
-      lastTimeRef.current = null;
-    };
-  }, [applyOffset, setOffset]);
+  }, [nextBanner]);
 
   const handleAdd = (p: (typeof newProducts)[number], e: React.MouseEvent) => {
     e.preventDefault();
@@ -299,6 +245,7 @@ const NewArrivals = () => {
 
   return (
     <section id="new-arrivals" className="bg-cream paper-bg">
+      {/* Banner rotativo */}
       <div className="relative w-full overflow-hidden border-y-[3px] border-dark">
         <div
           className="flex transition-transform duration-700 ease-in-out"
@@ -331,6 +278,7 @@ const NewArrivals = () => {
         </div>
       </div>
 
+      {/* Título */}
       <div className="px-6 lg:px-12 pt-14 pb-4 lg:pt-20 lg:pb-6">
         <div className="max-w-[1440px] mx-auto text-center">
           <p className="section-kicker text-primary mb-2.5">Fresh off the shelf</p>
@@ -343,67 +291,103 @@ const NewArrivals = () => {
         </div>
       </div>
 
-      <div className="relative pb-14 lg:pb-20 pt-6 overflow-hidden">
-        <div className="overflow-hidden px-14 sm:px-20">
-          <div
-            ref={trackRef}
-            className="flex w-max gap-4 will-change-transform"
-            style={{ transform: "translate3d(0, 0, 0)" }}
-          >
-            {marqueeProducts.map((product, index) => (
-              <Link
-                key={`${product.slug}-${index}`}
-                to={`/category/${product.categorySlug}/product/${product.slug}`}
-                className="group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-transform duration-300 hover:scale-[1.03]"
+      {/* Carrossel 3D */}
+      <div
+        className="relative pb-14 lg:pb-20 pt-6 overflow-hidden"
+        onMouseEnter={pause}
+        onMouseLeave={resume}
+      >
+        <div
+          className="relative mx-auto flex items-center justify-center"
+          style={{ height: `${ACTIVE_WIDTH * (4 / 3) + 40}px` }}
+        >
+          {newProducts.map((product, index) => {
+            const style = getCardStyle(index);
+            const signed = getSignedOffset(index);
+            const isActive = signed === 0;
+            const cardW = isActive ? ACTIVE_WIDTH : CARD_WIDTH;
+
+            return (
+              <div
+                key={product.slug}
+                className="absolute"
                 style={{
-                  width: `${CARD_WIDTH}px`,
-                  boxShadow: "4px 4px 0 hsl(var(--dark))",
+                  width: `${cardW}px`,
+                  transform: style.transform,
+                  opacity: style.opacity,
+                  filter: style.filter,
+                  zIndex: style.zIndex,
+                  pointerEvents: style.pointerEvents,
+                  transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+                onClick={() => {
+                  if (!isActive) goTo(index);
                 }}
               >
-                <div className="relative aspect-[3/4]">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    loading="eager"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <Link
+                  to={`/category/${product.categorySlug}/product/${product.slug}`}
+                  className="group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm block transition-transform duration-300 hover:scale-[1.03]"
+                  style={{
+                    boxShadow: isActive
+                      ? "6px 6px 0 hsl(var(--dark))"
+                      : "4px 4px 0 hsl(var(--dark))",
+                  }}
+                  onClick={(e) => {
+                    if (!isActive) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  <div className="relative aspect-[3/4]">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      loading="eager"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                  <div
-                    className="absolute top-2 right-2 bg-accent text-foreground font-display italic font-bold text-[0.48rem] sm:text-[0.55rem] px-2 py-0.5 border-2 border-dark rounded-full z-[2]"
-                    style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
-                  >
-                    {product.sticker}
-                  </div>
-
-                  <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
                     <div
-                      className="font-display font-black italic text-white leading-none mb-0.5 text-[0.75rem] sm:text-[0.9rem]"
-                      style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
+                      className="absolute top-2 right-2 bg-accent text-foreground font-display italic font-bold text-[0.48rem] sm:text-[0.55rem] px-2 py-0.5 border-2 border-dark rounded-full z-[2]"
+                      style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
                     >
-                      {product.name}
+                      {product.sticker}
                     </div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <span className="text-accent text-[0.6rem]">★</span>
-                      <span className="font-display font-bold text-white text-[0.55rem]">{product.rating}</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="font-display font-black text-[0.9rem] sm:text-[1.1rem] text-accent">{product.price}</div>
-                      <button
-                        type="button"
-                        className="bg-cream text-foreground border-2 border-dark px-2 py-0.5 sm:px-2.5 sm:py-1 font-display italic text-[0.5rem] sm:text-[0.6rem] font-bold rounded-full transition-colors hover:bg-accent"
-                        onClick={(e) => handleAdd(product, e)}
+
+                    <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
+                      <div
+                        className="font-display font-black italic text-white leading-none mb-0.5 text-[0.75rem] sm:text-[0.9rem]"
+                        style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
                       >
-                        Add 🛒
-                      </button>
+                        {product.name}
+                      </div>
+                      <div className="flex items-center gap-1 mb-1">
+                        <span className="text-accent text-[0.6rem]">★</span>
+                        <span className="font-display font-bold text-white text-[0.55rem]">
+                          {product.rating}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="font-display font-black text-[0.9rem] sm:text-[1.1rem] text-accent">
+                          {product.price}
+                        </div>
+                        <button
+                          type="button"
+                          className="bg-cream text-foreground border-2 border-dark px-2 py-0.5 sm:px-2.5 sm:py-1 font-display italic text-[0.5rem] sm:text-[0.6rem] font-bold rounded-full transition-colors hover:bg-accent"
+                          onClick={(e) => handleAdd(product, e)}
+                        >
+                          Add 🛒
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              </div>
+            );
+          })}
         </div>
 
+        {/* Setas */}
         <button
           onClick={prevProduct}
           className="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
@@ -418,6 +402,20 @@ const NewArrivals = () => {
         >
           <ChevronRight size={16} />
         </button>
+
+        {/* Dots indicadores */}
+        <div className="flex justify-center gap-1.5 mt-6">
+          {newProducts.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className={`w-2 h-2 rounded-full border border-dark transition-all ${
+                i === activeIndex ? "bg-primary scale-125" : "bg-cream/70"
+              }`}
+              aria-label={`Go to product ${i + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
