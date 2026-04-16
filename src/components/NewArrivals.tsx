@@ -19,6 +19,8 @@ import silkImg from "@/assets/products/silk.webp";
 import curiousKitImg from "@/assets/products/curious-kit.webp";
 import longDistanceImg from "@/assets/products/long-distance.webp";
 
+const banners = [banner1, banner2, banner3];
+
 const newProducts = [
   {
     slug: "hot-stuff",
