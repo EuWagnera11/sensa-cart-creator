@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { getProductBySlug, getCategoryBySlug, getProductsByCategory } from "@/data/products";
+import { getProductImage } from "@/data/productImages";
 import Navbar from "@/components/Navbar";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
@@ -82,9 +83,13 @@ const ProductPage = () => {
                   {product.sticker}
                 </div>
               )}
-              <span className="text-[10rem] relative z-[2]" style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,.2))", animation: "float 4s ease-in-out infinite" }}>
-                {product.emoji}
-              </span>
+              {getProductImage(product.name) ? (
+                <img src={getProductImage(product.name)} alt={product.name} className="absolute inset-0 w-full h-full object-cover z-[2]" />
+              ) : (
+                <span className="text-[10rem] relative z-[2]" style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,.2))", animation: "float 4s ease-in-out infinite" }}>
+                  {product.emoji}
+                </span>
+              )}
             </div>
 
             {/* Info */}
@@ -187,8 +192,12 @@ const ProductPage = () => {
                     `}
                   >
                     <Link to={`/category/${categorySlug}/product/${rp.slug}`} className="block no-underline">
-                      <div className="bg-parch border-[3px] border-dark rounded-sm h-32 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                        <span className="text-5xl">{rp.emoji}</span>
+                      <div className="bg-parch border-[3px] border-dark rounded-sm h-32 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors overflow-hidden">
+                        {getProductImage(rp.name) ? (
+                          <img src={getProductImage(rp.name)} alt={rp.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-5xl">{rp.emoji}</span>
+                        )}
                       </div>
                       <h3 className="font-display font-black italic text-lg text-foreground group-hover:text-primary transition-colors">{rp.name}</h3>
                       <p className="font-serif italic text-sm text-muted-foreground mb-2">{rp.description}</p>
