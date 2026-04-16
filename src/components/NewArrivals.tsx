@@ -107,9 +107,7 @@ const NewArrivals = () => {
               loading={i === 0 ? "eager" : "lazy"}
               width={1920}
               height={640}
-              className="w-full flex-shrink-0 object-cover aspect-[4/3] sm:aspect-auto"
-              style={{ aspectRatio: undefined }}
-            />
+              className="w-full flex-shrink-0 object-cover aspect-[4/3] sm:aspect-[1920/640]"
             />
           ))}
         </div>
