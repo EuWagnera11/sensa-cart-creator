@@ -1,15 +1,19 @@
 
 
-# Trocar fundo da seção "Our Best Kept Secrets" para bg-dark
+# Trocar fundo da seção "Our Best Kept Secrets" para marrom escuro
 
-## Problema
-A seção está com `bg-black` (preto puro) mas o usuário quer o marrom escuro original (`bg-dark` = `hsl(23, 100%, 5%)`).
+## Mudança
 
-## Mudança em `src/components/Products.tsx`
+### `src/components/Products.tsx` — Linha 43
+Trocar `bg-black`, `border-black` e `border-b-black` por `bg-dark`, `border-dark` e `border-b-dark`:
 
-### Linha 43 — div wrapper da seção
-- Trocar `bg-black` por `bg-dark`
-- Trocar `border-black` e `border-b-black` por `border-dark`
+```
+bg-black border-t-[5px] border-black border-b-[5px] border-b-black
+```
+→
+```
+bg-dark border-t-[5px] border-dark border-b-[5px] border-b-dark
+```
 
-Resultado: fundo volta ao marrom escuro original da identidade visual OoohMy.
+Resultado: fundo volta ao marrom escuro da identidade visual OoohMy (`hsl(23, 100%, 5%)`).
 
