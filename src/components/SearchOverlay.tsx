@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import { products, type Product } from "@/data/products";
 import { getProductImage } from "@/data/productImages";
 
