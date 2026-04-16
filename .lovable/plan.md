@@ -1,17 +1,15 @@
 
 
-# Remover bordas cinza da seção "Our Best Kept Secrets"
+# Trocar fundo da seção "Our Best Kept Secrets" para bg-dark
 
 ## Problema
-O grid de produtos e os cards individuais têm bordas `border-white/15` (branco com 15% opacidade), que aparecem como cinza.
+A seção está com `bg-black` (preto puro) mas o usuário quer o marrom escuro original (`bg-dark` = `hsl(23, 100%, 5%)`).
 
-## Mudanças em `src/components/Products.tsx`
+## Mudança em `src/components/Products.tsx`
 
-### Linha 50 — Container do grid
-- Remover `border-[3px] border-white/15` do wrapper do grid
+### Linha 43 — div wrapper da seção
+- Trocar `bg-black` por `bg-dark`
+- Trocar `border-black` e `border-b-black` por `border-dark`
 
-### Linha 55 — Cards individuais
-- Remover `border-r-[3px] border-white/15` e `border-b-[3px] border-b-white/15` dos cards
-
-Resultado: grid de produtos sem nenhuma borda cinza, fundo 100% preto.
+Resultado: fundo volta ao marrom escuro original da identidade visual OoohMy.
 
