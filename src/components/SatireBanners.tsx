@@ -11,7 +11,7 @@ const SatireBanners = () => (
           <img
             src={satireHer}
             alt="Retro illustration — her"
-            loading="eager"
+            loading="lazy"
             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute bottom-6 left-0 right-0 flex justify-center z-10">
@@ -31,7 +31,7 @@ const SatireBanners = () => (
           <img
             src={satireHim}
             alt="Retro illustration — him"
-            loading="eager"
+            loading="lazy"
             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute bottom-6 left-0 right-0 flex justify-center z-10">

@@ -54,7 +54,7 @@ const Products = () => {
               to={`/category/${product.categorySlug}/product/${product.slug}`}
               className={`group relative overflow-hidden transition-transform hover:-translate-x-1 hover:-translate-y-1 hover:-rotate-[0.5deg] hover:z-[2] flex flex-col justify-end aspect-square no-underline ${index % 4 !== 3 ? "lg:border-r-[3px] border-white/10" : ""} ${index < 2 ? "sm:border-b-[3px] lg:border-b-0 border-white/10" : ""}`}
             >
-              <img src={product.image} alt={product.name} loading="eager" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <img src={product.image} alt={product.name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
               <div className="absolute top-3 right-4 bg-accent text-foreground font-display italic font-bold text-[0.68rem] px-3.5 py-1 border-2 border-dark rounded-full z-[2]" style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}>

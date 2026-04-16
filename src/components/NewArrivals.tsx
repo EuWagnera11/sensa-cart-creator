@@ -167,7 +167,7 @@ const NewArrivals = () => {
                 <img
                   src={product.image}
                   alt={product.name}
-                  loading="eager"
+                  loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />

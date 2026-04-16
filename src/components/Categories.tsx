@@ -39,7 +39,7 @@ const Categories = () => (
             <img
               src={cat.image}
               alt={cat.name}
-              loading="eager"
+              loading="lazy"
               decoding="async"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
