@@ -257,19 +257,15 @@ const NewArrivals = () => {
   }, [totalWidth]);
 
   const handlePrev = useCallback(() => {
-    const current = offsetRef.current;
-    const cardIndex = Math.round(current / CARD_STEP);
-    let target = (cardIndex - 1) * CARD_STEP;
-    if (target < 0) target += totalWidth;
-    targetOffsetRef.current = target;
+    // Jump back by one card step relative to current position
+    offsetRef.current -= CARD_STEP;
+    if (offsetRef.current < 0) offsetRef.current += totalWidth;
   }, [totalWidth]);
 
   const handleNext = useCallback(() => {
-    const current = offsetRef.current;
-    const cardIndex = Math.round(current / CARD_STEP);
-    let target = (cardIndex + 1) * CARD_STEP;
-    if (target >= totalWidth) target -= totalWidth;
-    targetOffsetRef.current = target;
+    // Jump forward by one card step relative to current position
+    offsetRef.current += CARD_STEP;
+    if (offsetRef.current >= totalWidth) offsetRef.current -= totalWidth;
   }, [totalWidth]);
 
   const pause = useCallback(() => { isPausedRef.current = true; }, []);
