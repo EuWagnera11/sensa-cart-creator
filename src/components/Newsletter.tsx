@@ -71,13 +71,13 @@ const Newsletter = () => {
       {/* Member avatars - closer to the text above */}
       <div className="relative z-[1] flex items-center justify-center -space-x-4 mt-4 mb-4">
         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-[3px] border-cream overflow-hidden shadow-lg">
-          <img src={member1} alt="Club member" loading="lazy" width={512} height={512} className="w-full h-full object-cover" />
+          <img src={member1} alt="Club member" loading="eager" width={512} height={512} className="w-full h-full object-cover" />
         </div>
         <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-[3px] border-cream overflow-hidden shadow-lg z-10">
-          <img src={member2} alt="Club member" loading="lazy" width={512} height={512} className="w-full h-full object-cover" />
+          <img src={member2} alt="Club member" loading="eager" width={512} height={512} className="w-full h-full object-cover" />
         </div>
         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-[3px] border-cream overflow-hidden shadow-lg">
-          <img src={member3} alt="Club member" loading="lazy" width={512} height={512} className="w-full h-full object-cover" />
+          <img src={member3} alt="Club member" loading="eager" width={512} height={512} className="w-full h-full object-cover" />
         </div>
       </div>
 
