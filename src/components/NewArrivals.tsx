@@ -227,12 +227,14 @@ const NewArrivals = () => {
     return () => clearInterval(id);
   }, [nextProduct]);
 
-  const getProduct = (offset: number) => {
-    const idx = ((productIndex + offset) % count + count) % count;
-    return newProducts[idx];
+  const getWrappedProduct = (index: number) => {
+    const i = ((index % count) + count) % count;
+    return newProducts[i];
   };
 
-  const handleAdd = (p: (typeof newProducts)[number]) => {
+  const handleAdd = (p: (typeof newProducts)[number], e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem({
       id: p.slug,
       name: p.name,
