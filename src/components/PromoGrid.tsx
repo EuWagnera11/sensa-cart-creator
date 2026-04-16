@@ -33,14 +33,14 @@ const PromoGrid = () => (
             }}
           />
 
-          <div className={`absolute top-5 left-5 w-[70px] h-[70px] rounded-full flex flex-col items-center justify-center text-center font-black text-[0.55rem] tracking-wide uppercase leading-tight border-[3px] z-[2] ${promo.isNew ? "bg-primary text-cream border-white/20" : "bg-dark text-accent border-white/20"}`}>
-            <span className="text-lg font-display whitespace-pre-line leading-none">{promo.badge}</span>
+          <div className={`absolute top-3 left-3 sm:top-5 sm:left-5 w-[50px] h-[50px] sm:w-[70px] sm:h-[70px] rounded-full flex flex-col items-center justify-center text-center font-black text-[0.45rem] sm:text-[0.55rem] tracking-wide uppercase leading-tight border-2 sm:border-[3px] z-[2] ${promo.isNew ? "bg-primary text-cream border-white/20" : "bg-dark text-accent border-white/20"}`}>
+            <span className="text-sm sm:text-lg font-display whitespace-pre-line leading-none">{promo.badge}</span>
           </div>
 
-          <div className="relative z-[1] px-6 py-7">
-            <div className="font-display font-black italic text-2xl text-white mb-1" style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}>{promo.name}</div>
-            <div className="font-serif italic text-[0.8rem] text-white/75 mb-3.5 max-w-[200px]">{promo.sub}</div>
-            <span className="inline-block bg-white/90 text-foreground font-display italic text-[0.85rem] font-bold px-[22px] py-[9px] border-2 border-dark rounded-[2px] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5" style={{ boxShadow: "3px 3px 0 rgba(0,0,0,.3)" }}>
+          <div className="relative z-[1] px-4 py-5 sm:px-6 sm:py-7">
+            <div className="font-display font-black italic text-lg sm:text-2xl text-white mb-0.5 sm:mb-1" style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}>{promo.name}</div>
+            <div className="font-serif italic text-[0.65rem] sm:text-[0.8rem] text-white/75 mb-2.5 sm:mb-3.5 max-w-[200px]">{promo.sub}</div>
+            <span className="inline-block bg-white/90 text-foreground font-display italic text-[0.7rem] sm:text-[0.85rem] font-bold px-[14px] py-[6px] sm:px-[22px] sm:py-[9px] border-2 border-dark rounded-[2px] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5" style={{ boxShadow: "3px 3px 0 rgba(0,0,0,.3)" }}>
               {promo.cta}
             </span>
           </div>
