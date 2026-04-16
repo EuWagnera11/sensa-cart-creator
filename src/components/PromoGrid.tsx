@@ -13,9 +13,9 @@ const promos = [
 
 const PromoGrid = () => (
   <div className="border-y-[5px] border-dark bg-background paper-bg">
-    <div className="grid grid-cols-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4">
       {promos.map((promo, index) => (
-        <Link key={promo.name} to={promo.to} className={`relative min-h-[280px] xl:min-h-[340px] overflow-hidden flex flex-col justify-end group no-underline ${index < 3 ? "border-r-4 border-dark" : ""} transition-all hover:brightness-110`}>
+        <Link key={promo.name} to={promo.to} className={`relative min-h-[200px] sm:min-h-[280px] xl:min-h-[340px] overflow-hidden flex flex-col justify-end group no-underline border-r-[3px] last:border-r-0 border-b-[3px] border-dark [&:nth-last-child(-n+2)]:border-b-0 lg:[&:nth-last-child(-n+2)]:border-b-0 lg:border-b-0 lg:last:border-r-0 lg:border-r-4 transition-all hover:brightness-110`}>
           <img
             src={promo.image}
             alt={promo.name}
