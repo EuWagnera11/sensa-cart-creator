@@ -2,13 +2,7 @@ import trustBox from "@/assets/icons/trust-box.png";
 import trustLightning from "@/assets/icons/trust-lightning.png";
 import trustLock from "@/assets/icons/trust-lock.png";
 
-const trustMobile = [
-  { img: trustBox, title: "Discreet", sub: "No logos. No questions." },
-  { img: trustLightning, title: "24–48h", sub: "Ships fast, always." },
-  { img: trustLock, title: "Private", sub: "Your car. Your secret." },
-];
-
-const trustDesktop = [
+const trustItems = [
   { img: trustBox, title: "Your neighbours? Clueless.", sub: '"No logos. No questions. Nothing to explain."' },
   { img: trustLightning, title: "Faster than your excuses.", sub: '"Ships in 24–48h. Discreet, always."' },
   { img: trustLock, title: "Nothing to explain.", sub: '"Your car. Your secret."' },
