@@ -214,7 +214,7 @@ const NewArrivals = () => {
   const isPausedRef = useRef(false);
   const rafRef = useRef<number>(0);
   const lastTimeRef = useRef(0);
-  const targetOffsetRef = useRef<number | null>(null);
+  
 
   const totalWidth = newProducts.length * CARD_STEP;
 
