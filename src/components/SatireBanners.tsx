@@ -7,7 +7,7 @@ const SatireBanners = () => (
     <div className="grid grid-cols-2">
       {/* Left — Her */}
       <Link to="/category/newbie" className="relative overflow-hidden border-r-[3px] border-dark group block no-underline">
-        <div className="relative w-full aspect-square sm:aspect-[16/10]">
+        <div className="relative w-full aspect-[3/4] sm:aspect-[16/10]">
           <img
             src={satireHer}
             alt="Retro illustration — her"
@@ -23,7 +23,7 @@ const SatireBanners = () => (
       </Link>
 
       <Link to="/category/push-it" className="relative overflow-hidden group block no-underline">
-        <div className="relative w-full aspect-square sm:aspect-[16/10]">
+        <div className="relative w-full aspect-[3/4] sm:aspect-[16/10]">
           <img
             src={satireHim}
             alt="Retro illustration — him"
