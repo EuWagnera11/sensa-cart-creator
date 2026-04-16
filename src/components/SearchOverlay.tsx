@@ -24,8 +24,12 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
   }, [isOpen]);
 
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
+    const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      if (e.key === "Enter" && query.length >= 2) {
+        onClose();
+        navigate(`/products?q=${encodeURIComponent(query)}`);
+      }
     };
     if (isOpen) document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
