@@ -66,7 +66,7 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar produtos..."
+            placeholder="Search products..."
             className="flex-1 bg-transparent font-serif text-base outline-none placeholder:text-muted-foreground/50"
           />
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
@@ -128,7 +128,7 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
 
         {query.length < 2 && (
           <div className="px-5 py-6 text-center">
-            <p className="font-serif italic text-sm text-muted-foreground">Digite pelo menos 2 caracteres para buscar...</p>
+            <p className="font-serif italic text-sm text-muted-foreground">Type at least 2 characters to search...</p>
           </div>
         )}
       </div>

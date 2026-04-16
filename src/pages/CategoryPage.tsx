@@ -50,7 +50,7 @@ const CategoryPage = () => {
     <>
       <SEOHead
         title={`${category.name} — ${category.desc}`}
-        description={`Explore ${category.desc.toLowerCase()} na OoohMy. ${category.collection}. Envio discreto.`}
+        description={`Explore ${category.desc.toLowerCase()} at OoohMy. ${category.collection}. Discreet shipping.`}
       />
       <AnnounceBanner />
       <Navbar />
@@ -183,10 +183,10 @@ const CategoryPage = () => {
 
                     <div className="grid grid-cols-2 gap-2.5">
                       <button type="button" className="cta-primary w-full text-[0.82rem] px-4 py-2.5" onClick={() => handleBuy(product.id)}>
-                        Comprar
+                        Buy now
                       </button>
                       <Link to={`/category/${categorySlug}/product/${product.slug}`} className="cta-secondary w-full text-[0.82rem] px-4 py-2.5 no-underline text-center">
-                        Saiba mais
+                        Learn more
                       </Link>
                     </div>
                   </div>
