@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import heroImg from "@/assets/pages/press-hero.jpg";
+import heroImg from "@/assets/pages/press-hero.webp";
 
 const brandFacts = [
   { label: "Founded", value: "2025" },

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import heroImg from "@/assets/pages/affiliates-hero.jpg";
+import heroImg from "@/assets/pages/affiliates-hero.webp";
 
 const stats = [
   { value: "15%", label: "Commission rate" },
