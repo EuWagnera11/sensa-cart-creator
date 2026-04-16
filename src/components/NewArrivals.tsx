@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
-import { useCarousel } from "@/hooks/useCarousel";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
 import banner3 from "@/assets/banners/new-arrivals-3.webp";
@@ -193,30 +192,88 @@ const newProducts = [
   },
 ];
 
-const ACTIVE_WIDTH = 280;
 const CARD_WIDTH = 220;
+const CARD_GAP = 16;
+const CARD_STEP = CARD_WIDTH + CARD_GAP;
+const SPEED = 40; // px per second
 
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
   const { addItem, setIsOpen } = useCart();
 
-  const {
-    activeIndex,
-    next: nextProduct,
-    prev: prevProduct,
-    goTo,
-    pause,
-    resume,
-    getCardStyle,
-    getSignedOffset,
-  } = useCarousel({ itemCount: newProducts.length, autoPlayInterval: 4000, visibleCount: 5 });
-
+  // Banner rotation
   const nextBanner = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
-
   useEffect(() => {
     const id = setInterval(nextBanner, 4500);
     return () => clearInterval(id);
   }, [nextBanner]);
+
+  // Marquee state
+  const trackRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
+  const isPausedRef = useRef(false);
+  const rafRef = useRef<number>(0);
+  const lastTimeRef = useRef(0);
+  const targetOffsetRef = useRef<number | null>(null);
+
+  const totalWidth = newProducts.length * CARD_STEP;
+
+  useEffect(() => {
+    const animate = (time: number) => {
+      if (!lastTimeRef.current) lastTimeRef.current = time;
+      const dt = (time - lastTimeRef.current) / 1000;
+      lastTimeRef.current = time;
+
+      // If there's a manual navigation target, lerp toward it
+      if (targetOffsetRef.current !== null) {
+        const diff = targetOffsetRef.current - offsetRef.current;
+        if (Math.abs(diff) < 0.5) {
+          offsetRef.current = targetOffsetRef.current;
+          targetOffsetRef.current = null;
+        } else {
+          offsetRef.current += diff * Math.min(1, dt * 8);
+        }
+      } else if (!isPausedRef.current) {
+        offsetRef.current += SPEED * dt;
+      }
+
+      // Wrap seamlessly
+      if (offsetRef.current >= totalWidth) {
+        offsetRef.current -= totalWidth;
+      }
+      if (offsetRef.current < 0) {
+        offsetRef.current += totalWidth;
+      }
+
+      if (trackRef.current) {
+        trackRef.current.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`;
+      }
+
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [totalWidth]);
+
+  const handlePrev = useCallback(() => {
+    const current = offsetRef.current;
+    const cardIndex = Math.round(current / CARD_STEP);
+    let target = (cardIndex - 1) * CARD_STEP;
+    if (target < 0) target += totalWidth;
+    targetOffsetRef.current = target;
+  }, [totalWidth]);
+
+  const handleNext = useCallback(() => {
+    const current = offsetRef.current;
+    const cardIndex = Math.round(current / CARD_STEP);
+    let target = (cardIndex + 1) * CARD_STEP;
+    if (target >= totalWidth) target -= totalWidth;
+    targetOffsetRef.current = target;
+  }, [totalWidth]);
+
+  const pause = useCallback(() => { isPausedRef.current = true; }, []);
+  const resume = useCallback(() => { isPausedRef.current = false; }, []);
 
   const handleAdd = (p: (typeof newProducts)[number], e: React.MouseEvent) => {
     e.preventDefault();
@@ -242,6 +299,67 @@ const NewArrivals = () => {
     setIsOpen(true);
     toast.success(`${p.name} added to bag ✨`);
   };
+
+  // Duplicate array for seamless loop
+  const items = [...newProducts, ...newProducts];
+
+  const renderCard = (product: (typeof newProducts)[number], index: number) => (
+    <div
+      key={`${product.slug}-${index}`}
+      className="flex-shrink-0"
+      style={{ width: `${CARD_WIDTH}px`, marginRight: `${CARD_GAP}px` }}
+    >
+      <Link
+        to={`/category/${product.categorySlug}/product/${product.slug}`}
+        className="group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm block transition-transform duration-300 hover:scale-[1.03]"
+        style={{ boxShadow: "4px 4px 0 hsl(var(--dark))" }}
+      >
+        <div className="relative aspect-[3/4]">
+          <img
+            src={product.image}
+            alt={product.name}
+            loading="eager"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+          <div
+            className="absolute top-2 right-2 bg-accent text-foreground font-display italic font-bold text-[0.48rem] sm:text-[0.55rem] px-2 py-0.5 border-2 border-dark rounded-full z-[2]"
+            style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
+          >
+            {product.sticker}
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
+            <div
+              className="font-display font-black italic text-white leading-none mb-0.5 text-[0.75rem] sm:text-[0.9rem]"
+              style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
+            >
+              {product.name}
+            </div>
+            <div className="flex items-center gap-1 mb-1">
+              <span className="text-accent text-[0.6rem]">★</span>
+              <span className="font-display font-bold text-white text-[0.55rem]">
+                {product.rating}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <div className="font-display font-black text-[0.9rem] sm:text-[1.1rem] text-accent">
+                {product.price}
+              </div>
+              <button
+                type="button"
+                className="bg-cream text-foreground border-2 border-dark px-2 py-0.5 sm:px-2.5 sm:py-1 font-display italic text-[0.5rem] sm:text-[0.6rem] font-bold rounded-full transition-colors hover:bg-accent"
+                onClick={(e) => handleAdd(product, e)}
+              >
+                Add 🛒
+              </button>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
 
   return (
     <section id="new-arrivals" className="bg-cream paper-bg">
@@ -291,131 +409,31 @@ const NewArrivals = () => {
         </div>
       </div>
 
-      {/* Carrossel 3D */}
+      {/* Marquee contínuo */}
       <div
         className="relative pb-14 lg:pb-20 pt-6 overflow-hidden"
         onMouseEnter={pause}
         onMouseLeave={resume}
       >
-        <div
-          className="relative mx-auto flex items-center justify-center"
-          style={{ height: `${ACTIVE_WIDTH * (4 / 3) + 40}px` }}
-        >
-          {newProducts.map((product, index) => {
-            const style = getCardStyle(index);
-            const signed = getSignedOffset(index);
-            const isActive = signed === 0;
-            const cardW = isActive ? ACTIVE_WIDTH : CARD_WIDTH;
-
-            return (
-              <div
-                key={product.slug}
-                className="absolute"
-                style={{
-                  width: `${cardW}px`,
-                  transform: style.transform,
-                  opacity: style.opacity,
-                  filter: style.filter,
-                  zIndex: style.zIndex,
-                  pointerEvents: style.pointerEvents,
-                  transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                }}
-                onClick={() => {
-                  if (!isActive) goTo(index);
-                }}
-              >
-                <Link
-                  to={`/category/${product.categorySlug}/product/${product.slug}`}
-                  className="group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm block transition-transform duration-300 hover:scale-[1.03]"
-                  style={{
-                    boxShadow: isActive
-                      ? "6px 6px 0 hsl(var(--dark))"
-                      : "4px 4px 0 hsl(var(--dark))",
-                  }}
-                  onClick={(e) => {
-                    if (!isActive) {
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  <div className="relative aspect-[3/4]">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      loading="eager"
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                    <div
-                      className="absolute top-2 right-2 bg-accent text-foreground font-display italic font-bold text-[0.48rem] sm:text-[0.55rem] px-2 py-0.5 border-2 border-dark rounded-full z-[2]"
-                      style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
-                    >
-                      {product.sticker}
-                    </div>
-
-                    <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
-                      <div
-                        className="font-display font-black italic text-white leading-none mb-0.5 text-[0.75rem] sm:text-[0.9rem]"
-                        style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
-                      >
-                        {product.name}
-                      </div>
-                      <div className="flex items-center gap-1 mb-1">
-                        <span className="text-accent text-[0.6rem]">★</span>
-                        <span className="font-display font-bold text-white text-[0.55rem]">
-                          {product.rating}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="font-display font-black text-[0.9rem] sm:text-[1.1rem] text-accent">
-                          {product.price}
-                        </div>
-                        <button
-                          type="button"
-                          className="bg-cream text-foreground border-2 border-dark px-2 py-0.5 sm:px-2.5 sm:py-1 font-display italic text-[0.5rem] sm:text-[0.6rem] font-bold rounded-full transition-colors hover:bg-accent"
-                          onClick={(e) => handleAdd(product, e)}
-                        >
-                          Add 🛒
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
+        <div ref={trackRef} className="flex will-change-transform">
+          {items.map((product, index) => renderCard(product, index))}
         </div>
 
         {/* Setas */}
         <button
-          onClick={prevProduct}
+          onClick={handlePrev}
           className="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
           aria-label="Previous product"
         >
           <ChevronLeft size={16} />
         </button>
         <button
-          onClick={nextProduct}
+          onClick={handleNext}
           className="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
           aria-label="Next product"
         >
           <ChevronRight size={16} />
         </button>
-
-        {/* Dots indicadores */}
-        <div className="flex justify-center gap-1.5 mt-6">
-          {newProducts.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              className={`w-2 h-2 rounded-full border border-dark transition-all ${
-                i === activeIndex ? "bg-primary scale-125" : "bg-cream/70"
-              }`}
-              aria-label={`Go to product ${i + 1}`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );
