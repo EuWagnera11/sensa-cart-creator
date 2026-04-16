@@ -22,7 +22,7 @@ const Navbar = () => {
   const { user, signOut } = useAuth();
 
   return (
-    <nav className="bg-dark border-b-4 border-primary sticky top-0 z-[100]">
+    <nav className="bg-dark border-b-4 border-dark sticky top-0 z-[100]">
       <div className="flex items-center justify-between px-4 lg:px-8 xl:px-12 3xl:px-16 h-[58px] xl:h-[66px] 3xl:h-[80px] max-w-[1440px] 3xl:max-w-[1800px] mx-auto gap-4">
         <Link to="/" className="font-display italic font-black text-[2rem] tracking-[0.5px] flex items-center shrink-0 no-underline">
           <span className="text-accent">Oooh</span>
