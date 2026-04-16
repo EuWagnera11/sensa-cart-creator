@@ -4,7 +4,7 @@ import satireHim from "@/assets/satire/why-not.webp";
 
 const SatireBanners = () => (
   <div className="border-y-[5px] border-dark">
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-2 items-stretch">
       {/* Left — Her */}
       <Link to="/category/newbie" className="relative overflow-hidden border-r-[3px] border-dark group block no-underline">
         <div className="relative w-full aspect-[3/4] sm:aspect-[16/10]">
