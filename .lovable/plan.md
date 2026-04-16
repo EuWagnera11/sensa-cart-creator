@@ -1,44 +1,41 @@
 
 
-## Footer Redesign — Estilo KaBuM compacto
+# Carrossel 3D estilo "ProductCarousel" para New Arrivals
 
-Comparing the current footer (image 53) with the KaBuM reference (images 54-56), the main issues are:
-- Each section takes too much vertical space with excessive padding and centering
-- On desktop, the newsletter should be a **single horizontal bar** (label + input + button in one row)
-- Support info (hours + contact button) should be more compact, possibly inline
-- Links grid spacing is too generous
-- Overall too much vertical breathing room between sections
+## O que muda
 
-### Changes to `src/components/Footer.tsx`
+Substituir o carrossel marquee atual (scroll contínuo horizontal) por um **carrossel circular 3D** onde:
+- O card ativo fica centralizado, em destaque (scale 1.0, opacidade total)
+- Cards adjacentes ficam menores, com blur e opacidade reduzida, criando profundidade
+- Navegação por setas (prev/next) com transição suave animada
+- Auto-play com intervalo (~4s), pausa no hover
+- Loop infinito circular (último → primeiro sem salto)
 
-**1. Newsletter bar — horizontal on desktop**
-- Desktop: single row with "OoohMy News" label on left, subtitle, then input + button on right (like KaBuM's top bar)
-- Mobile: stacked but tighter (reduce py from 5 to 3)
+## Estrutura
 
-**2. Support section — compact**
-- Combine hours + button into a single tight row on desktop
-- Reduce padding (py-4 → py-2)
+### 1. Hook `useCarousel` (`src/hooks/useCarousel.ts`)
+- Recebe: `itemCount`, `autoPlayInterval` (default 4000ms)
+- Gerencia: `activeIndex`, funções `next`/`prev`, auto-play com pause on hover
+- Calcula estilos 3D para cada card baseado na distância ao ativo:
+  - **Ativo**: `scale(1)`, `opacity: 1`, `blur(0)`, `z-index: 10`
+  - **±1**: `scale(0.85)`, `opacity: 0.6`, `blur(1px)`, `z-index: 5`
+  - **±2+**: `scale(0.7)`, `opacity: 0.3`, `blur(3px)`, `z-index: 1`
+- Distância circular: `Math.min(Math.abs(diff), itemCount - Math.abs(diff))`
 
-**3. Info blocks — reduce padding**
-- py-3 → py-2, smaller emoji, tighter text
+### 2. Refatorar `NewArrivals.tsx`
+- Manter: banner rotativo no topo, dados dos produtos, handleAdd
+- Substituir: seção do carrossel marquee pelo novo layout 3D
+- Cards dispostos com `position: absolute` + `translateX` calculado, centralizados
+- Transição CSS com `transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1)`
+- Setas prev/next mantêm o estilo visual atual (cream/border-dark/rounded)
+- On hover no container: pausa auto-play
 
-**4. Links grid — tighter**
-- Reduce py-4 → py-3, gap-3 → gap-2
-- Slightly larger font for readability but less spacing between items
+### 3. Visual dos cards
+- Mantém o design atual dos cards (imagem, sticker, nome, preço, botão Add)
+- Card ativo: tamanho maior (~280px width), sombra mais forte
+- Cards laterais: menores, desfocados, clicáveis para navegar até eles
 
-**5. Social — inline with text on desktop**
-- Like KaBuM: "Social:" label + icons in a row on desktop
-- Reduce py-3 → py-2
-
-**6. Logo + Legal + Payment + Copyright — merge into fewer sections**
-- Combine logo, legal text, privacy links, payment badges, and copyright into one or two compact sections to reduce total section count
-- Remove redundant borders
-
-**7. Overall**
-- Reduce all vertical padding by ~40%
-- On desktop (sm+), use flex-row layouts for newsletter and support
-- Keep mobile centered but much tighter
-
-### File edited
-- `src/components/Footer.tsx` — rewrite for compactness
+## Arquivos alterados
+- `src/hooks/useCarousel.ts` — novo hook
+- `src/components/NewArrivals.tsx` — refatorar seção do carrossel
 
