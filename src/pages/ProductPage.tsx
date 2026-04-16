@@ -4,6 +4,7 @@ import { getProductImage } from "@/data/productImages";
 import Navbar from "@/components/Navbar";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { ArrowLeft, ShoppingCart, Truck, Shield, RotateCcw, Star, Heart, Package, Clock } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -54,6 +55,20 @@ const ProductPage = () => {
 
   return (
     <>
+      <SEOHead
+        title={product.name}
+        description={product.description.replace(/"/g, "")}
+        type="product"
+        product={{
+          name: product.name,
+          price: product.price,
+          description: product.longDescription,
+          availability: product.inStock ? "InStock" : "OutOfStock",
+          rating: product.rating,
+          reviewCount: product.reviews,
+          category: product.category,
+        }}
+      />
       <AnnounceBanner />
       <Navbar />
 
