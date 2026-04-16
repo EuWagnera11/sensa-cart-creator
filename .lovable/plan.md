@@ -1,51 +1,36 @@
 
 
-# Plano: Layout Desktop em Todos os Dispositivos (exceto Hero)
+## Footer Redesign — Estilo KaBuM adaptado para OoohMy
 
-## O que muda
-Remover todos os breakpoints responsivos que mudam o layout de grid/flex para mobile, mantendo o layout desktop em todas as telas. O Hero continua com seu comportamento responsivo atual.
+Inspirado no footer das screenshots (KaBuM), vamos criar um footer com seções empilhadas bem definidas, adaptado ao nicho europeu de pleasure products.
 
-## Componentes afetados
+### Estrutura (de cima para baixo)
 
-### 1. `src/components/Categories.tsx`
-- Grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` → `grid-cols-3`
-- Remover borders condicionais por breakpoint
+1. **Newsletter** — Título "OoohMy News" + subtítulo "Get exclusive offers" + campo de email + botão "SUBSCRIBE" (estilo do brand, primary color)
 
-### 2. `src/components/Products.tsx`
-- Grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4` → `grid-cols-4`
-- Remover borders condicionais por breakpoint
+2. **Atendimento / Support** — Centralizado, com horário (Mon–Fri, 10:00–18:00 CET) + botão "CONTACT US" em destaque (accent color, estilo bold)
 
-### 3. `src/components/NewArrivals.tsx`
-- Banner aspect: `aspect-[4/3] sm:aspect-[1920/640]` → `aspect-[1920/640]`
-- Products grid: `grid-cols-1 sm:grid-cols-3` → `grid-cols-3`
-- Product aspect: `aspect-[4/5] sm:aspect-[3/4]` → `aspect-[3/4]`
-- Remover borders condicionais
+3. **Info blocks** — Dois blocos:
+   - **Discreet Shipping**: 🇪🇺 Ships across Europe, plain packaging
+   - **Based in Ireland**: 🇮🇪 Registered brand, all prices include VAT
 
-### 4. `src/components/SatireBanners.tsx`
-- Grid: `grid-cols-1 md:grid-cols-2` → `grid-cols-2`
-- Aspect: manter `md:aspect-[16/10]` como padrão
-- Border: sempre `border-r-[3px]` no primeiro item
+4. **Social Media** — Row de ícones (Instagram, TikTok, Twitter/X) centralizados
 
-### 5. `src/components/PromoGrid.tsx`
-- Grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4` → `grid-cols-4`
-- Remover borders condicionais
+5. **Logo + Legal** — Logo OoohMy centralizado + texto legal (registered brand, VAT, GDPR) + links Privacy/Terms/Cookies
 
-### 6. `src/components/Newsletter.tsx`
-- Form: `flex-col sm:flex-row` → `flex-row`
-- Input/button borders: sempre inline (sem rounded top/bottom mobile)
+6. **Payment badges** — VISA, MC, PAYPAL, MBWAY, KLARNA em row
 
-### 7. `src/components/Footer.tsx`
-- Grid: `grid-cols-2 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]` → `grid-cols-[2fr_1fr_1fr_1fr]`
+7. **Copyright** — Linha final com © 2026
 
-### 8. `src/components/Navbar.tsx`
-- Manter o menu mobile hamburger (necessário para toque), mas mostrar o bag button desktop sempre
-- Auth links: remover `hidden sm:` para aparecer sempre
+### Design
+- Background `bg-dark`, border-top `primary`
+- Seções separadas por `border-b border-white/[0.08]`
+- Tudo centralizado no mobile (text-center)
+- Desktop: layout mais horizontal onde faz sentido
+- Fontes e cores do brand (display, serif italic, primary/accent)
+- Newsletter input com estilo dark, border branca sutil
+- Compacto mas informativo
 
-### Não alterados
-- **Hero** — mantém responsividade atual
-- **AnnounceBanner**, **MarqueeBand** — já são idênticos em mobile/desktop
-- **TrustBar** — já está `grid-cols-3`
-
-## Resultado
-O site terá exatamente o mesmo layout visual em celular, tablet e desktop, apenas menor em telas pequenas. O Hero continua adaptativo.
+### Arquivo editado
+- `src/components/Footer.tsx` — rewrite completo
 
