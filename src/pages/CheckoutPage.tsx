@@ -37,21 +37,21 @@ const CheckoutPage = () => {
       <AnnounceBanner />
       <Navbar />
 
-      <section className="bg-parch paper-bg px-6 py-12 lg:px-12 lg:py-16 border-b-[3px] border-dark">
+      <section className="bg-parch paper-bg px-4 sm:px-6 py-8 sm:py-12 lg:px-12 lg:py-16 border-b-[3px] border-dark">
         <div className="max-w-[1440px] mx-auto">
-          <Link to="/cart" className="inline-flex items-center gap-2 text-sm font-display italic text-muted-foreground no-underline hover:text-primary transition-colors mb-6">
+          <Link to="/cart" className="inline-flex items-center gap-2 text-sm font-display italic text-muted-foreground no-underline hover:text-primary transition-colors mb-4 sm:mb-6">
             <ArrowLeft size={16} /> Back to cart
           </Link>
           <p className="section-kicker text-primary mb-3">Checkout</p>
-          <h1 className="font-display font-black italic text-foreground leading-none" style={{ fontSize: "clamp(2.4rem,4vw,4.5rem)" }}>
+          <h1 className="font-display font-black italic text-foreground leading-none" style={{ fontSize: "clamp(1.8rem,4vw,4.5rem)" }}>
             Fast, discreet and nearly done.
           </h1>
         </div>
       </section>
 
-      <section className="bg-background paper-bg px-6 py-10 lg:px-12 lg:py-16">
-        <div className="max-w-[1440px] mx-auto grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start">
-          <form className="surface-card rounded-[28px] p-6 lg:p-8" onSubmit={handleSubmit}>
+      <section className="bg-background paper-bg px-4 sm:px-6 py-8 sm:py-10 lg:px-12 lg:py-16">
+        <div className="max-w-[1440px] mx-auto grid gap-6 lg:gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start">
+          <form className="surface-card rounded-[20px] sm:rounded-[28px] p-4 sm:p-6 lg:p-8" onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div>
                 <h2 className="font-display font-black italic text-2xl text-foreground">Delivery details</h2>
@@ -109,8 +109,8 @@ const CheckoutPage = () => {
             </div>
           </form>
 
-          <aside className="surface-inverse rounded-[28px] p-6 lg:p-7 sticky top-28">
-            <h2 className="font-display font-black italic text-2xl text-white">Order summary</h2>
+          <aside className="surface-inverse rounded-[20px] sm:rounded-[28px] p-5 sm:p-6 lg:p-7 lg:sticky lg:top-28">
+            <h2 className="font-display font-black italic text-xl sm:text-2xl text-white">Order summary</h2>
             <div className="space-y-4 mt-6">
               {items.map((item) => (
                 <div key={item.id} className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">

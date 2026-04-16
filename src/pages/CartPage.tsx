@@ -15,26 +15,26 @@ const CartPage = () => {
       <AnnounceBanner />
       <Navbar />
 
-      <section className="bg-parch paper-bg px-6 py-12 lg:px-12 lg:py-16 border-b-[3px] border-dark">
+      <section className="bg-parch paper-bg px-4 sm:px-6 py-8 sm:py-12 lg:px-12 lg:py-16 border-b-[3px] border-dark">
         <div className="max-w-[1440px] mx-auto">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm font-display italic text-muted-foreground no-underline hover:text-primary transition-colors mb-6">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm font-display italic text-muted-foreground no-underline hover:text-primary transition-colors mb-4 sm:mb-6">
             <ArrowLeft size={16} /> Continue shopping
           </Link>
           <p className="section-kicker text-primary mb-3">Shopping Bag</p>
           <div className="flex items-end justify-between gap-4 flex-wrap">
-            <h1 className="font-display font-black italic text-foreground leading-none" style={{ fontSize: "clamp(2.4rem,4vw,4.5rem)" }}>
+            <h1 className="font-display font-black italic text-foreground leading-none" style={{ fontSize: "clamp(1.8rem,4vw,4.5rem)" }}>
               Your quiet little cart.
             </h1>
-            <div className="surface-card px-5 py-4 text-right">
+            <div className="surface-card px-4 sm:px-5 py-3 sm:py-4 text-right">
               <div className="text-[0.68rem] uppercase tracking-[3px] text-muted-foreground">Items selected</div>
-              <div className="font-display text-3xl italic font-black text-foreground">{itemCount}</div>
+              <div className="font-display text-2xl sm:text-3xl italic font-black text-foreground">{itemCount}</div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-background paper-bg px-6 py-10 lg:px-12 lg:py-16">
-        <div className="max-w-[1440px] mx-auto grid gap-8 lg:grid-cols-[1.35fr_0.65fr] items-start">
+      <section className="bg-background paper-bg px-4 sm:px-6 py-8 sm:py-10 lg:px-12 lg:py-16">
+        <div className="max-w-[1440px] mx-auto grid gap-6 lg:gap-8 lg:grid-cols-[1.35fr_0.65fr] items-start">
           <div className="space-y-4">
             {items.length === 0 ? (
               <div className="surface-card rounded-[28px] p-10 text-center">
@@ -47,9 +47,9 @@ const CartPage = () => {
               </div>
             ) : (
               items.map((item) => (
-                <div key={item.id} className="surface-card rounded-[28px] p-5 lg:p-6">
+                <div key={item.id} className="surface-card rounded-[20px] sm:rounded-[28px] p-4 sm:p-5 lg:p-6">
                   <div className="flex gap-4 lg:gap-6 flex-col sm:flex-row">
-                    <Link to={`/category/${item.categorySlug}/product/${item.slug}`} className="w-full sm:w-[150px] h-[150px] rounded-[24px] border-[3px] border-dark bg-surface flex items-center justify-center text-[4rem] no-underline shadow-soft">
+                    <Link to={`/category/${item.categorySlug}/product/${item.slug}`} className="w-full sm:w-[130px] lg:sm:w-[150px] h-[130px] sm:h-[150px] rounded-[18px] sm:rounded-[24px] border-[3px] border-dark bg-surface flex items-center justify-center text-[3.5rem] sm:text-[4rem] no-underline shadow-soft shrink-0">
                       {item.emoji}
                     </Link>
 
@@ -94,7 +94,7 @@ const CartPage = () => {
             )}
           </div>
 
-          <aside className="surface-inverse rounded-[28px] p-6 lg:p-7 sticky top-28">
+          <aside className="surface-inverse rounded-[20px] sm:rounded-[28px] p-5 sm:p-6 lg:p-7 lg:sticky lg:top-28">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-full border-[3px] border-dark bg-accent text-foreground flex items-center justify-center shadow-soft">
                 <ShoppingBag size={18} />
