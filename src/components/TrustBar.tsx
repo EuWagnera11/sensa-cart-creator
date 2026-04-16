@@ -6,7 +6,7 @@ const trust = [
 
 const TrustBar = () => (
   <div className="bg-background paper-bg py-10 px-6 lg:px-12 border-b-4 border-dark">
-    <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="max-w-[1200px] mx-auto grid grid-cols-3 gap-3 sm:gap-6">
       {trust.map((item) => (
         <div
           key={item.title}
