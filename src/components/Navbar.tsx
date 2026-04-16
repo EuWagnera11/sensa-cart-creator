@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X, User, LogOut } from "lucide-react";
+import { Menu, ShoppingBag, X, User, LogOut, Search } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/hooks/useAuth";
+import SearchOverlay from "@/components/SearchOverlay";
 
 const navItems = [
   { name: "Buzz", sub: "Vibrators", to: "/category/buzz" },
@@ -15,6 +16,7 @@ const navItems = [
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const { itemCount, setIsOpen } = useCart();
   const { user, signOut } = useAuth();
@@ -47,6 +49,16 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center gap-3">
+          {/* Search */}
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            className="text-white/50 hover:text-accent transition-colors p-1.5"
+            title="Buscar"
+          >
+            <Search size={18} />
+          </button>
+
           {/* Auth button */}
           {user ? (
             <button
@@ -103,6 +115,7 @@ const Navbar = () => {
           </div>
         </div>
       )}
+      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </nav>
   );
 };
