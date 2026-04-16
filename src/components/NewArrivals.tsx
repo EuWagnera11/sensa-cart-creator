@@ -214,7 +214,7 @@ const NewArrivals = () => {
   const isPausedRef = useRef(false);
   const rafRef = useRef<number>(0);
   const lastTimeRef = useRef(0);
-  const targetOffsetRef = useRef<number | null>(null);
+  
 
   const totalWidth = newProducts.length * CARD_STEP;
 
@@ -224,16 +224,7 @@ const NewArrivals = () => {
       const dt = (time - lastTimeRef.current) / 1000;
       lastTimeRef.current = time;
 
-      // If there's a manual navigation target, lerp toward it
-      if (targetOffsetRef.current !== null) {
-        const diff = targetOffsetRef.current - offsetRef.current;
-        if (Math.abs(diff) < 0.5) {
-          offsetRef.current = targetOffsetRef.current;
-          targetOffsetRef.current = null;
-        } else {
-          offsetRef.current += diff * Math.min(1, dt * 8);
-        }
-      } else if (!isPausedRef.current) {
+      if (!isPausedRef.current) {
         offsetRef.current += SPEED * dt;
       }
 
@@ -257,19 +248,15 @@ const NewArrivals = () => {
   }, [totalWidth]);
 
   const handlePrev = useCallback(() => {
-    const current = offsetRef.current;
-    const cardIndex = Math.round(current / CARD_STEP);
-    let target = (cardIndex - 1) * CARD_STEP;
-    if (target < 0) target += totalWidth;
-    targetOffsetRef.current = target;
+    // Jump back by one card step relative to current position
+    offsetRef.current -= CARD_STEP;
+    if (offsetRef.current < 0) offsetRef.current += totalWidth;
   }, [totalWidth]);
 
   const handleNext = useCallback(() => {
-    const current = offsetRef.current;
-    const cardIndex = Math.round(current / CARD_STEP);
-    let target = (cardIndex + 1) * CARD_STEP;
-    if (target >= totalWidth) target -= totalWidth;
-    targetOffsetRef.current = target;
+    // Jump forward by one card step relative to current position
+    offsetRef.current += CARD_STEP;
+    if (offsetRef.current >= totalWidth) offsetRef.current -= totalWidth;
   }, [totalWidth]);
 
   const pause = useCallback(() => { isPausedRef.current = true; }, []);
