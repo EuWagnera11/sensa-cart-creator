@@ -18,7 +18,7 @@ const newProducts = [
     name: "Hot Stuff",
     emoji: "🌶️",
     collection: "The Slippery Slope",
-    category: "Géis",
+    category: "Gels",
     desc: '"Warning: may cause strong opinions and zero regrets."',
     price: "€34",
     sticker: "New Drop ✨",

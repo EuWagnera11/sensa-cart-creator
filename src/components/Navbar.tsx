@@ -54,7 +54,7 @@ const Navbar = () => {
             type="button"
             onClick={() => setSearchOpen(true)}
             className="text-white/50 hover:text-accent transition-colors p-1.5"
-            title="Buscar"
+            title="Search"
           >
             <Search size={18} />
           </button>

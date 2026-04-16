@@ -377,10 +377,10 @@ const AllProductsPage = () => {
 
                     <div className="px-4 pb-4 grid grid-cols-2 gap-2">
                       <button type="button" className="cta-primary w-full text-xs px-3 py-2.5" onClick={() => handleBuy(product.id)}>
-                        Comprar
+                        Buy now
                       </button>
                       <Link to={`/category/${product.categorySlug}/product/${product.slug}`} className="cta-secondary w-full text-xs px-3 py-2.5 no-underline text-center">
-                        Detalhes
+                        Details
                       </Link>
                     </div>
                   </div>

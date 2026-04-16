@@ -8,7 +8,7 @@ import togetherImg from "@/assets/products/the-together.webp";
 
 const products = [
   { emoji: "⚡", collection: "The Main Event · Buzz", name: "The OoohMy One", slug: "the-ooohmy-one", category: "Buzz", categorySlug: "buzz", desc: '"Your neighbours will know. That\'s their problem."', price: "€79", sticker: "Most wanted 🔥", bg: "rgba(255,45,107,.15)", image: ooohMyImg, rating: 4.8, reviews: 1284 },
-  { emoji: "🌶️", collection: "The Slippery Slope · Géis", name: "Hot Stuff", slug: "hot-stuff", category: "Géis", categorySlug: "slippery", desc: '"Warning: may cause strong opinions and zero regrets."', price: "€34", sticker: "New Drop ✨", bg: "rgba(255,107,26,.12)", image: hotStuffImg, rating: 4.6, reviews: 567 },
+  { emoji: "🌶️", collection: "The Slippery Slope · Gels", name: "Hot Stuff", slug: "hot-stuff", category: "Gels", categorySlug: "slippery", desc: '"Warning: may cause strong opinions and zero regrets."', price: "€34", sticker: "New Drop ✨", bg: "rgba(255,107,26,.12)", image: hotStuffImg, rating: 4.6, reviews: 567 },
   { emoji: "🗝️", collection: "First Showing · Newbie", name: "The Set-Up", slug: "the-set-up", category: "Newbie", categorySlug: "newbie", desc: '"Everything you need. Nothing embarrassing. Much."', price: "€99", sticker: "Starter 🗝️", bg: "rgba(0,212,184,.1)", image: setUpImg, rating: 4.8, reviews: 678 },
   { emoji: "💑", collection: "Two's Company · Duo", name: "The Together", slug: "the-together", category: "Duo", categorySlug: "duo", desc: '"Two is always better. We rest our case."', price: "€129", sticker: "Best Seller 👑", bg: "rgba(255,208,0,.08)", image: togetherImg, rating: 4.9, reviews: 523 },
 ];
