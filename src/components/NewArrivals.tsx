@@ -12,6 +12,12 @@ import setUpImg from "@/assets/products/the-set-up.webp";
 import whisperImg from "@/assets/products/whisper.webp";
 import pocketRocketImg from "@/assets/products/pocket-rocket.webp";
 import dateNightImg from "@/assets/products/date-night.webp";
+import thunderImg from "@/assets/products/thunder.webp";
+import ooohMyOneImg from "@/assets/products/the-ooohmy-one.webp";
+import directorsKitImg from "@/assets/products/directors-kit.webp";
+import silkImg from "@/assets/products/silk.webp";
+import curiousKitImg from "@/assets/products/curious-kit.webp";
+import longDistanceImg from "@/assets/products/long-distance.webp";
 
 const banners = [banner1, banner2, banner3];
 
@@ -98,6 +104,90 @@ const newProducts = [
     sticker: "New 🆕",
     image: dateNightImg,
     rating: 4.5,
+    reviews: 234,
+  },
+  {
+    slug: "thunder",
+    categorySlug: "buzz",
+    name: "Thunder",
+    emoji: "⛈️",
+    collection: "The Main Event",
+    category: "Vibrators",
+    desc: '"Warning: May cause noise complaints."',
+    price: "€99",
+    sticker: "Sale 🏷️",
+    image: thunderImg,
+    rating: 4.8,
+    reviews: 256,
+  },
+  {
+    slug: "the-ooohmy-one",
+    categorySlug: "buzz",
+    name: "The OoohMy One",
+    emoji: "⚡",
+    collection: "The Main Event",
+    category: "Vibrators",
+    desc: '"Your neighbours will know. That\'s their problem."',
+    price: "€79",
+    sticker: "Fan Fave 🔥",
+    image: ooohMyOneImg,
+    rating: 4.9,
+    reviews: 342,
+  },
+  {
+    slug: "the-directors-kit",
+    categorySlug: "tied",
+    name: "Director's Kit",
+    emoji: "🎬",
+    collection: "The Director's Cut",
+    category: "Bondage",
+    desc: '"Action! ...and cut."',
+    price: "€159",
+    sticker: "Premium 👑",
+    image: directorsKitImg,
+    rating: 4.9,
+    reviews: 145,
+  },
+  {
+    slug: "silk",
+    categorySlug: "slippery",
+    name: "Silk",
+    emoji: "✨",
+    collection: "The Slippery Slope",
+    category: "Gels",
+    desc: '"Smoother than your best pickup line."',
+    price: "€29",
+    sticker: "Top Rated ⭐",
+    image: silkImg,
+    rating: 4.7,
+    reviews: 891,
+  },
+  {
+    slug: "curious-kit",
+    categorySlug: "newbie",
+    name: "Curious Kit",
+    emoji: "🔍",
+    collection: "First Showing",
+    category: "Newbie",
+    desc: '"For the curious. No judgement."',
+    price: "€59",
+    sticker: "New ✨",
+    image: curiousKitImg,
+    rating: 4.6,
+    reviews: 234,
+  },
+  {
+    slug: "long-distance",
+    categorySlug: "duo",
+    name: "Long Distance",
+    emoji: "📱",
+    collection: "Two's Company",
+    category: "Duo",
+    desc: '"Love knows no distance. Neither does Bluetooth."',
+    price: "€109",
+    sticker: "New Drop ✨",
+    image: longDistanceImg,
+    rating: 4.8,
     reviews: 234,
   },
 ];
