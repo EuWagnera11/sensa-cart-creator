@@ -59,8 +59,10 @@ const newProducts = [
 
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
+  const [productIndex, setProductIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const { addItem, setIsOpen } = useCart();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const count = newProducts.length;
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
   const prev = useCallback(() => setCurrent((c) => (c - 1 + banners.length) % banners.length), []);
@@ -70,20 +72,29 @@ const NewArrivals = () => {
     return () => clearInterval(id);
   }, [next]);
 
-  const scrollLeft = () => {
-    const el = scrollRef.current;
-    if (el) {
-      const cardWidth = el.querySelector("a")?.offsetWidth ?? 200;
-      el.scrollBy({ left: -(cardWidth + 20), behavior: "smooth" });
-    }
-  };
+  const nextProduct = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setProductIndex((i) => i + 1);
+    setTimeout(() => setIsAnimating(false), 500);
+  }, [isAnimating]);
 
-  const scrollRight = () => {
-    const el = scrollRef.current;
-    if (el) {
-      const cardWidth = el.querySelector("a")?.offsetWidth ?? 200;
-      el.scrollBy({ left: cardWidth + 20, behavior: "smooth" });
-    }
+  const prevProduct = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setProductIndex((i) => i - 1);
+    setTimeout(() => setIsAnimating(false), 500);
+  }, [isAnimating]);
+
+  // Auto-rotate products
+  useEffect(() => {
+    const id = setInterval(nextProduct, 3500);
+    return () => clearInterval(id);
+  }, [nextProduct]);
+
+  const getProduct = (offset: number) => {
+    const idx = ((productIndex + offset) % count + count) % count;
+    return newProducts[idx];
   };
 
   const handleAdd = (p: (typeof newProducts)[number]) => {
@@ -107,6 +118,75 @@ const NewArrivals = () => {
     });
     setIsOpen(true);
     toast.success(`${p.name} added to bag ✨`);
+  };
+
+  const centerProduct = getProduct(0);
+  const leftProduct = getProduct(-1);
+  const rightProduct = getProduct(1);
+
+  const renderCard = (product: (typeof newProducts)[number], position: "left" | "center" | "right") => {
+    const isCenter = position === "center";
+    return (
+      <Link
+        to={`/category/${product.categorySlug}/product/${product.slug}`}
+        className={`group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-all duration-500 ${
+          isCenter ? "w-[220px] sm:w-[280px] lg:w-[320px] z-10 scale-100 opacity-100" : "w-[160px] sm:w-[200px] lg:w-[240px] z-0 scale-90 opacity-60"
+        }`}
+        style={{ boxShadow: isCenter ? "5px 5px 0 hsl(var(--dark))" : "3px 3px 0 hsl(var(--dark) / 0.4)" }}
+      >
+        <div className="relative aspect-[3/4]">
+          <img
+            src={product.image}
+            alt={product.name}
+            loading="eager"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+          {isCenter && (
+            <div
+              className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 bg-accent text-foreground font-display italic font-bold text-[0.55rem] sm:text-[0.68rem] px-2.5 py-0.5 sm:px-3.5 sm:py-1 border-2 border-dark rounded-full z-[2]"
+              style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
+            >
+              {product.sticker}
+            </div>
+          )}
+
+          <div className="absolute bottom-0 left-0 right-0 z-[1] p-3 sm:p-5">
+            <div
+              className={`font-display font-black italic text-white leading-none mb-1 ${isCenter ? "text-[1rem] sm:text-[1.4rem]" : "text-[0.8rem] sm:text-[1rem]"}`}
+              style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
+            >
+              {product.name}
+            </div>
+
+            {isCenter && (
+              <>
+                <div className="flex items-center gap-1 mb-2.5">
+                  <span className="text-accent text-[0.75rem]">★</span>
+                  <span className="font-display font-bold text-white text-[0.72rem]">{product.rating}</span>
+                  <span className="font-serif italic text-white/40 text-[0.6rem]">({product.reviews.toLocaleString()})</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="font-display font-black text-[1.1rem] sm:text-[1.4rem] text-accent">{product.price}</div>
+                  <button
+                    type="button"
+                    className="bg-cream text-foreground border-2 border-dark px-3 py-1.5 sm:px-4 sm:py-2 font-display italic text-[0.65rem] sm:text-[0.8rem] font-bold rounded-full transition-colors hover:bg-accent"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(product); }}
+                  >
+                    Add 🛒
+                  </button>
+                </div>
+              </>
+            )}
+
+            {!isCenter && (
+              <div className="font-display font-black text-[0.85rem] sm:text-[1.1rem] text-accent">{product.price}</div>
+            )}
+          </div>
+        </div>
+      </Link>
+    );
   };
 
   return (
@@ -161,111 +241,53 @@ const NewArrivals = () => {
 
       {/* Products carousel */}
       <div className="px-6 lg:px-12 pt-14 pb-4 lg:pt-20 lg:pb-6">
-        <div className="max-w-[1440px] mx-auto flex items-end justify-between">
-          <div>
-            <p className="section-kicker text-primary mb-2.5">Fresh off the shelf</p>
-            <h2
-              className="font-display font-black italic text-dark leading-none"
-              style={{ fontSize: "clamp(2rem,3vw,3rem)" }}
-            >
-              What's New, Gorgeous?
-            </h2>
-          </div>
-          <button
-            onClick={scrollRight}
-            className="hidden sm:flex items-center gap-1.5 bg-dark text-cream font-display italic font-bold text-[0.8rem] px-5 py-2.5 border-[3px] border-dark rounded-sm hover:bg-primary transition-colors"
-            style={{ boxShadow: "3px 3px 0 hsl(var(--dark) / 0.3)" }}
+        <div className="max-w-[1440px] mx-auto text-center">
+          <p className="section-kicker text-primary mb-2.5">Fresh off the shelf</p>
+          <h2
+            className="font-display font-black italic text-dark leading-none"
+            style={{ fontSize: "clamp(2rem,3vw,3rem)" }}
           >
-            Next <ChevronRight size={16} />
-          </button>
+            What's New, Gorgeous?
+          </h2>
         </div>
       </div>
 
-      <div className="relative pb-14 lg:pb-20">
-        <div
-          ref={scrollRef}
-          className="flex gap-5 overflow-x-auto scroll-smooth px-6 lg:px-12 pb-2 snap-x snap-mandatory"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
-        >
-          {newProducts.map((product) => (
-            <Link
-              key={product.slug}
-              to={`/category/${product.categorySlug}/product/${product.slug}`}
-              className="group relative overflow-hidden flex-shrink-0 w-[200px] sm:w-[260px] lg:w-[300px] no-underline border-[3px] border-dark rounded-sm snap-start"
-              style={{ boxShadow: "4px 4px 0 hsl(var(--dark))" }}
-            >
-              <div className="relative aspect-[3/4]">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  loading="eager"
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                {/* Sticker */}
-                <div
-                  className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 bg-accent text-foreground font-display italic font-bold text-[0.55rem] sm:text-[0.68rem] px-2.5 py-0.5 sm:px-3.5 sm:py-1 border-2 border-dark rounded-full z-[2]"
-                  style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
-                >
-                  {product.sticker}
-                </div>
-
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 z-[1] p-4 sm:p-6">
-                  <div className="font-display italic text-[0.6rem] sm:text-[0.68rem] mb-0.5 text-white/40">
-                    {product.collection}
-                  </div>
-                  <div
-                    className="font-display font-black italic text-[1rem] sm:text-[1.4rem] text-white leading-none mb-1.5"
-                    style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
-                  >
-                    {product.name}
-                  </div>
-
-                  <div className="flex items-center gap-1 mb-3">
-                    <span className="text-accent text-[0.75rem] sm:text-[0.85rem]">★</span>
-                    <span className="font-display font-bold text-white text-[0.72rem] sm:text-[0.8rem]">
-                      {product.rating}
-                    </span>
-                    <span className="font-serif italic text-white/40 text-[0.6rem] sm:text-[0.7rem]">
-                      ({product.reviews.toLocaleString()})
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="font-display font-black text-[1.1rem] sm:text-[1.4rem] text-accent">
-                      {product.price}
-                    </div>
-                    <button
-                      type="button"
-                      className="bg-cream text-foreground border-2 border-dark px-3 py-1.5 sm:px-4 sm:py-2 font-display italic text-[0.65rem] sm:text-[0.8rem] font-bold rounded-full transition-colors hover:bg-accent"
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(product); }}
-                    >
-                      Add 🛒
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
+      <div className="relative pb-14 lg:pb-20 pt-6">
+        <div className="flex items-center justify-center gap-3 sm:gap-5">
+          {renderCard(leftProduct, "left")}
+          {renderCard(centerProduct, "center")}
+          {renderCard(rightProduct, "right")}
         </div>
 
-        {/* Mobile arrows */}
+        {/* Arrows */}
         <button
-          onClick={scrollLeft}
-          className="sm:hidden absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] z-10"
+          onClick={prevProduct}
+          className="absolute left-3 sm:left-8 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
           aria-label="Previous product"
         >
           <ChevronLeft size={18} />
         </button>
         <button
-          onClick={scrollRight}
-          className="sm:hidden absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] z-10"
+          onClick={nextProduct}
+          className="absolute right-3 sm:right-8 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
           aria-label="Next product"
         >
           <ChevronRight size={18} />
         </button>
+
+        {/* Dots */}
+        <div className="flex justify-center gap-2 mt-6">
+          {newProducts.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => { setProductIndex(i); }}
+              className={`w-2.5 h-2.5 rounded-full border-2 border-dark transition-all ${
+                ((productIndex % count) + count) % count === i ? "bg-primary scale-125" : "bg-dark/20"
+              }`}
+              aria-label={`Go to product ${i + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
