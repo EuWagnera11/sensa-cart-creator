@@ -1,13 +1,17 @@
+import trustBox from "@/assets/icons/trust-box.png";
+import trustLightning from "@/assets/icons/trust-lightning.png";
+import trustLock from "@/assets/icons/trust-lock.png";
+
 const trustMobile = [
-  { icon: "📦", title: "Discreet", sub: "No logos. No questions." },
-  { icon: "⚡", title: "24–48h", sub: "Ships fast, always." },
-  { icon: "🔒", title: "Private", sub: "Your car. Your secret." },
+  { img: trustBox, title: "Discreet", sub: "No logos. No questions." },
+  { img: trustLightning, title: "24–48h", sub: "Ships fast, always." },
+  { img: trustLock, title: "Private", sub: "Your car. Your secret." },
 ];
 
 const trustDesktop = [
-  { icon: "📦", title: "Your neighbours? Clueless.", sub: '"No logos. No questions. Nothing to explain."' },
-  { icon: "⚡", title: "Faster than your excuses.", sub: '"Ships in 24–48h. Discreet, always."' },
-  { icon: "🔒", title: "Nothing to explain.", sub: '"Your car. Your secret."' },
+  { img: trustBox, title: "Your neighbours? Clueless.", sub: '"No logos. No questions. Nothing to explain."' },
+  { img: trustLightning, title: "Faster than your excuses.", sub: '"Ships in 24–48h. Discreet, always."' },
+  { img: trustLock, title: "Nothing to explain.", sub: '"Your car. Your secret."' },
 ];
 
 const TrustBar = () => (
@@ -17,7 +21,7 @@ const TrustBar = () => (
       <div className="grid grid-cols-3 gap-3 sm:hidden">
         {trustMobile.map((item) => (
           <div key={item.title} className="flex items-center gap-2.5 justify-center">
-            <span className="text-2xl">{item.icon}</span>
+            <img src={item.img} alt="" className="w-7 h-7 object-contain" loading="eager" />
             <div>
               <div className="font-display font-black text-[0.8rem] text-foreground leading-tight">{item.title}</div>
               <div className="font-serif italic text-[0.62rem] text-foreground/50 leading-snug mt-0.5">{item.sub}</div>
@@ -41,7 +45,7 @@ const TrustBar = () => (
                 backgroundSize: "12px 12px",
               }}
             />
-            <span className="relative text-4xl block mb-4">{item.icon}</span>
+            <img src={item.img} alt="" className="relative w-10 h-10 object-contain mx-auto mb-4" loading="eager" />
             <div className="relative font-display font-black text-[1rem] text-foreground leading-tight">{item.title}</div>
             <div className="relative font-serif italic text-[0.82rem] text-foreground/50 leading-snug mt-2">{item.sub}</div>
           </div>
