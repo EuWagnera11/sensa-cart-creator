@@ -61,14 +61,13 @@ const Navbar = () => {
 
           {/* Auth button */}
           {user ? (
-            <div className="hidden sm:flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <Link
                 to="/orders"
                 className="inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
                 title="My Orders"
               >
                 <Package size={15} />
-                <span className="hidden md:inline">Orders</span>
               </Link>
               <button
                 type="button"
@@ -77,23 +76,21 @@ const Navbar = () => {
                 title="Sign out"
               >
                 <LogOut size={15} />
-                <span className="hidden md:inline">Sign Out</span>
               </button>
             </div>
           ) : (
             <Link
               to="/auth"
-              className="hidden sm:inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
+              className="inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
             >
               <User size={15} />
-              <span className="hidden md:inline">Sign In</span>
             </Link>
           )}
 
-          {/* Mobile bag button */}
+          {/* Bag button */}
           <button
             type="button"
-            className="sm:hidden relative text-cream p-2"
+            className="relative text-cream p-2"
             onClick={() => setIsOpen(true)}
           >
             <ShoppingBag size={22} />
@@ -102,14 +99,6 @@ const Navbar = () => {
                 {itemCount}
               </span>
             )}
-          </button>
-          <button
-            type="button"
-            className="hidden sm:inline-flex items-center gap-2 red-texture-fill border-2 border-dark px-5 py-2.5 font-display italic text-[0.9rem] rounded-[2px] transition-all"
-            style={{ boxShadow: "3px 3px 0 rgba(0,0,0,.4)" }}
-            onClick={() => setIsOpen(true)}
-          >
-            Bag ({itemCount}) <ShoppingBag size={16} />
           </button>
           <button className="lg:hidden text-cream rounded-full border border-white/10 bg-white/[0.03] p-2.5" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
