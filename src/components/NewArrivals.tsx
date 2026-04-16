@@ -107,7 +107,7 @@ const NewArrivals = () => {
               loading="eager"
               width={1920}
               height={640}
-              className="w-full flex-shrink-0 object-cover aspect-[4/3] sm:aspect-[1920/640]"
+              className="w-full flex-shrink-0 object-cover aspect-[1920/640]"
             />
           ))}
         </div>
@@ -154,14 +154,14 @@ const NewArrivals = () => {
             What's New, Gorgeous?
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 border-[3px] border-dark">
+          <div className="grid grid-cols-3 gap-0 border-[3px] border-dark">
             {newProducts.map((product, i) => (
               <Link
                 key={product.slug}
                 to={`/category/${product.categorySlug}/product/${product.slug}`}
-                className={`group relative overflow-hidden flex flex-col aspect-[4/5] sm:aspect-[3/4] no-underline ${
-                  i < 2 ? "sm:border-r-[3px] border-dark" : ""
-                } border-b-[3px] sm:border-b-0 last:border-b-0 border-dark`}
+                className={`group relative overflow-hidden flex flex-col aspect-[3/4] no-underline ${
+                  i < 2 ? "border-r-[3px] border-dark" : ""
+                }`}
               >
                 <img
                   src={product.image}

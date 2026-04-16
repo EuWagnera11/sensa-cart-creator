@@ -50,15 +50,15 @@ const Newsletter = () => {
 
       {/* Email form */}
       <form className="max-w-[480px] mx-auto relative z-[1]" style={{ boxShadow: "6px 6px 0 hsl(var(--dark))" }} onSubmit={handleSubmit}>
-        <div className="flex flex-col sm:flex-row">
+        <div className="flex flex-row">
           <input
             type="email"
             placeholder="Your private email..."
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="flex-1 px-6 py-4 font-display italic bg-cream text-foreground border-[3px] border-dark sm:border-r-0 rounded-t-[2px] sm:rounded-l-[2px] sm:rounded-tr-none outline-none"
+            className="flex-1 px-6 py-4 font-display italic bg-cream text-foreground border-[3px] border-dark border-r-0 rounded-l-[2px] outline-none"
           />
-          <button type="submit" className="yellow-texture-fill border-[3px] border-dark px-7 py-4 font-display italic font-bold text-[1rem] whitespace-nowrap rounded-b-[2px] sm:rounded-r-[2px] sm:rounded-bl-none transition-colors">
+          <button type="submit" className="yellow-texture-fill border-[3px] border-dark px-7 py-4 font-display italic font-bold text-[1rem] whitespace-nowrap rounded-r-[2px] transition-colors">
             Let me in →
           </button>
         </div>
