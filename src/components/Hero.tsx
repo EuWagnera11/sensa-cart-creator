@@ -4,7 +4,7 @@ import heroImage from "@/assets/hero-image.webp";
 
 
 const Hero = () => (
-  <section className="min-h-[85vh] bg-parch paper-bg grid grid-cols-1 lg:grid-cols-[1fr_1fr] border-b-[5px] border-dark relative overflow-hidden">
+  <section className="min-h-[85vh] bg-parch paper-bg grid grid-cols-1 lg:grid-cols-[1fr_1fr] relative overflow-hidden">
     {/* Halftone overlay */}
     <div
       className="absolute inset-0 opacity-[0.06] pointer-events-none"
