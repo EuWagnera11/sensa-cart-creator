@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { getCategoryBySlug, getProductsByCategory, categories } from "@/data/products";
+import { getProductImage } from "@/data/productImages";
 import Navbar from "@/components/Navbar";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
@@ -119,8 +120,12 @@ const CategoryPage = () => {
                   )}
 
                   <Link to={`/category/${categorySlug}/product/${product.slug}`} className="block no-underline">
-                    <div className="bg-parch border-[3px] border-dark rounded-sm h-40 flex items-center justify-center mb-5 group-hover:bg-accent/20 transition-colors">
-                      <span className="text-6xl">{product.emoji}</span>
+                    <div className="bg-parch border-[3px] border-dark rounded-sm h-40 flex items-center justify-center mb-5 group-hover:bg-accent/20 transition-colors overflow-hidden">
+                      {getProductImage(product.name) ? (
+                        <img src={getProductImage(product.name)} alt={product.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-6xl">{product.emoji}</span>
+                      )}
                     </div>
 
                     <div className="font-display italic text-[0.7rem] text-muted-foreground mb-1">{product.collection}</div>
