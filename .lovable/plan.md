@@ -1,41 +1,28 @@
 
 
-# Carrossel 3D estilo "ProductCarousel" para New Arrivals
+# Reverter carrossel para estilo marquee contínuo (sem 3D)
 
-## O que muda
+## Problema
+O carrossel atual usa o hook `useCarousel` com efeitos 3D (scale, blur, opacidade) e cards posicionados com `absolute`. O usuário quer voltar ao estilo anterior: uma faixa contínua de produtos todos visíveis, deslizando horizontalmente em loop infinito sem efeitos de profundidade.
 
-Substituir o carrossel marquee atual (scroll contínuo horizontal) por um **carrossel circular 3D** onde:
-- O card ativo fica centralizado, em destaque (scale 1.0, opacidade total)
-- Cards adjacentes ficam menores, com blur e opacidade reduzida, criando profundidade
-- Navegação por setas (prev/next) com transição suave animada
-- Auto-play com intervalo (~4s), pausa no hover
-- Loop infinito circular (último → primeiro sem salto)
+## Mudanças
 
-## Estrutura
+### `src/components/NewArrivals.tsx`
+- Remover o import e uso do `useCarousel` hook
+- Substituir o layout 3D (cards absolute + translateX por distância) por uma **faixa horizontal contínua** (marquee):
+  - Array duplicado: `[...newProducts, ...newProducts]`
+  - `requestAnimationFrame` loop com `translate3d` a velocidade constante (~40px/s)
+  - Todos os cards com o mesmo tamanho (~220px), sem scale/blur/opacidade
+  - Cards em `flex` inline, não `absolute`
+  - Wrap seamless via modulo do offset
+- Manter setas prev/next que avançam/recuam um card com animação suave (lerp de ~400ms)
+- Manter pause on hover, resume on leave
+- Manter o banner rotativo e o handleAdd inalterados
+- Remover dots indicadores (não fazem sentido num marquee contínuo)
 
-### 1. Hook `useCarousel` (`src/hooks/useCarousel.ts`)
-- Recebe: `itemCount`, `autoPlayInterval` (default 4000ms)
-- Gerencia: `activeIndex`, funções `next`/`prev`, auto-play com pause on hover
-- Calcula estilos 3D para cada card baseado na distância ao ativo:
-  - **Ativo**: `scale(1)`, `opacity: 1`, `blur(0)`, `z-index: 10`
-  - **±1**: `scale(0.85)`, `opacity: 0.6`, `blur(1px)`, `z-index: 5`
-  - **±2+**: `scale(0.7)`, `opacity: 0.3`, `blur(3px)`, `z-index: 1`
-- Distância circular: `Math.min(Math.abs(diff), itemCount - Math.abs(diff))`
+### `src/hooks/useCarousel.ts`
+- Pode ser mantido (não causa problema) mas deixará de ser usado pelo NewArrivals
 
-### 2. Refatorar `NewArrivals.tsx`
-- Manter: banner rotativo no topo, dados dos produtos, handleAdd
-- Substituir: seção do carrossel marquee pelo novo layout 3D
-- Cards dispostos com `position: absolute` + `translateX` calculado, centralizados
-- Transição CSS com `transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1)`
-- Setas prev/next mantêm o estilo visual atual (cream/border-dark/rounded)
-- On hover no container: pausa auto-play
-
-### 3. Visual dos cards
-- Mantém o design atual dos cards (imagem, sticker, nome, preço, botão Add)
-- Card ativo: tamanho maior (~280px width), sombra mais forte
-- Cards laterais: menores, desfocados, clicáveis para navegar até eles
-
-## Arquivos alterados
-- `src/hooks/useCarousel.ts` — novo hook
-- `src/components/NewArrivals.tsx` — refatorar seção do carrossel
+## Resultado
+Carrossel plano, contínuo, todos os produtos visíveis lado a lado, loop infinito sem efeito 3D.
 
