@@ -250,7 +250,7 @@ const NewArrivals = () => {
               loading="eager"
               width={1920}
               height={640}
-              className="w-full flex-shrink-0 object-cover aspect-[1920/640]"
+              className="w-full flex-shrink-0 object-cover aspect-[16/9] sm:aspect-[1920/640]"
             />
           ))}
         </div>
