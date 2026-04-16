@@ -255,19 +255,36 @@ const NewArrivals = () => {
     toast.success(`${p.name} added to bag ✨`);
   };
 
-  const centerProduct = getProduct(0);
-  const leftProduct = getProduct(-1);
-  const rightProduct = getProduct(1);
+  // Build visible products array — 7 on desktop, 5 on tablet, 3 on mobile
+  const visibleProducts = Array.from({ length: 7 }, (_, i) => {
+    const offset = i - 3; // -3 to +3
+    return getProduct(offset);
+  });
 
-  const renderCard = (product: (typeof newProducts)[number], position: "left" | "center" | "right") => {
-    const isCenter = position === "center";
+  const renderCard = (product: (typeof newProducts)[number], index: number) => {
+    const isCenter = index === 3;
+    const distFromCenter = Math.abs(index - 3);
+    // On mobile hide outer cards, on tablet hide outermost
+    const hideClass = distFromCenter >= 3 ? "hidden lg:block" : distFromCenter >= 2 ? "hidden sm:block" : "";
+    
     return (
       <Link
+        key={`${product.slug}-${index}`}
         to={`/category/${product.categorySlug}/product/${product.slug}`}
-        className={`group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-all duration-500 ${
-          isCenter ? "w-[200px] sm:w-[270px] lg:w-[310px] z-10 scale-100 opacity-100" : "w-[170px] sm:w-[240px] lg:w-[270px] z-0 scale-[0.96] opacity-75"
+        className={`group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-all duration-500 ${hideClass} ${
+          isCenter
+            ? "w-[180px] sm:w-[200px] lg:w-[220px] z-10 scale-100 opacity-100"
+            : distFromCenter === 1
+            ? "w-[150px] sm:w-[170px] lg:w-[190px] z-[5] scale-[0.97] opacity-90"
+            : distFromCenter === 2
+            ? "w-[140px] sm:w-[155px] lg:w-[170px] z-[3] scale-[0.94] opacity-70"
+            : "w-[140px] lg:w-[155px] z-[1] scale-[0.91] opacity-55"
         }`}
-        style={{ boxShadow: isCenter ? "5px 5px 0 hsl(var(--dark))" : "3px 3px 0 hsl(var(--dark) / 0.4)" }}
+        style={{
+          boxShadow: isCenter
+            ? "5px 5px 0 hsl(var(--dark))"
+            : `${3 - distFromCenter}px ${3 - distFromCenter}px 0 hsl(var(--dark) / ${0.4 - distFromCenter * 0.1})`,
+        }}
       >
         <div className="relative aspect-[3/4]">
           <img
@@ -280,16 +297,18 @@ const NewArrivals = () => {
 
           {isCenter && (
             <div
-              className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 bg-accent text-foreground font-display italic font-bold text-[0.55rem] sm:text-[0.68rem] px-2.5 py-0.5 sm:px-3.5 sm:py-1 border-2 border-dark rounded-full z-[2]"
+              className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 bg-accent text-foreground font-display italic font-bold text-[0.5rem] sm:text-[0.6rem] px-2 py-0.5 sm:px-3 sm:py-0.5 border-2 border-dark rounded-full z-[2]"
               style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
             >
               {product.sticker}
             </div>
           )}
 
-          <div className="absolute bottom-0 left-0 right-0 z-[1] p-3 sm:p-5">
+          <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
             <div
-              className={`font-display font-black italic text-white leading-none mb-1 ${isCenter ? "text-[1rem] sm:text-[1.4rem]" : "text-[0.8rem] sm:text-[1rem]"}`}
+              className={`font-display font-black italic text-white leading-none mb-0.5 ${
+                isCenter ? "text-[0.85rem] sm:text-[1.1rem]" : "text-[0.7rem] sm:text-[0.85rem]"
+              }`}
               style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
             >
               {product.name}
@@ -297,16 +316,16 @@ const NewArrivals = () => {
 
             {isCenter && (
               <>
-                <div className="flex items-center gap-1 mb-2.5">
-                  <span className="text-accent text-[0.75rem]">★</span>
-                  <span className="font-display font-bold text-white text-[0.72rem]">{product.rating}</span>
-                  <span className="font-serif italic text-white/40 text-[0.6rem]">({product.reviews.toLocaleString()})</span>
+                <div className="flex items-center gap-1 mb-1.5">
+                  <span className="text-accent text-[0.65rem]">★</span>
+                  <span className="font-display font-bold text-white text-[0.62rem]">{product.rating}</span>
+                  <span className="font-serif italic text-white/40 text-[0.5rem]">({product.reviews.toLocaleString()})</span>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="font-display font-black text-[1.1rem] sm:text-[1.4rem] text-accent">{product.price}</div>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="font-display font-black text-[1rem] sm:text-[1.2rem] text-accent">{product.price}</div>
                   <button
                     type="button"
-                    className="bg-cream text-foreground border-2 border-dark px-3 py-1.5 sm:px-4 sm:py-2 font-display italic text-[0.65rem] sm:text-[0.8rem] font-bold rounded-full transition-colors hover:bg-accent"
+                    className="bg-cream text-foreground border-2 border-dark px-2.5 py-1 sm:px-3 sm:py-1.5 font-display italic text-[0.55rem] sm:text-[0.7rem] font-bold rounded-full transition-colors hover:bg-accent"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(product); }}
                   >
                     Add 🛒
@@ -316,7 +335,7 @@ const NewArrivals = () => {
             )}
 
             {!isCenter && (
-              <div className="font-display font-black text-[0.85rem] sm:text-[1.1rem] text-accent">{product.price}</div>
+              <div className="font-display font-black text-[0.75rem] sm:text-[0.9rem] text-accent">{product.price}</div>
             )}
           </div>
         </div>
@@ -373,35 +392,33 @@ const NewArrivals = () => {
       </div>
 
       <div className="relative pb-14 lg:pb-20 pt-6">
-        <div className="flex items-center justify-center gap-3 sm:gap-5">
-          {renderCard(leftProduct, "left")}
-          {renderCard(centerProduct, "center")}
-          {renderCard(rightProduct, "right")}
+        <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4">
+          {visibleProducts.map((product, i) => renderCard(product, i))}
         </div>
 
         {/* Arrows */}
         <button
           onClick={prevProduct}
-          className="absolute left-3 sm:left-8 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
+          className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
           aria-label="Previous product"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={16} />
         </button>
         <button
           onClick={nextProduct}
-          className="absolute right-3 sm:right-8 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
+          className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
           aria-label="Next product"
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={16} />
         </button>
 
         {/* Dots */}
-        <div className="flex justify-center gap-2 mt-6">
+        <div className="flex justify-center gap-1.5 mt-6">
           {newProducts.map((_, i) => (
             <button
               key={i}
               onClick={() => { setProductIndex(i); }}
-              className={`w-2.5 h-2.5 rounded-full border-2 border-dark transition-all ${
+              className={`w-2 h-2 rounded-full border-2 border-dark transition-all ${
                 ((productIndex % count) + count) % count === i ? "bg-primary scale-125" : "bg-dark/20"
               }`}
               aria-label={`Go to product ${i + 1}`}
