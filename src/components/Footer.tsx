@@ -25,7 +25,7 @@ const helpLinks = [
 
 const Footer = () => {
   return (
-    <footer className="bg-dark border-t-[3px] border-primary text-white">
+    <footer className="bg-dark border-t-[3px] border-dark text-white">
       {/* Main content */}
       <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_0.8fr_0.6fr] gap-8 sm:gap-6">
         {/* Brand column */}
