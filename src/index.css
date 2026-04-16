@@ -6,7 +6,7 @@
 
 /* Viewport-based scaling: ~14px at 1280px → 16px at 1920px */
 html {
-  font-size: clamp(0.8rem, 0.65rem + 0.4vw, 1rem);
+  font-size: clamp(0.875rem, 0.5rem + 0.5vw, 1.375rem);
 }
 
 @layer base {
