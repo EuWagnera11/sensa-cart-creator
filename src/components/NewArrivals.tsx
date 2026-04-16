@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
@@ -56,17 +57,10 @@ const newProducts = [
   },
 ];
 
-// Triple the array for seamless infinite loop
-const loopProducts = [...newProducts, ...newProducts, ...newProducts];
-
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
   const { addItem, setIsOpen } = useCart();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [carouselX, setCarouselX] = useState(0);
-  const animRef = useRef<number>();
-  const speedRef = useRef(0.5);
-  const pausedRef = useRef(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
   const prev = useCallback(() => setCurrent((c) => (c - 1 + banners.length) % banners.length), []);
@@ -76,26 +70,13 @@ const NewArrivals = () => {
     return () => clearInterval(id);
   }, [next]);
 
-  // Infinite carousel auto-scroll
-  useEffect(() => {
-    let x = 0;
-    const animate = () => {
-      if (!pausedRef.current) {
-        x -= speedRef.current;
-        const track = trackRef.current;
-        if (track) {
-          const singleSetWidth = track.scrollWidth / 3;
-          if (Math.abs(x) >= singleSetWidth) {
-            x += singleSetWidth;
-          }
-          setCarouselX(x);
-        }
-      }
-      animRef.current = requestAnimationFrame(animate);
-    };
-    animRef.current = requestAnimationFrame(animate);
-    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
-  }, []);
+  const scrollRight = () => {
+    const el = scrollRef.current;
+    if (el) {
+      const cardWidth = el.querySelector("a")?.offsetWidth ?? 200;
+      el.scrollBy({ left: cardWidth + 20, behavior: "smooth" });
+    }
+  };
 
   const handleAdd = (p: (typeof newProducts)[number]) => {
     addItem({
@@ -171,36 +152,39 @@ const NewArrivals = () => {
       </div>
 
       {/* Products carousel */}
-      <div className="px-6 lg:px-12 pt-16 pb-8 lg:pt-20 lg:pb-10">
-        <div className="max-w-[1440px] mx-auto">
-          <p className="section-kicker text-primary mb-2.5">Fresh off the shelf</p>
-          <h2
-            className="font-display font-black italic text-dark leading-none mb-10"
-            style={{ fontSize: "clamp(2rem,3vw,3rem)" }}
+      <div className="px-6 lg:px-12 pt-14 pb-4 lg:pt-20 lg:pb-6">
+        <div className="max-w-[1440px] mx-auto flex items-end justify-between">
+          <div>
+            <p className="section-kicker text-primary mb-2.5">Fresh off the shelf</p>
+            <h2
+              className="font-display font-black italic text-dark leading-none"
+              style={{ fontSize: "clamp(2rem,3vw,3rem)" }}
+            >
+              What's New, Gorgeous?
+            </h2>
+          </div>
+          <button
+            onClick={scrollRight}
+            className="hidden sm:flex items-center gap-1.5 bg-dark text-cream font-display italic font-bold text-[0.8rem] px-5 py-2.5 border-[3px] border-dark rounded-sm hover:bg-primary transition-colors"
+            style={{ boxShadow: "3px 3px 0 hsl(var(--dark) / 0.3)" }}
           >
-            What's New, Gorgeous?
-          </h2>
+            Next <ChevronRight size={16} />
+          </button>
         </div>
       </div>
 
-      <div
-        className="overflow-hidden pb-16 lg:pb-20"
-        onMouseEnter={() => { pausedRef.current = true; }}
-        onMouseLeave={() => { pausedRef.current = false; }}
-        onTouchStart={() => { pausedRef.current = true; }}
-        onTouchEnd={() => { setTimeout(() => { pausedRef.current = false; }, 2000); }}
-      >
+      <div className="relative pb-14 lg:pb-20">
         <div
-          ref={trackRef}
-          className="flex gap-5 sm:gap-7 will-change-transform"
-          style={{ transform: `translateX(${carouselX}px)` }}
+          ref={scrollRef}
+          className="flex gap-5 overflow-x-auto scroll-smooth px-6 lg:px-12 pb-2 snap-x snap-mandatory"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
         >
-          {loopProducts.map((product, i) => (
+          {newProducts.map((product) => (
             <Link
-              key={`${product.slug}-${i}`}
+              key={product.slug}
               to={`/category/${product.categorySlug}/product/${product.slug}`}
-              className="group relative overflow-hidden flex-shrink-0 w-[260px] sm:w-[320px] lg:w-[380px] no-underline border-[3px] border-dark rounded-sm"
-              style={{ boxShadow: "5px 5px 0 hsl(var(--dark))" }}
+              className="group relative overflow-hidden flex-shrink-0 w-[200px] sm:w-[260px] lg:w-[300px] no-underline border-[3px] border-dark rounded-sm snap-start"
+              style={{ boxShadow: "4px 4px 0 hsl(var(--dark))" }}
             >
               <div className="relative aspect-[3/4]">
                 <img
@@ -209,48 +193,45 @@ const NewArrivals = () => {
                   loading="eager"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
                 {/* Sticker */}
                 <div
-                  className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-accent text-foreground font-display italic font-bold text-[0.6rem] sm:text-[0.72rem] px-3 py-1 sm:px-4 sm:py-1.5 border-2 border-dark rounded-full z-[2]"
+                  className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 bg-accent text-foreground font-display italic font-bold text-[0.55rem] sm:text-[0.68rem] px-2.5 py-0.5 sm:px-3.5 sm:py-1 border-2 border-dark rounded-full z-[2]"
                   style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
                 >
                   {product.sticker}
                 </div>
 
                 {/* Content */}
-                <div className="relative z-[1] mt-auto absolute bottom-0 left-0 right-0 p-5 sm:p-7">
-                  <div className="font-display italic text-[0.68rem] mb-1 text-white/40">
+                <div className="absolute bottom-0 left-0 right-0 z-[1] p-4 sm:p-6">
+                  <div className="font-display italic text-[0.6rem] sm:text-[0.68rem] mb-0.5 text-white/40">
                     {product.collection}
                   </div>
                   <div
-                    className="font-display font-black italic text-[1.2rem] sm:text-[1.6rem] text-white leading-none mb-2"
+                    className="font-display font-black italic text-[1rem] sm:text-[1.4rem] text-white leading-none mb-1.5"
                     style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
                   >
                     {product.name}
                   </div>
-                  <div className="font-serif italic text-[0.75rem] leading-relaxed mb-3 text-white/50">
-                    {product.desc}
-                  </div>
 
-                  <div className="flex items-center gap-1.5 mb-4">
-                    <span className="text-accent text-[0.9rem]">★</span>
-                    <span className="font-display font-bold text-white text-[0.85rem]">
+                  <div className="flex items-center gap-1 mb-3">
+                    <span className="text-accent text-[0.75rem] sm:text-[0.85rem]">★</span>
+                    <span className="font-display font-bold text-white text-[0.72rem] sm:text-[0.8rem]">
                       {product.rating}
                     </span>
-                    <span className="font-serif italic text-white/40 text-[0.72rem]">
+                    <span className="font-serif italic text-white/40 text-[0.6rem] sm:text-[0.7rem]">
                       ({product.reviews.toLocaleString()})
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="font-display font-black text-[1.3rem] sm:text-[1.6rem] text-accent">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="font-display font-black text-[1.1rem] sm:text-[1.4rem] text-accent">
                       {product.price}
                     </div>
                     <button
                       type="button"
-                      className="bg-cream text-foreground border-2 border-dark px-4 py-2 sm:px-[18px] sm:py-2 font-display italic text-[0.75rem] sm:text-[0.85rem] font-bold rounded-full transition-colors hover:bg-accent"
+                      className="bg-cream text-foreground border-2 border-dark px-3 py-1.5 sm:px-4 sm:py-2 font-display italic text-[0.65rem] sm:text-[0.8rem] font-bold rounded-full transition-colors hover:bg-accent"
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(product); }}
                     >
                       Add 🛒
@@ -261,6 +242,15 @@ const NewArrivals = () => {
             </Link>
           ))}
         </div>
+
+        {/* Mobile arrow */}
+        <button
+          onClick={scrollRight}
+          className="sm:hidden absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] z-10"
+          aria-label="Next product"
+        >
+          <ChevronRight size={18} />
+        </button>
       </div>
     </section>
   );
