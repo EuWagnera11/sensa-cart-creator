@@ -13,6 +13,7 @@ interface SearchOverlayProps {
 const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
