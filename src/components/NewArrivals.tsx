@@ -3,9 +3,13 @@ import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
 import banner3 from "@/assets/banners/new-arrivals-3.webp";
+import mobileBanner1 from "@/assets/banners/new-arrivals-mobile-1.webp";
+import mobileBanner2 from "@/assets/banners/new-arrivals-mobile-2.webp";
+import mobileBanner3 from "@/assets/banners/new-arrivals-mobile-3.webp";
 import hotStuffImg from "@/assets/products/hot-stuff.webp";
 import togetherImg from "@/assets/products/the-together.webp";
 import setUpImg from "@/assets/products/the-set-up.webp";
@@ -20,6 +24,7 @@ import curiousKitImg from "@/assets/products/curious-kit.webp";
 import longDistanceImg from "@/assets/products/long-distance.webp";
 
 const banners = [banner1, banner2, banner3];
+const mobileBanners = [mobileBanner1, mobileBanner2, mobileBanner3];
 
 const newProducts = [
   {
@@ -200,9 +205,11 @@ const SPEED = 40; // px per second
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
   const { addItem, setIsOpen } = useCart();
+  const isMobile = useIsMobile();
+  const activeBanners = isMobile ? mobileBanners : banners;
 
   // Banner rotation
-  const nextBanner = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
+  const nextBanner = useCallback(() => setCurrent((c) => (c + 1) % activeBanners.length), [activeBanners.length]);
   useEffect(() => {
     const id = setInterval(nextBanner, 4500);
     return () => clearInterval(id);
@@ -356,21 +363,21 @@ const NewArrivals = () => {
           className="flex transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${current * 100}%)` }}
         >
-          {banners.map((src, i) => (
+          {activeBanners.map((src, i) => (
             <img
               key={i}
               src={src}
               alt={`New arrivals banner ${i + 1}`}
               loading="eager"
-              width={1920}
-              height={640}
-              className="w-full flex-shrink-0 object-cover aspect-[16/9] sm:aspect-[1920/640]"
+              width={isMobile ? 1080 : 1920}
+              height={isMobile ? 1440 : 640}
+              className="w-full flex-shrink-0 object-cover aspect-[3/4] sm:aspect-[1920/640]"
             />
           ))}
         </div>
 
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
-          {banners.map((_, i) => (
+          {activeBanners.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
