@@ -5,7 +5,7 @@ import satireHim from "@/assets/satire/why-not.webp";
 const bannerClasses = "absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105";
 const leftBtnWrapClasses = "absolute bottom-6 sm:bottom-8 left-0 right-0 flex justify-center z-10";
 const rightBtnWrapClasses = "absolute bottom-7 sm:bottom-8 left-0 right-0 flex justify-center z-10";
-const btnBase = "border-[2px] border-dark rounded-sm px-5 py-2 text-[0.75rem] sm:px-9 sm:py-3 sm:text-[1.05rem] font-display italic font-bold shadow-[4px_4px_0_hsl(var(--dark))] group-hover:translate-x-[-2px] group-hover:translate-y-[-2px] group-hover:shadow-[7px_7px_0_hsl(var(--dark))] transition-all inline-block";
+const btnBase = "border-[2px] border-dark rounded-sm px-5 py-2 text-[0.75rem] sm:px-9 sm:py-3 sm:text-[1.05rem] font-display italic font-bold shadow-[4px_4px_0_hsl(var(--dark))] group-hover:translate-x-[-2px] group-hover:translate-y-[-2px] group-hover:shadow-[7px_7px_0_hsl(var(--dark))] transition-all inline-flex items-center justify-center text-center w-[9.5rem] sm:w-[14rem]";
 
 const SatireBanners = () => (
   <div className="border-y-[5px] border-dark">
