@@ -503,6 +503,26 @@ const ProductPage = () => {
             </div>
           </div>
 
+          {/* Promo Banner */}
+          <div className="mt-16 bg-primary border-[3px] border-dark rounded-sm overflow-hidden relative" style={{ boxShadow: "var(--shadow-brutal)" }}>
+            <div className="absolute inset-0 pointer-events-none" style={{
+              backgroundImage: "radial-gradient(circle, rgba(255,255,255,.08) 1px, transparent 1px)",
+              backgroundSize: "16px 16px",
+            }} />
+            <div className="relative z-[1] px-6 lg:px-10 py-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
+              <div className="flex-1 text-center sm:text-left">
+                <p className="font-display italic font-bold text-cream/70 text-xs tracking-[3px] uppercase mb-1">Limited Time</p>
+                <h3 className="font-display font-black italic text-cream text-2xl lg:text-3xl leading-tight mb-2" style={{ textShadow: "2px 2px 0 rgba(0,0,0,.2)" }}>
+                  Free Shipping on €50+
+                </h3>
+                <p className="font-serif italic text-cream/80 text-sm">Discreet packaging. No logos. No questions.</p>
+              </div>
+              <Link to="/products" className="shrink-0 bg-accent text-foreground border-[3px] border-dark font-display italic font-bold text-sm px-8 py-3 rounded-sm shadow-[4px_4px_0_hsl(var(--dark))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_hsl(var(--dark))] transition-all no-underline">
+                Shop All →
+              </Link>
+            </div>
+          </div>
+
           {/* Related Products */}
           {relatedProducts.length > 0 && (
             <div className="mt-16">
@@ -511,35 +531,63 @@ const ProductPage = () => {
                 More from {category.name}.
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {relatedProducts.map((rp) => (
-                  <Link
-                    key={rp.id}
-                    to={`/category/${categorySlug}/product/${rp.slug}`}
-                    className="group bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_hsl(var(--dark))] no-underline"
-                    style={{ boxShadow: "var(--shadow-brutal)" }}
-                  >
-                    <div className="relative aspect-square overflow-hidden bg-surface">
-                      {getProductImage(rp.name) ? (
-                        <img src={getProductImage(rp.name)} alt={rp.name} loading="eager" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center bg-parch">
-                          <span className="text-5xl">{rp.emoji}</span>
+                {relatedProducts.map((rp) => {
+                  const rpDiscount = rp.originalPrice ? Math.round((1 - rp.price / rp.originalPrice) * 100) : 0;
+                  const rpFreeShipping = rp.price >= 50;
+
+                  return (
+                    <Link
+                      key={rp.id}
+                      to={`/category/${categorySlug}/product/${rp.slug}`}
+                      className="group bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_hsl(var(--dark))] no-underline"
+                      style={{ boxShadow: "var(--shadow-brutal)" }}
+                    >
+                      <div className="relative aspect-square overflow-hidden bg-surface">
+                        {getProductImage(rp.name) ? (
+                          <img src={getProductImage(rp.name)} alt={rp.name} loading="eager" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center bg-parch">
+                            <span className="text-5xl">{rp.emoji}</span>
+                          </div>
+                        )}
+                        {/* Badges */}
+                        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+                          {rpDiscount > 0 && (
+                            <span className="bg-primary text-white font-display italic font-bold text-[0.55rem] px-2 py-0.5 border border-dark rounded-sm">
+                              -{rpDiscount}%
+                            </span>
+                          )}
+                          {rpFreeShipping && (
+                            <span className="bg-accent text-foreground font-display italic font-bold text-[0.5rem] px-1.5 py-0.5 border border-dark rounded-sm">
+                              🚚 Free
+                            </span>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-display font-black italic text-base text-foreground group-hover:text-primary transition-colors mb-0.5 truncate">{rp.name}</h3>
-                      <p className="font-serif italic text-xs text-muted-foreground mb-2 line-clamp-1">{rp.description}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="font-display font-black text-lg text-primary">€{rp.price}</span>
-                        <span className="flex items-center gap-0.5 text-[0.65rem] text-muted-foreground">
-                          <Star size={10} className="fill-accent text-accent" />
-                          {rp.rating}
-                        </span>
+                        {rp.sticker && (
+                          <span className="absolute top-2 right-2 bg-accent text-foreground font-display italic font-bold text-[0.55rem] px-2 py-0.5 border border-dark rounded-full z-10">
+                            {rp.sticker}
+                          </span>
+                        )}
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                      <div className="p-4">
+                        <h3 className="font-display font-black italic text-base text-foreground group-hover:text-primary transition-colors mb-0.5 truncate">{rp.name}</h3>
+                        <p className="font-serif italic text-xs text-muted-foreground mb-2 line-clamp-1">{rp.description}</p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-display font-black text-lg text-primary">€{rp.price}</span>
+                            {rp.originalPrice && (
+                              <span className="font-serif italic text-[0.65rem] text-muted-foreground line-through">€{rp.originalPrice}</span>
+                            )}
+                          </div>
+                          <span className="flex items-center gap-0.5 text-[0.65rem] text-muted-foreground">
+                            <Star size={10} className="fill-accent text-accent" />
+                            {rp.rating}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
