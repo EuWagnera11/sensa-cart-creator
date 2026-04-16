@@ -98,7 +98,6 @@ const App = () => (
       <BrowserRouter>
         <CartProvider>
           <ScrollManager />
-          <Suspense fallback={<div className="min-h-screen bg-background" />}>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/cart" element={<CartPage />} />
@@ -117,7 +116,6 @@ const App = () => (
               <Route path="/category/:categorySlug/product/:productSlug" element={<ProductPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </Suspense>
           <CartSheet />
         </CartProvider>
       </BrowserRouter>
