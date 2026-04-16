@@ -47,12 +47,12 @@ const Products = () => {
           Our Best Kept Secrets.
         </h2>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 border-[3px] border-dark">
+        <div className="grid grid-cols-2 lg:grid-cols-4 border-[3px] border-white/15 rounded-sm" style={{ boxShadow: "4px 4px 0 rgba(0,0,0,.4)" }}>
           {products.map((product, index) => (
             <Link
               key={product.slug}
               to={`/category/${product.categorySlug}/product/${product.slug}`}
-              className={`group relative overflow-hidden transition-transform hover:-translate-x-1 hover:-translate-y-1 hover:-rotate-[0.5deg] hover:z-[2] flex flex-col justify-end aspect-square no-underline border-r-[3px] border-dark even:border-r-0 lg:even:border-r-[3px] lg:[&:nth-child(4)]:border-r-0 border-b-[3px] border-b-dark [&:nth-child(n+3)]:border-b-0 lg:border-b-0`}
+              className={`group relative overflow-hidden transition-transform hover:-translate-x-1 hover:-translate-y-1 hover:-rotate-[0.5deg] hover:z-[2] flex flex-col justify-end aspect-square no-underline border-r-[3px] border-white/15 even:border-r-0 lg:even:border-r-[3px] lg:[&:nth-child(4)]:border-r-0 border-b-[3px] border-b-white/15 [&:nth-child(n+3)]:border-b-0 lg:border-b-0`}
             >
               <img src={product.image} alt={product.name} loading="eager" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
