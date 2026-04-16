@@ -22,7 +22,7 @@ const Newsletter = () => {
   };
 
   return (
-    <div id="newsletter" className="bg-primary border-y-[5px] border-dark py-12 px-6 lg:px-12 text-center relative overflow-hidden">
+    <div id="newsletter" className="bg-primary border-y-[3px] border-dark py-12 px-6 lg:px-12 text-center relative overflow-hidden">
       {/* Background OoohMy watermark */}
       <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-display italic font-black text-[16rem] text-cream/[0.04] whitespace-nowrap pointer-events-none select-none">
         OoohMy
