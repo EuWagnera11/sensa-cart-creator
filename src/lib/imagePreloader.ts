@@ -45,32 +45,6 @@ function collectImageUrls(): string[] {
  */
 export function preloadAllImages(): void {
   const all = collectImageUrls();
-  // Priority: first 2 (hero images) immediately
-  const priority = all.slice(0, 2);
-  const rest = all.slice(2);
-
-  priority.forEach((src) => preloadImage(src));
-
-  const BATCH_SIZE = 6;
-  let index = 0;
-
-  function loadNextBatch() {
-    const batch = rest.slice(index, index + BATCH_SIZE);
-    if (batch.length === 0) return;
-
-    Promise.all(batch.map(preloadImage)).then(() => {
-      index += BATCH_SIZE;
-      if ("requestIdleCallback" in window) {
-        requestIdleCallback(loadNextBatch);
-      } else {
-        setTimeout(loadNextBatch, 100);
-      }
-    });
-  }
-
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(loadNextBatch);
-  } else {
-    setTimeout(loadNextBatch, 500);
-  }
+  // Fire ALL images simultaneously for maximum speed
+  all.forEach((src) => preloadImage(src));
 }
