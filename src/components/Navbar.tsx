@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, X, User, LogOut } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
   { name: "Buzz", sub: "Vibrators", to: "/category/buzz" },
@@ -9,7 +10,6 @@ const navItems = [
   { name: "Slippery", sub: "Gels & lubes", to: "/category/slippery" },
   { name: "Tied", sub: "Bondage", to: "/category/tied" },
   { name: "Newbie", sub: "Starter kits", to: "/category/newbie" },
-  
   { name: "Oops 🔥", sub: "Sale", to: "/category/oops", highlight: true },
 ];
 
@@ -17,6 +17,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const { itemCount, setIsOpen } = useCart();
+  const { user, signOut } = useAuth();
 
   return (
     <nav className="bg-dark border-b-4 border-primary sticky top-0 z-[100]">
@@ -46,6 +47,27 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center gap-3">
+          {/* Auth button */}
+          {user ? (
+            <button
+              type="button"
+              onClick={signOut}
+              className="hidden sm:inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem]"
+              title="Sign out"
+            >
+              <LogOut size={15} />
+              <span className="hidden md:inline">Sign Out</span>
+            </button>
+          ) : (
+            <Link
+              to="/auth"
+              className="hidden sm:inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
+            >
+              <User size={15} />
+              <span className="hidden md:inline">Sign In</span>
+            </Link>
+          )}
+
           <button
             type="button"
             className="hidden sm:inline-flex items-center gap-2 red-texture-fill border-2 border-dark px-5 py-2.5 font-display italic text-[0.9rem] rounded-[2px] transition-all"
@@ -68,6 +90,17 @@ const Navbar = () => {
               <span className="text-white/25 text-xs ml-2">{item.sub}</span>
             </NavLink>
           ))}
+          <div className="pt-4">
+            {user ? (
+              <button onClick={() => { signOut(); setMobileOpen(false); }} className="text-white/50 font-display italic text-sm flex items-center gap-2">
+                <LogOut size={15} /> Sign Out
+              </button>
+            ) : (
+              <Link to="/auth" onClick={() => setMobileOpen(false)} className="text-accent font-display italic text-sm flex items-center gap-2 no-underline">
+                <User size={15} /> Sign In
+              </Link>
+            )}
+          </div>
         </div>
       )}
     </nav>
