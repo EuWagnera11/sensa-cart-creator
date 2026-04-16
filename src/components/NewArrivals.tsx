@@ -175,7 +175,7 @@ const NewArrivals = () => {
       <Link
         to={`/category/${product.categorySlug}/product/${product.slug}`}
         className={`group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-all duration-500 ${
-          isCenter ? "w-[220px] sm:w-[280px] lg:w-[320px] z-10 scale-100 opacity-100" : "w-[160px] sm:w-[200px] lg:w-[240px] z-0 scale-90 opacity-60"
+          isCenter ? "w-[200px] sm:w-[270px] lg:w-[310px] z-10 scale-100 opacity-100" : "w-[170px] sm:w-[240px] lg:w-[270px] z-0 scale-[0.96] opacity-75"
         }`}
         style={{ boxShadow: isCenter ? "5px 5px 0 hsl(var(--dark))" : "3px 3px 0 hsl(var(--dark) / 0.4)" }}
       >
