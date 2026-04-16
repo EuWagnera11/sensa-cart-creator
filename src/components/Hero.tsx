@@ -1,8 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star, Truck, ShieldCheck, Package } from "lucide-react";
 import heroImage from "@/assets/hero-image.webp";
-
-const trustBadges = [
   { icon: Package, label: "Discreet packaging" },
   { icon: Truck, label: "Ships in 24h" },
   { icon: ShieldCheck, label: "Zero judgement" },
