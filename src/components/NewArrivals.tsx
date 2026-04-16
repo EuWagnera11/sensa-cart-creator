@@ -255,22 +255,7 @@ const NewArrivals = () => {
           ))}
         </div>
 
-        <button
-          onClick={prev}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center font-display font-bold text-lg shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-10"
-          aria-label="Previous banner"
-        >
-          ←
-        </button>
-        <button
-          onClick={next}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center font-display font-bold text-lg shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-10"
-          aria-label="Next banner"
-        >
-          →
-        </button>
-
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
           {banners.map((_, i) => (
             <button
               key={i}
