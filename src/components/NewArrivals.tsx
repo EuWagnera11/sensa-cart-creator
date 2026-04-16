@@ -255,48 +255,41 @@ const NewArrivals = () => {
     toast.success(`${p.name} added to bag ✨`);
   };
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const isResetting = useRef(false);
+  // Visible count based on rough card widths
+  const visibleCount = 6;
+  
+  // Build items to render: enough to fill screen + overflow on both sides
+  const getWrappedProduct = (index: number) => {
+    const i = ((index % count) + count) % count;
+    return newProducts[i];
+  };
 
-  // Render 3 copies for infinite loop
-  const loopProducts = [...newProducts, ...newProducts, ...newProducts];
+  // Render range: from productIndex - visibleCount to productIndex + visibleCount
+  const renderRange = Array.from({ length: visibleCount * 2 + 1 }, (_, i) => productIndex - visibleCount + i);
 
-  // On mount, scroll to middle set
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const oneSetWidth = el.scrollWidth / 3;
-    el.scrollLeft = oneSetWidth;
-  }, []);
-
-  // When scroll nears edges, jump to middle set seamlessly
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const handleScroll = () => {
-      if (isResetting.current) return;
-      const oneSetWidth = el.scrollWidth / 3;
-      if (el.scrollLeft < oneSetWidth * 0.15) {
-        isResetting.current = true;
-        el.style.scrollBehavior = "auto";
-        el.scrollLeft += oneSetWidth;
-        el.style.scrollBehavior = "";
-        isResetting.current = false;
-      } else if (el.scrollLeft > oneSetWidth * 1.85) {
-        isResetting.current = true;
-        el.style.scrollBehavior = "auto";
-        el.scrollLeft -= oneSetWidth;
-        el.style.scrollBehavior = "";
-        isResetting.current = false;
-      }
-    };
-    el.addEventListener("scroll", handleScroll);
-    return () => el.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollBy = (dir: number) => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({ left: dir * 300, behavior: "smooth" });
+  const handleAdd = (p: (typeof newProducts)[number], e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({
+      id: p.slug,
+      name: p.name,
+      slug: p.slug,
+      category: p.category,
+      categorySlug: p.categorySlug,
+      collection: p.collection,
+      emoji: p.emoji,
+      description: p.desc,
+      longDescription: p.desc,
+      price: Number(p.price.replace("€", "")),
+      sticker: p.sticker,
+      features: ["Fast dispatch", "Discreet packaging"],
+      images: [p.emoji],
+      inStock: true,
+      rating: p.rating,
+      reviews: p.reviews,
+    });
+    setIsOpen(true);
+    toast.success(`${p.name} added to bag ✨`);
   };
 
   const renderCard = (product: (typeof newProducts)[number], idx: number) => {
