@@ -9,6 +9,9 @@ import banner3 from "@/assets/banners/new-arrivals-3.webp";
 import hotStuffImg from "@/assets/products/hot-stuff.webp";
 import togetherImg from "@/assets/products/the-together.webp";
 import setUpImg from "@/assets/products/the-set-up.webp";
+import whisperImg from "@/assets/products/whisper.webp";
+import pocketRocketImg from "@/assets/products/pocket-rocket.webp";
+import dateNightImg from "@/assets/products/date-night.webp";
 
 const banners = [banner1, banner2, banner3];
 
@@ -54,6 +57,48 @@ const newProducts = [
     image: setUpImg,
     rating: 4.8,
     reviews: 678,
+  },
+  {
+    slug: "whisper",
+    categorySlug: "buzz",
+    name: "Whisper",
+    emoji: "🤫",
+    collection: "Quiet Riot",
+    category: "Vibrators",
+    desc: '"Silent but deadly. In the best way."',
+    price: "€59",
+    sticker: "Trending 🔥",
+    image: whisperImg,
+    rating: 4.7,
+    reviews: 412,
+  },
+  {
+    slug: "pocket-rocket",
+    categorySlug: "buzz",
+    name: "Pocket Rocket",
+    emoji: "🚀",
+    collection: "Quiet Riot",
+    category: "Vibrators",
+    desc: '"Small. Mighty. Discreet."',
+    price: "€45",
+    sticker: "Fan Fave 💜",
+    image: pocketRocketImg,
+    rating: 4.8,
+    reviews: 891,
+  },
+  {
+    slug: "date-night",
+    categorySlug: "duo",
+    name: "Date Night",
+    emoji: "🌹",
+    collection: "Two's Company",
+    category: "Duo",
+    desc: '"Everything for the night you\'ve been planning."',
+    price: "€89",
+    sticker: "New 🆕",
+    image: dateNightImg,
+    rating: 4.5,
+    reviews: 234,
   },
 ];
 
