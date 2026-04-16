@@ -102,56 +102,77 @@ const CategoryPage = () => {
               <p className="font-display italic text-xl text-muted-foreground">Products coming soon...</p>
             </div>
           ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 border-[3px] border-dark">
-              {categoryProducts.map((product, i) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {categoryProducts.map((product) => (
                 <div
                   key={product.id}
-                  className={`p-8 relative overflow-hidden transition-all hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0_hsl(var(--dark))] hover:z-[2] group no-underline bg-cream
-                    ${(i + 1) % 3 !== 0 ? "border-r-0 lg:border-r-[3px] border-dark" : ""}
-                    ${i < categoryProducts.length - (categoryProducts.length % 3 || 3) ? "border-b-[3px] border-dark" : ""}
-                    sm:border-b-[3px] sm:border-dark lg:border-b-0
-                    ${i < categoryProducts.length - 1 ? "border-b-[3px] border-dark" : ""}
-                  `}
+                  className="group relative bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0_hsl(var(--dark))] hover:z-[2]"
+                  style={{ boxShadow: "var(--shadow-brutal)" }}
                 >
-                  {product.sticker && (
-                    <div className="absolute -top-1 right-4 bg-accent text-foreground font-display italic font-bold text-[0.65rem] px-3 py-1 border-2 border-dark rounded-full shadow-[2px_2px_0_hsl(var(--dark))]" style={{ transform: "rotate(3deg)" }}>
-                      {product.sticker}
-                    </div>
-                  )}
-
-                  <Link to={`/category/${categorySlug}/product/${product.slug}`} className="block no-underline">
-                    <div className="bg-parch border-[3px] border-dark rounded-sm h-40 flex items-center justify-center mb-5 group-hover:bg-accent/20 transition-colors overflow-hidden">
+                  {/* Image area — hero-sized */}
+                  <Link to={`/category/${categorySlug}/product/${product.slug}`} className="block no-underline relative">
+                    <div className="relative aspect-square overflow-hidden bg-surface">
                       {getProductImage(product.name) ? (
-                        <img src={getProductImage(product.name)} alt={product.name} className="w-full h-full object-cover" />
+                        <img
+                          src={getProductImage(product.name)}
+                          alt={product.name}
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
                       ) : (
-                        <span className="text-6xl">{product.emoji}</span>
+                        <div className="absolute inset-0 flex items-center justify-center bg-parch">
+                          <span className="text-7xl">{product.emoji}</span>
+                        </div>
+                      )}
+
+                      {/* Gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                      {/* Sticker badge */}
+                      {product.sticker && (
+                        <div
+                          className="absolute top-3 right-3 bg-accent text-foreground font-display italic font-bold text-[0.65rem] px-3.5 py-1.5 border-2 border-dark rounded-full shadow-[2px_2px_0_hsl(var(--dark))] z-10"
+                          style={{ transform: "rotate(3deg)" }}
+                        >
+                          {product.sticker}
+                        </div>
                       )}
                     </div>
-
-                    <div className="font-display italic text-[0.7rem] text-muted-foreground mb-1">{product.collection}</div>
-                    <h3 className="font-display font-black italic text-xl text-foreground leading-tight mb-2 group-hover:text-primary transition-colors">{product.name}</h3>
-                    <p className="font-serif italic text-sm text-muted-foreground leading-relaxed mb-4">{product.description}</p>
                   </Link>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-display font-black text-2xl text-primary">€{product.price}</span>
-                      {product.originalPrice && (
-                        <span className="font-serif italic text-sm text-muted-foreground line-through">€{product.originalPrice}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <span className="text-accent">★</span> {product.rating} ({product.reviews})
-                    </div>
-                  </div>
+                  {/* Info area */}
+                  <div className="p-5 pb-6">
+                    <div className="font-display italic text-[0.68rem] text-muted-foreground mb-1 tracking-wide">{product.collection}</div>
 
-                  <div className="grid grid-cols-2 gap-3 mt-5">
-                    <button type="button" className="cta-primary w-full text-sm px-4 py-3" onClick={() => handleBuy(product.id)}>
-                      Comprar
-                    </button>
-                    <Link to={`/category/${categorySlug}/product/${product.slug}`} className="cta-secondary w-full text-sm px-4 py-3 no-underline text-center">
-                      Saiba mais
+                    <Link to={`/category/${categorySlug}/product/${product.slug}`} className="block no-underline">
+                      <h3 className="font-display font-black italic text-[1.25rem] text-foreground leading-tight mb-1.5 group-hover:text-primary transition-colors">
+                        {product.name}
+                      </h3>
                     </Link>
+
+                    <p className="font-serif italic text-[0.82rem] text-muted-foreground leading-relaxed mb-4 line-clamp-2">{product.description}</p>
+
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-display font-black text-[1.6rem] text-primary leading-none">€{product.price}</span>
+                        {product.originalPrice && (
+                          <span className="font-serif italic text-[0.78rem] text-muted-foreground line-through">€{product.originalPrice}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 text-[0.75rem] text-muted-foreground">
+                        <span className="text-accent text-sm">★</span>
+                        <span className="font-display font-bold">{product.rating}</span>
+                        <span className="font-serif italic">({product.reviews})</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button type="button" className="cta-primary w-full text-[0.82rem] px-4 py-2.5" onClick={() => handleBuy(product.id)}>
+                        Comprar
+                      </button>
+                      <Link to={`/category/${categorySlug}/product/${product.slug}`} className="cta-secondary w-full text-[0.82rem] px-4 py-2.5 no-underline text-center">
+                        Saiba mais
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}
