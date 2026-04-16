@@ -123,6 +123,15 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                   );
                 })}
               </ul>
+              {unique.length > 0 && (
+                <Link
+                  to={`/products?q=${encodeURIComponent(query)}`}
+                  onClick={onClose}
+                  className="block text-center py-3 border-t-2 border-dark/10 font-display italic text-sm font-bold text-primary hover:bg-dark/[0.03] transition-colors no-underline"
+                >
+                  See all results →
+                </Link>
+              )}
             )}
           </div>
         )}
