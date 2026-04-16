@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Viewport-based scaling: ~14px at 1280px → 16px at 1920px */
+html {
+  font-size: clamp(0.8rem, 0.65rem + 0.4vw, 1rem);
+}
+
 @layer base {
   :root {
     --background: 38 90% 94%;

@@ -4,7 +4,7 @@ import heroImage from "@/assets/hero-image.webp";
 
 
 const Hero = () => (
-  <section className="min-h-[80vh] sm:min-h-[92vh] bg-parch paper-bg grid grid-cols-1 lg:grid-cols-[1fr_1fr] border-b-[5px] border-dark relative overflow-hidden">
+  <section className="min-h-[85vh] bg-parch paper-bg grid grid-cols-1 lg:grid-cols-[1fr_1fr] border-b-[5px] border-dark relative overflow-hidden">
     {/* Halftone overlay */}
     <div
       className="absolute inset-0 opacity-[0.06] pointer-events-none"
@@ -17,18 +17,18 @@ const Hero = () => (
     {/* Left — copy */}
     <div className="flex flex-col justify-center px-5 sm:px-10 lg:px-14 xl:px-20 py-10 sm:py-16 lg:py-12 relative z-[2]">
       <h1 className="font-display font-black italic leading-[0.88]" style={{ animation: "slideUp .5s ease both .2s" }}>
-        <span className="block text-primary" style={{ fontSize: "clamp(3.8rem,7vw,7.5rem)" }}>Oooh My.</span>
+        <span className="block text-primary" style={{ fontSize: "clamp(3rem,5.5vw,7.5rem)" }}>Oooh My.</span>
         <span
           className="block"
           style={{
-            fontSize: "clamp(4.5rem,8vw,9.5rem)",
+            fontSize: "clamp(3.5rem,6.5vw,9.5rem)",
             color: "transparent",
             WebkitTextStroke: "3px hsl(var(--dark))",
           }}
         >
           Pleasure.
         </span>
-        <span className="block text-foreground font-black" style={{ fontSize: "clamp(2.8rem,5vw,5.2rem)" }}>
+        <span className="block text-foreground font-black" style={{ fontSize: "clamp(2.2rem,4vw,5.2rem)" }}>
           Unfiltered.
         </span>
       </h1>
