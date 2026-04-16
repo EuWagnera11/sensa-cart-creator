@@ -49,8 +49,26 @@ const ScrollManager = () => {
 
 const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
+  const isTouchDevice = typeof window !== "undefined" && "ontouchstart" in window;
 
   useEffect(() => {
+    if (isTouchDevice) {
+      // Tap ripple effect for mobile
+      const handleTouch = (e: TouchEvent) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        const ripple = document.createElement("div");
+        ripple.className = "tap-ripple";
+        ripple.style.left = touch.clientX + "px";
+        ripple.style.top = touch.clientY + "px";
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 450);
+      };
+      document.addEventListener("touchstart", handleTouch, { passive: true });
+      return () => document.removeEventListener("touchstart", handleTouch);
+    }
+
+    // Desktop: custom cursor
     const el = cursorRef.current;
     if (!el) return;
 
@@ -73,7 +91,6 @@ const CustomCursor = () => {
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // Initial binding
     const selectors = "a, button, input, .cat-card, .product-card, .promo-card, .swatch-block";
     document.querySelectorAll<HTMLElement>(selectors).forEach((element) => {
       element.addEventListener("mouseenter", grow);
@@ -84,8 +101,9 @@ const CustomCursor = () => {
       document.removeEventListener("mousemove", handleMove);
       observer.disconnect();
     };
-  }, []);
+  }, [isTouchDevice]);
 
+  if (isTouchDevice) return null;
   return <div ref={cursorRef} aria-hidden="true" className="custom-cursor" />;
 };
 

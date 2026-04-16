@@ -238,6 +238,29 @@ body::after {
   height: 44px;
 }
 
+@media (max-width: 1024px) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
+.tap-ripple {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: hsl(var(--accent) / 0.35);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%) scale(0);
+  animation: tapPulse 0.4s ease-out forwards;
+}
+
+@keyframes tapPulse {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+}
+
 .halftone::before {
   content: '';
   position: absolute;
