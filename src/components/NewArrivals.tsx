@@ -159,7 +159,7 @@ const NewArrivals = () => {
               <Link
                 key={product.slug}
                 to={`/category/${product.categorySlug}/product/${product.slug}`}
-                className={`group relative overflow-hidden flex flex-col aspect-[3/4] no-underline ${
+                className={`group relative overflow-hidden flex flex-col aspect-[2/3] sm:aspect-[3/4] no-underline ${
                   i < 2 ? "border-r-[3px] border-dark" : ""
                 }`}
               >
