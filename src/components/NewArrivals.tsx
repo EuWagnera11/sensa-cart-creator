@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
@@ -69,6 +69,14 @@ const NewArrivals = () => {
     const id = setInterval(next, 4500);
     return () => clearInterval(id);
   }, [next]);
+
+  const scrollLeft = () => {
+    const el = scrollRef.current;
+    if (el) {
+      const cardWidth = el.querySelector("a")?.offsetWidth ?? 200;
+      el.scrollBy({ left: -(cardWidth + 20), behavior: "smooth" });
+    }
+  };
 
   const scrollRight = () => {
     const el = scrollRef.current;
@@ -243,7 +251,14 @@ const NewArrivals = () => {
           ))}
         </div>
 
-        {/* Mobile arrow */}
+        {/* Mobile arrows */}
+        <button
+          onClick={scrollLeft}
+          className="sm:hidden absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] z-10"
+          aria-label="Previous product"
+        >
+          <ChevronLeft size={18} />
+        </button>
         <button
           onClick={scrollRight}
           className="sm:hidden absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] z-10"
