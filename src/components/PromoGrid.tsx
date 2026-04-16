@@ -15,7 +15,7 @@ const PromoGrid = () => (
   <div className="border-y-[5px] border-dark bg-background paper-bg">
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {promos.map((promo, index) => (
-        <div key={promo.name} className={`relative min-h-[340px] overflow-hidden flex flex-col justify-end group ${index < 3 ? "border-r-0 lg:border-r-4 border-dark" : ""} transition-all hover:brightness-110`}>
+        <Link key={promo.name} to={promo.to} className={`relative min-h-[340px] overflow-hidden flex flex-col justify-end group no-underline ${index < 3 ? "border-r-0 lg:border-r-4 border-dark" : ""} transition-all hover:brightness-110`}>
           <img
             src={promo.image}
             alt={promo.name}
@@ -40,11 +40,11 @@ const PromoGrid = () => (
           <div className="relative z-[1] px-6 py-7">
             <div className="font-display font-black italic text-2xl text-white mb-1" style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}>{promo.name}</div>
             <div className="font-serif italic text-[0.8rem] text-white/75 mb-3.5 max-w-[200px]">{promo.sub}</div>
-            <Link to={promo.to} className="inline-block bg-white/90 text-foreground font-display italic text-[0.85rem] font-bold px-[22px] py-[9px] border-2 border-dark rounded-[2px] no-underline transition-all hover:-translate-x-0.5 hover:-translate-y-0.5" style={{ boxShadow: "3px 3px 0 rgba(0,0,0,.3)" }}>
+            <span className="inline-block bg-white/90 text-foreground font-display italic text-[0.85rem] font-bold px-[22px] py-[9px] border-2 border-dark rounded-[2px] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5" style={{ boxShadow: "3px 3px 0 rgba(0,0,0,.3)" }}>
               {promo.cta}
-            </Link>
+            </span>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   </div>
