@@ -1,54 +1,43 @@
 
 
-# Plano: Responsividade Universal com Escalonamento por Viewport
+# Plano: Escalonamento para 4K e Ultra-Wide
 
 ## Problema
-O site fica perfeito em Full HD (1920x1080) mas fica "apertado" em resoluções menores como 1360x768. Os textos, paddings e alturas estão dimensionados com valores fixos (rem/px) que não escalam proporcionalmente entre diferentes tamanhos de desktop.
+A fórmula atual `clamp(0.8rem, 0.65rem + 0.4vw, 1rem)` tem teto em `1rem` (16px), que é atingido em ~1920px. Em monitores 4K (2840x2160), o font-size fica travado em 16px — tudo parece minúsculo porque os pixels físicos são muito densos.
 
 ## Solução
-Usar **escalonamento CSS baseado em viewport** para que o site inteiro se adapte proporcionalmente a qualquer resolução. A técnica principal é aplicar um `font-size` responsivo no `<html>` usando `clamp()`, fazendo com que todos os valores em `rem` escalem automaticamente.
-
-## O que muda visualmente
-Nada. O site vai parecer exatamente igual em Full HD. Em telas menores (1360px, 1280px, etc.) ele vai "encolher" proporcionalmente, mantendo as mesmas proporções visuais.
+Estender a fórmula do root font-size para continuar escalando acima de 1920px, subindo proporcionalmente até ~22px em 2840px.
 
 ---
 
 ## Alterações Técnicas
 
-### 1. `src/index.css` — Escalonamento global via root font-size
-Adicionar um `font-size` responsivo no `html` que escala de ~14px (em 1280px) até 16px (em 1920px):
+### 1. `src/index.css` — Nova fórmula de escalonamento
+Substituir a fórmula atual por uma que escala de **14px (1280px)** até **22px (2840px)**:
 ```css
 html {
-  font-size: clamp(0.8rem, 0.65rem + 0.4vw, 1rem);
+  font-size: clamp(0.875rem, 0.5rem + 0.5vw, 1.375rem);
 }
 ```
-Isso faz com que TODOS os componentes que usam `rem` escalem automaticamente.
+Cálculo: em 1280px → ~0.875rem (14px), em 1920px → ~1.1rem (17.6px), em 2840px → ~1.375rem (22px).
 
-### 2. `src/components/Hero.tsx` — Ajustar clamp values
-Substituir os `clamp()` dos títulos para usar `vw` units que escalem melhor:
-- "Oooh My." → `clamp(3rem, 5.5vw, 7.5rem)`
-- "Pleasure." → `clamp(3.5rem, 6.5vw, 9.5rem)`
-- "Unfiltered." → `clamp(2.2rem, 4vw, 5.2rem)`
+Isso faz todo o site escalar para cima em 4K automaticamente, sem mudar nada em Full HD (fica praticamente igual ~16-17px).
 
-Mudar `min-h-[80vh] sm:min-h-[92vh]` para `min-h-[85vh]` para evitar scroll desnecessário em telas baixas (768px height).
+### 2. `src/components/Hero.tsx` — Ajustar max dos clamp do título
+Os clamp dos títulos têm max values que precisam subir para não "travar" em 4K:
+- "Oooh My." → `clamp(3rem, 5.5vw, 9rem)`
+- "Pleasure." → `clamp(3.5rem, 6.5vw, 12rem)`
+- "Unfiltered." → `clamp(2.2rem, 4vw, 6.5rem)`
 
-### 3. `src/components/Navbar.tsx` — Escalar para telas menores
-Reduzir padding e tamanho do logo em telas médias:
-- Altura do navbar: `h-[66px]` → `h-[58px] xl:h-[66px]`
-- Padding horizontal: `px-6 lg:px-12` → `px-4 lg:px-8 xl:px-12`
-- Nav items padding: `px-[14px]` → `px-[10px] xl:px-[14px]`
+### 3. `src/components/Navbar.tsx` — Adicionar scaling 3xl
+Usar o breakpoint `3xl` já configurado para aumentar proporções em 4K:
+- Altura: adicionar `3xl:h-[80px]`
+- Padding: adicionar `3xl:px-16`
 
-### 4. `src/components/SatireBanners.tsx` — Aspect ratio flexível
-Mudar `aspect-[16/9]` para `aspect-[16/10]` no desktop médio para melhor preenchimento.
-
-### 5. `src/components/PromoGrid.tsx` — Min-height responsiva
-Trocar `min-h-[340px]` fixo por `min-h-[280px] xl:min-h-[340px]`.
-
-### 6. `tailwind.config.ts` — Adicionar breakpoint `3xl`
-Adicionar screen `"3xl": "1920px"` para poder ter ajustes específicos para monitores grandes se necessário no futuro.
+Isso garante que a navbar não fique "perdida" em telas gigantes.
 
 ---
 
-## Resumo
-A mudança mais impactante é o **item 1** (root font-size responsivo). Ele sozinho já resolve 80% do problema porque todos os rem/em do site passam a escalar proporcionalmente. Os demais ajustes são refinamentos pontuais.
+## Resultado
+O site vai escalar proporcionalmente de 1280px até 2840px+. Em Full HD continua praticamente igual (variação mínima de ~1px). Em 4K, tudo cresce proporcionalmente mantendo as mesmas proporções visuais.
 
