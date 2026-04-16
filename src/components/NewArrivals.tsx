@@ -224,16 +224,7 @@ const NewArrivals = () => {
       const dt = (time - lastTimeRef.current) / 1000;
       lastTimeRef.current = time;
 
-      // If there's a manual navigation target, lerp toward it
-      if (targetOffsetRef.current !== null) {
-        const diff = targetOffsetRef.current - offsetRef.current;
-        if (Math.abs(diff) < 0.5) {
-          offsetRef.current = targetOffsetRef.current;
-          targetOffsetRef.current = null;
-        } else {
-          offsetRef.current += diff * Math.min(1, dt * 8);
-        }
-      } else if (!isPausedRef.current) {
+      if (!isPausedRef.current) {
         offsetRef.current += SPEED * dt;
       }
 
