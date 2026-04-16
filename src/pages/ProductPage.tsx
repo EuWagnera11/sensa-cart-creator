@@ -392,13 +392,89 @@ const ProductPage = () => {
                     </div>
                   </div>
 
+                  {/* Write a review form */}
+                  {user && (
+                    <div className="bg-parch border-2 border-dark/10 rounded-sm p-5 mb-6">
+                      <h4 className="font-display italic font-bold text-sm text-foreground mb-3">Write a review</h4>
+                      <div className="flex gap-1 mb-3">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <button key={s} type="button" onClick={() => setNewReview({ ...newReview, rating: s })}>
+                            <Star size={20} className={s <= newReview.rating ? "fill-accent text-accent" : "text-muted-foreground/30"} />
+                          </button>
+                        ))}
+                      </div>
+                      <textarea
+                        value={newReview.text}
+                        onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+                        placeholder="Share your experience..."
+                        className="w-full bg-cream border-2 border-dark/10 rounded-sm p-3 text-sm font-serif italic outline-none focus:border-primary transition-colors resize-none"
+                        rows={3}
+                      />
+                      <button
+                        type="button"
+                        disabled={submittingReview}
+                        onClick={async () => {
+                          setSubmittingReview(true);
+                          const { error } = await supabase.from("product_reviews").insert({
+                            product_slug: productSlug || "",
+                            user_id: user.id,
+                            rating: newReview.rating,
+                            review_text: newReview.text || null,
+                          });
+                          setSubmittingReview(false);
+                          if (error) { toast.error("Failed to submit review"); return; }
+                          toast.success("Review submitted! 🎉");
+                          setNewReview({ rating: 5, text: "" });
+                          // Refresh reviews
+                          const { data } = await supabase.from("product_reviews").select("*").eq("product_slug", productSlug || "").order("created_at", { ascending: false });
+                          if (data) setDbReviews(data as typeof dbReviews);
+                        }}
+                        className="mt-3 cta-primary text-sm px-6 py-2"
+                      >
+                        {submittingReview ? "Submitting..." : "Submit Review"}
+                      </button>
+                    </div>
+                  )}
+                  {!user && (
+                    <div className="bg-parch border-2 border-dark/10 rounded-sm p-4 mb-6 text-center">
+                      <Link to="/auth" className="font-display italic text-primary text-sm no-underline hover:underline">Sign in to leave a review →</Link>
+                    </div>
+                  )}
+
+                  {/* Static + DB reviews */}
                   <div className="space-y-4">
+                    {/* Show DB reviews first */}
+                    {dbReviews.map((review) => (
+                      <div key={review.id} className="bg-parch border-2 border-dark/10 rounded-sm p-5">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="w-8 h-8 bg-primary/10 border-2 border-dark/10 rounded-full flex items-center justify-center font-display font-bold text-xs text-primary">
+                              U
+                            </span>
+                            <span className="font-display italic font-bold text-sm text-foreground">User</span>
+                            {review.verified_purchase && (
+                              <span className="flex items-center gap-0.5 text-[0.6rem] text-green-700 font-bold">
+                                <Check size={10} strokeWidth={3} /> Verified
+                              </span>
+                            )}
+                            <div className="flex gap-0.5">
+                              {[...Array(5)].map((_, j) => (
+                                <Star key={j} size={11} className={j < review.rating ? "fill-accent text-accent" : "text-muted-foreground/30"} />
+                              ))}
+                            </div>
+                          </div>
+                          <span className="text-[0.68rem] text-muted-foreground">{new Date(review.created_at).toLocaleDateString("pt-PT")}</span>
+                        </div>
+                        {review.review_text && <p className="font-serif italic text-sm text-foreground/80 leading-relaxed ml-10">{review.review_text}</p>}
+                      </div>
+                    ))}
+                    {/* Fallback static reviews */}
                     {[
                       { name: "Sarah M.", rating: 5, text: "Best purchase I've ever made. The quality is amazing and the packaging was super discreet. Highly recommend! 🔥", date: "2 weeks ago", verified: true },
                       { name: "Ana R.", rating: 5, text: "Exceeded all my expectations. Arrived fast and the product is even better than described.", date: "1 month ago", verified: true },
                       { name: "Guest", rating: 4, text: "Great product, just wish there were more colour options. But the quality is top-notch.", date: "2 months ago", verified: false },
                     ].map((review, i) => (
-                      <div key={i} className="bg-parch border-2 border-dark/10 rounded-sm p-5">
+                      <div key={`static-${i}`} className="bg-parch border-2 border-dark/10 rounded-sm p-5">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="w-8 h-8 bg-primary/10 border-2 border-dark/10 rounded-full flex items-center justify-center font-display font-bold text-xs text-primary">
