@@ -1,13 +1,7 @@
 import { Link } from "react-router-dom";
-import { Star, Truck, ShieldCheck, Package } from "lucide-react";
 import heroImage from "@/assets/hero-image.webp";
 
-const trustBadges = [
-  { icon: Package, label: "Discreet packaging" },
-  { icon: Truck, label: "Ships in 24h" },
-  { icon: ShieldCheck, label: "Zero judgement" },
-  { icon: Star, label: "4.9★ avg rating" },
-];
+
 
 const Hero = () => (
   <section className="min-h-[92vh] bg-parch paper-bg grid grid-cols-1 lg:grid-cols-[1fr_1fr] border-b-[5px] border-dark relative overflow-hidden">
@@ -67,22 +61,6 @@ const Hero = () => (
       </div>
 
       {/* Trust badges row */}
-      <div
-        className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-10 lg:mt-14"
-        style={{ animation: "slideUp .5s ease both .5s" }}
-      >
-        {trustBadges.map((badge) => (
-          <div
-            key={badge.label}
-            className="flex items-center gap-2 bg-cream/60 border-2 border-dark/10 rounded-sm px-3 py-2.5"
-          >
-            <badge.icon className="w-4 h-4 text-primary shrink-0" strokeWidth={2.5} />
-            <span className="font-display italic font-bold text-[0.72rem] text-foreground/70 leading-tight">
-              {badge.label}
-            </span>
-          </div>
-        ))}
-      </div>
     </div>
 
     {/* Right — image */}
@@ -96,18 +74,6 @@ const Hero = () => (
         style={{ objectPosition: "60% top" }}
       />
 
-      {/* Floating badge */}
-      <div
-        className="absolute bottom-6 left-6 bg-cream/95 border-[3px] border-dark rounded-sm px-5 py-3 shadow-[4px_4px_0_hsl(var(--dark))] z-10 backdrop-blur-sm"
-        style={{ animation: "slideUp .6s ease both .7s", transform: "rotate(-2deg)" }}
-      >
-        <p className="font-display italic font-black text-[0.85rem] text-foreground leading-tight">
-          🔥 2,400+ happy customers
-        </p>
-        <p className="font-serif italic text-[0.7rem] text-muted-foreground mt-0.5">
-          Shipped across Europe this month
-        </p>
-      </div>
     </div>
   </section>
 );
