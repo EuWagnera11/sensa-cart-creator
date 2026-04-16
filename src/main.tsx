@@ -3,10 +3,10 @@ import App from "./App.tsx";
 import "./index.css";
 import { preloadAllImages } from "./lib/imagePreloader";
 
-createRoot(document.getElementById("root")!).render(<App />);
-
-// Preload all images into browser cache
+// Preload ALL images BEFORE React even starts rendering
 preloadAllImages();
+
+createRoot(document.getElementById("root")!).render(<App />);
 
 // Register service worker for persistent image caching
 if ("serviceWorker" in navigator) {
