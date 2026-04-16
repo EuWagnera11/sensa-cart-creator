@@ -405,7 +405,7 @@ const NewArrivals = () => {
           className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide px-10 sm:px-16 pb-2"
           style={{ scrollSnapType: "x mandatory" }}
         >
-          {newProducts.map((product) => renderCard(product))}
+          {loopProducts.map((product, idx) => renderCard(product, idx))}
         </div>
 
         {/* Arrows */}
