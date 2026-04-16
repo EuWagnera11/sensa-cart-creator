@@ -23,6 +23,21 @@ const ProductPage = () => {
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
   const imgRef = useRef<HTMLDivElement>(null);
   const { addItem, setIsOpen } = useCart();
+  const { user } = useAuth();
+  const [dbReviews, setDbReviews] = useState<Array<{ id: string; rating: number; review_text: string | null; verified_purchase: boolean; created_at: string; user_id: string }>>([]);
+  const [stockQty, setStockQty] = useState<number | null>(null);
+  const [newReview, setNewReview] = useState({ rating: 5, text: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  useEffect(() => {
+    if (!productSlug) return;
+    supabase.from("product_reviews").select("*").eq("product_slug", productSlug).order("created_at", { ascending: false }).then(({ data }) => {
+      if (data) setDbReviews(data as typeof dbReviews);
+    });
+    supabase.from("product_stock").select("quantity").eq("product_slug", productSlug).maybeSingle().then(({ data }) => {
+      if (data) setStockQty(data.quantity);
+    });
+  }, [productSlug]);
 
   if (!product || !category) {
     return (
