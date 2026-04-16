@@ -23,7 +23,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-dark border-b-4 border-primary sticky top-0 z-[100]">
-      <div className="flex items-center justify-between px-6 lg:px-12 h-[66px] max-w-[1440px] mx-auto gap-4">
+      <div className="flex items-center justify-between px-4 lg:px-8 xl:px-12 h-[58px] xl:h-[66px] max-w-[1440px] mx-auto gap-4">
         <Link to="/" className="font-display italic font-black text-[2rem] tracking-[0.5px] flex items-center shrink-0 no-underline">
           <span className="text-accent">Oooh</span>
           <span className="text-cream">My</span>
@@ -35,7 +35,7 @@ const Navbar = () => {
             <li key={item.name}>
               <NavLink
                 to={item.to}
-                className={({ isActive }) => `flex flex-col items-center px-[14px] h-[66px] justify-center no-underline transition-colors ${index < navItems.length - 1 ? "border-r border-white/10" : ""} ${
+                className={({ isActive }) => `flex flex-col items-center px-[10px] xl:px-[14px] h-[58px] xl:h-[66px] justify-center no-underline transition-colors ${index < navItems.length - 1 ? "border-r border-white/10" : ""} ${
                   isActive || location.pathname.startsWith(item.to) ? "bg-white/[0.07]" : "hover:bg-white/[0.07]"
                 }`}
               >
