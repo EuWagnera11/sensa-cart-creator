@@ -18,10 +18,17 @@ const Footer = () => (
         <div>
           <h4 className="font-display italic text-accent mb-[18px] text-[1rem]">The Secret Menu</h4>
           <ul className="space-y-[10px] list-none">
-            {["Buzz — Vibrators ⚡", "Duo — For Couples 🔥", "Slippery — Gels & Lubes 🌶️", "Tied — Bondage 🖤", "Newbie — Starter Kits 🎁", "Oops — Sale 😈"].map((item) => (
-              <li key={item}>
-                <Link to="/#categories" className="font-serif italic text-[0.82rem] text-white/35 hover:text-accent transition-colors no-underline">
-                  {item}
+            {[
+              { label: "Buzz — Vibrators ⚡", to: "/category/buzz" },
+              { label: "Duo — For Couples 🔥", to: "/category/duo" },
+              { label: "Slippery — Gels & Lubes 🌶️", to: "/category/slippery" },
+              { label: "Tied — Bondage 🖤", to: "/category/tied" },
+              { label: "Newbie — Starter Kits 🎁", to: "/category/newbie" },
+              { label: "Oops — Sale 😈", to: "/category/oops" },
+            ].map((item) => (
+              <li key={item.label}>
+                <Link to={item.to} className="font-serif italic text-[0.82rem] text-white/35 hover:text-accent transition-colors no-underline">
+                  {item.label}
                 </Link>
               </li>
             ))}
