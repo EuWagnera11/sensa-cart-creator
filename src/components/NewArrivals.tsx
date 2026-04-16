@@ -173,28 +173,28 @@ const NewArrivals = () => {
 
                 {/* Sticker */}
                 <div
-                  className="absolute top-3 right-4 bg-accent text-foreground font-display italic font-bold text-[0.68rem] px-3.5 py-1 border-2 border-dark rounded-full z-[2]"
+                  className="absolute top-2 right-2 sm:top-3 sm:right-4 bg-accent text-foreground font-display italic font-bold text-[0.5rem] sm:text-[0.68rem] px-2 py-0.5 sm:px-3.5 sm:py-1 border-2 border-dark rounded-full z-[2]"
                   style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
                 >
                   {product.sticker}
                 </div>
 
                 {/* Content */}
-                <div className="relative z-[1] mt-auto p-7">
-                  <div className="font-display italic text-[0.72rem] mb-1 text-white/40">
+                <div className="relative z-[1] mt-auto p-3 sm:p-7">
+                  <div className="hidden sm:block font-display italic text-[0.72rem] mb-1 text-white/40">
                     {product.collection}
                   </div>
                   <div
-                    className="font-display font-black italic text-[1.5rem] text-white leading-none mb-2"
+                    className="font-display font-black italic text-[0.9rem] sm:text-[1.5rem] text-white leading-none mb-1 sm:mb-2"
                     style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
                   >
                     {product.name}
                   </div>
-                  <div className="font-serif italic text-[0.8rem] leading-relaxed mb-3 text-white/50">
+                  <div className="hidden sm:block font-serif italic text-[0.8rem] leading-relaxed mb-3 text-white/50">
                     {product.desc}
                   </div>
 
-                  <div className="flex items-center gap-1.5 mb-4">
+                  <div className="hidden sm:flex items-center gap-1.5 mb-4">
                     <span className="text-accent text-[0.9rem]">★</span>
                     <span className="font-display font-bold text-white text-[0.85rem]">
                       {product.rating}
@@ -204,22 +204,18 @@ const NewArrivals = () => {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="font-display font-black text-[1.6rem] text-accent">
+                  <div className="flex items-center justify-between gap-2 sm:gap-4">
+                    <div className="font-display font-black text-[1rem] sm:text-[1.6rem] text-accent">
                       {product.price}
                     </div>
                     <button
                       type="button"
-                      className="bg-cream text-foreground border-2 border-dark px-[18px] py-2 font-display italic text-[0.85rem] font-bold rounded-full transition-colors hover:bg-accent"
+                      className="bg-cream text-foreground border-2 border-dark px-2 py-1 sm:px-[18px] sm:py-2 font-display italic text-[0.65rem] sm:text-[0.85rem] font-bold rounded-full transition-colors hover:bg-accent"
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(product); }}
                     >
                       Add 🛒
                     </button>
                   </div>
-
-                  <span className="font-serif italic text-[0.78rem] mt-3 text-white/55 inline-block">
-                    Discover →
-                  </span>
                 </div>
               </Link>
             ))}
