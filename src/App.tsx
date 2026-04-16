@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense } from "react";
+import { useEffect, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
@@ -8,22 +8,21 @@ import { Toaster } from "@/components/ui/toaster";
 import { CartProvider } from "@/context/CartContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
-
-const CategoryPage = lazy(() => import("./pages/CategoryPage.tsx"));
-const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
-const CartPage = lazy(() => import("./pages/CartPage.tsx"));
-const CheckoutPage = lazy(() => import("./pages/CheckoutPage.tsx"));
-const AllProductsPage = lazy(() => import("./pages/AllProductsPage.tsx"));
-const OurStoryPage = lazy(() => import("./pages/OurStoryPage.tsx"));
-const NoJudgmentPage = lazy(() => import("./pages/NoJudgmentPage.tsx"));
-const AffiliatesPage = lazy(() => import("./pages/AffiliatesPage.tsx"));
-const PressPage = lazy(() => import("./pages/PressPage.tsx"));
-const FaqPage = lazy(() => import("./pages/FaqPage.tsx"));
-const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
-const AuthPage = lazy(() => import("./pages/AuthPage.tsx"));
-const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage.tsx"));
-const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage.tsx"));
-const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+import CategoryPage from "./pages/CategoryPage.tsx";
+import ProductPage from "./pages/ProductPage.tsx";
+import CartPage from "./pages/CartPage.tsx";
+import CheckoutPage from "./pages/CheckoutPage.tsx";
+import AllProductsPage from "./pages/AllProductsPage.tsx";
+import OurStoryPage from "./pages/OurStoryPage.tsx";
+import NoJudgmentPage from "./pages/NoJudgmentPage.tsx";
+import AffiliatesPage from "./pages/AffiliatesPage.tsx";
+import PressPage from "./pages/PressPage.tsx";
+import FaqPage from "./pages/FaqPage.tsx";
+import ContactPage from "./pages/ContactPage.tsx";
+import AuthPage from "./pages/AuthPage.tsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
