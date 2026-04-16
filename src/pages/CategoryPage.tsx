@@ -1,10 +1,12 @@
 import { useParams, Link } from "react-router-dom";
 import { getCategoryBySlug, getProductsByCategory, categories } from "@/data/products";
 import { getProductImage } from "@/data/productImages";
+import { getCategoryBanners } from "@/data/categoryBanners";
 import Navbar from "@/components/Navbar";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import CategoryHeroBanner from "@/components/CategoryHeroBanner";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
