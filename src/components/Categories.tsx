@@ -27,7 +27,7 @@ const Categories = () => (
       </div>
     </div>
 
-    <div className="bg-dark">
+    <div className="bg-dark border-t-[3px] border-primary">
       <div className="grid grid-cols-2 lg:grid-cols-3">
         {categoriesDisplay.map((cat, index) => (
           <Link
