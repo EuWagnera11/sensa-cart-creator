@@ -290,7 +290,13 @@ const ProductPage = () => {
               <div className="flex items-center gap-2 text-sm">
                 <span className={`w-2.5 h-2.5 rounded-full ${product.inStock ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
                 <span className="font-display italic text-foreground text-[0.82rem]">
-                  {product.inStock ? "In Stock — Ships today if ordered before 3 PM" : "Out of Stock"}
+                  {stockQty !== null
+                    ? stockQty > 10
+                      ? `In Stock (${stockQty} left) — Ships today`
+                      : stockQty > 0
+                      ? `Only ${stockQty} left! Ships today`
+                      : "Out of Stock"
+                    : product.inStock ? "In Stock — Ships today if ordered before 3 PM" : "Out of Stock"}
                 </span>
               </div>
             </div>
