@@ -107,8 +107,7 @@ const NewArrivals = () => {
               loading={i === 0 ? "eager" : "lazy"}
               width={1920}
               height={640}
-              className="w-full flex-shrink-0 object-cover"
-              style={{ aspectRatio: "1920/640" }}
+              className="w-full flex-shrink-0 object-cover aspect-[4/3] sm:aspect-[1920/640]"
             />
           ))}
         </div>
@@ -160,9 +159,9 @@ const NewArrivals = () => {
               <Link
                 key={product.slug}
                 to={`/category/${product.categorySlug}/product/${product.slug}`}
-                className={`group relative overflow-hidden flex flex-col aspect-[3/4] no-underline ${
+                className={`group relative overflow-hidden flex flex-col aspect-[4/5] sm:aspect-[3/4] no-underline ${
                   i < 2 ? "sm:border-r-[3px] border-dark" : ""
-                }`}
+                } border-b-[3px] sm:border-b-0 last:border-b-0 border-dark`}
               >
                 <img
                   src={product.image}

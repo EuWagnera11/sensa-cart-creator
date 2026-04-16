@@ -207,7 +207,7 @@ const ProductPage = () => {
               <p className="text-sm text-foreground/70 leading-relaxed mb-6">{product.longDescription}</p>
 
               {/* Key features quick list */}
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 mb-6">
                 {product.features.slice(0, 4).map((feature, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <Check size={14} className="text-primary shrink-0" strokeWidth={3} />
@@ -255,7 +255,7 @@ const ProductPage = () => {
               </div>
 
               {/* Trust row — horizontal compact */}
-              <div className="grid grid-cols-4 gap-2 mb-5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
                 {[
                   { icon: <Truck size={15} />, text: "Free Ship €50+" },
                   { icon: <Package size={15} />, text: "Discreet Box" },
@@ -377,7 +377,7 @@ const ProductPage = () => {
                     ].map((review, i) => (
                       <div key={i} className="bg-parch border-2 border-dark/10 rounded-sm p-5">
                         <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <span className="w-8 h-8 bg-primary/10 border-2 border-dark/10 rounded-full flex items-center justify-center font-display font-bold text-xs text-primary">
                               {review.name[0]}
                             </span>
@@ -411,7 +411,7 @@ const ProductPage = () => {
               <h2 className="font-display font-black italic text-foreground leading-none mb-8" style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)" }}>
                 More from {category.name}.
               </h2>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {relatedProducts.map((rp) => (
                   <Link
                     key={rp.id}

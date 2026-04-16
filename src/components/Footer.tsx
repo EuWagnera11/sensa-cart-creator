@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
 const Footer = () => (
-  <footer className="bg-dark border-t-[5px] border-primary px-6 lg:px-12 pt-20 pb-10">
+  <footer className="bg-dark border-t-[5px] border-primary px-5 sm:px-6 lg:px-12 pt-12 sm:pt-20 pb-8 sm:pb-10">
     <div className="max-w-[1440px] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-14 pb-14 border-b border-white/[0.08]">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-8 sm:gap-12 mb-10 sm:mb-14 pb-10 sm:pb-14 border-b border-white/[0.08]">
         <div className="max-w-[340px]">
           <div className="font-display font-black italic text-4xl lg:text-[3rem] leading-none mb-3">
             <span className="text-primary">Oooh</span>
