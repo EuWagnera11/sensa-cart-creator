@@ -300,8 +300,8 @@ const NewArrivals = () => {
     toast.success(`${p.name} added to bag ✨`);
   };
 
-  // Duplicate array for seamless loop
-  const items = [...newProducts, ...newProducts];
+  // Triplicate array for seamless loop — ensures no visible teleport
+  const items = [...newProducts, ...newProducts, ...newProducts];
 
   const renderCard = (product: (typeof newProducts)[number], index: number) => (
     <div
