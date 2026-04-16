@@ -9,9 +9,9 @@ const items = [
 
 const AnnounceBanner = () => (
   <div className="bg-dark border-b-[3px] border-primary overflow-hidden py-2.5">
-    <div className="flex whitespace-nowrap" style={{ animation: "marquee 20s linear infinite" }}>
-      {[...items, ...items].map((item, i) => (
-        <span key={i} className="font-serif italic text-[0.82rem] text-cream px-12 flex-shrink-0">
+    <div className="flex whitespace-nowrap" style={{ animation: "marquee 12s linear infinite" }}>
+      {[...items, ...items, ...items].map((item, i) => (
+        <span key={i} className="font-serif italic text-[0.7rem] sm:text-[0.82rem] text-cream px-4 sm:px-12 flex-shrink-0">
           {item} <b className="text-accent not-italic">★</b>
         </span>
       ))}
