@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
@@ -56,9 +56,17 @@ const newProducts = [
   },
 ];
 
+// Triple the array for seamless infinite loop
+const loopProducts = [...newProducts, ...newProducts, ...newProducts];
+
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
   const { addItem, setIsOpen } = useCart();
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [carouselX, setCarouselX] = useState(0);
+  const animRef = useRef<number>();
+  const speedRef = useRef(0.5);
+  const pausedRef = useRef(false);
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
   const prev = useCallback(() => setCurrent((c) => (c - 1 + banners.length) % banners.length), []);
@@ -67,6 +75,27 @@ const NewArrivals = () => {
     const id = setInterval(next, 4500);
     return () => clearInterval(id);
   }, [next]);
+
+  // Infinite carousel auto-scroll
+  useEffect(() => {
+    let x = 0;
+    const animate = () => {
+      if (!pausedRef.current) {
+        x -= speedRef.current;
+        const track = trackRef.current;
+        if (track) {
+          const singleSetWidth = track.scrollWidth / 3;
+          if (Math.abs(x) >= singleSetWidth) {
+            x += singleSetWidth;
+          }
+          setCarouselX(x);
+        }
+      }
+      animRef.current = requestAnimationFrame(animate);
+    };
+    animRef.current = requestAnimationFrame(animate);
+    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
+  }, []);
 
   const handleAdd = (p: (typeof newProducts)[number]) => {
     addItem({
@@ -112,7 +141,6 @@ const NewArrivals = () => {
           ))}
         </div>
 
-        {/* Navigation arrows */}
         <button
           onClick={prev}
           className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center font-display font-bold text-lg shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-10"
@@ -128,7 +156,6 @@ const NewArrivals = () => {
           →
         </button>
 
-        {/* Dots */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
           {banners.map((_, i) => (
             <button
@@ -143,26 +170,39 @@ const NewArrivals = () => {
         </div>
       </div>
 
-      {/* 3 Products grid */}
-      <div className="px-6 lg:px-12 py-16 lg:py-20">
+      {/* Products carousel */}
+      <div className="px-6 lg:px-12 pt-16 pb-8 lg:pt-20 lg:pb-10">
         <div className="max-w-[1440px] mx-auto">
           <p className="section-kicker text-primary mb-2.5">Fresh off the shelf</p>
           <h2
-            className="font-display font-black italic text-dark leading-none mb-12"
+            className="font-display font-black italic text-dark leading-none mb-10"
             style={{ fontSize: "clamp(2rem,3vw,3rem)" }}
           >
             What's New, Gorgeous?
           </h2>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-3 gap-0 border-[3px] border-dark">
-            {newProducts.map((product, i) => (
-              <Link
-                key={product.slug}
-                to={`/category/${product.categorySlug}/product/${product.slug}`}
-                className={`group relative overflow-hidden flex flex-col aspect-[2/3] sm:aspect-[3/4] no-underline ${
-                  i < 2 ? "border-r-[3px] border-dark" : ""
-                }`}
-              >
+      <div
+        className="overflow-hidden pb-16 lg:pb-20"
+        onMouseEnter={() => { pausedRef.current = true; }}
+        onMouseLeave={() => { pausedRef.current = false; }}
+        onTouchStart={() => { pausedRef.current = true; }}
+        onTouchEnd={() => { setTimeout(() => { pausedRef.current = false; }, 2000); }}
+      >
+        <div
+          ref={trackRef}
+          className="flex gap-5 sm:gap-7 will-change-transform"
+          style={{ transform: `translateX(${carouselX}px)` }}
+        >
+          {loopProducts.map((product, i) => (
+            <Link
+              key={`${product.slug}-${i}`}
+              to={`/category/${product.categorySlug}/product/${product.slug}`}
+              className="group relative overflow-hidden flex-shrink-0 w-[260px] sm:w-[320px] lg:w-[380px] no-underline border-[3px] border-dark rounded-sm"
+              style={{ boxShadow: "5px 5px 0 hsl(var(--dark))" }}
+            >
+              <div className="relative aspect-[3/4]">
                 <img
                   src={product.image}
                   alt={product.name}
@@ -173,53 +213,53 @@ const NewArrivals = () => {
 
                 {/* Sticker */}
                 <div
-                  className="absolute top-2 right-2 sm:top-3 sm:right-4 bg-accent text-foreground font-display italic font-bold text-[0.5rem] sm:text-[0.68rem] px-2 py-0.5 sm:px-3.5 sm:py-1 border-2 border-dark rounded-full z-[2]"
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-accent text-foreground font-display italic font-bold text-[0.6rem] sm:text-[0.72rem] px-3 py-1 sm:px-4 sm:py-1.5 border-2 border-dark rounded-full z-[2]"
                   style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
                 >
                   {product.sticker}
                 </div>
 
                 {/* Content */}
-                <div className="relative z-[1] mt-auto p-3 sm:p-7">
-                  <div className="hidden sm:block font-display italic text-[0.72rem] mb-1 text-white/40">
+                <div className="relative z-[1] mt-auto absolute bottom-0 left-0 right-0 p-5 sm:p-7">
+                  <div className="font-display italic text-[0.68rem] mb-1 text-white/40">
                     {product.collection}
                   </div>
                   <div
-                    className="font-display font-black italic text-[0.9rem] sm:text-[1.5rem] text-white leading-none mb-1 sm:mb-2"
+                    className="font-display font-black italic text-[1.2rem] sm:text-[1.6rem] text-white leading-none mb-2"
                     style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
                   >
                     {product.name}
                   </div>
-                  <div className="hidden sm:block font-serif italic text-[0.8rem] leading-relaxed mb-3 text-white/50">
+                  <div className="font-serif italic text-[0.75rem] leading-relaxed mb-3 text-white/50">
                     {product.desc}
                   </div>
 
-                  <div className="hidden sm:flex items-center gap-1.5 mb-4">
+                  <div className="flex items-center gap-1.5 mb-4">
                     <span className="text-accent text-[0.9rem]">★</span>
                     <span className="font-display font-bold text-white text-[0.85rem]">
                       {product.rating}
                     </span>
-                    <span className="font-serif italic text-white/40 text-[0.78rem]">
-                      ({product.reviews.toLocaleString()} reviews)
+                    <span className="font-serif italic text-white/40 text-[0.72rem]">
+                      ({product.reviews.toLocaleString()})
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 sm:gap-4">
-                    <div className="font-display font-black text-[1rem] sm:text-[1.6rem] text-accent">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="font-display font-black text-[1.3rem] sm:text-[1.6rem] text-accent">
                       {product.price}
                     </div>
                     <button
                       type="button"
-                      className="bg-cream text-foreground border-2 border-dark px-2 py-1 sm:px-[18px] sm:py-2 font-display italic text-[0.65rem] sm:text-[0.85rem] font-bold rounded-full transition-colors hover:bg-accent"
+                      className="bg-cream text-foreground border-2 border-dark px-4 py-2 sm:px-[18px] sm:py-2 font-display italic text-[0.75rem] sm:text-[0.85rem] font-bold rounded-full transition-colors hover:bg-accent"
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(product); }}
                     >
                       Add 🛒
                     </button>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
