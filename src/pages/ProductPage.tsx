@@ -73,28 +73,28 @@ const ProductPage = () => {
       <Navbar />
 
       {/* Breadcrumb */}
-      <div className="bg-cream paper-bg border-b-[3px] border-dark px-6 lg:px-12 py-3">
-        <div className="max-w-[1440px] mx-auto flex items-center gap-2 text-xs font-serif italic text-muted-foreground">
-          <Link to="/" className="hover:text-primary transition-colors no-underline text-muted-foreground">Home</Link>
+      <div className="bg-cream paper-bg border-b-[3px] border-dark px-4 sm:px-6 lg:px-12 py-3">
+        <div className="max-w-[1440px] mx-auto flex items-center gap-2 text-xs font-serif italic text-muted-foreground overflow-x-auto">
+          <Link to="/" className="hover:text-primary transition-colors no-underline text-muted-foreground shrink-0">Home</Link>
           <span>›</span>
-          <Link to={`/category/${categorySlug}`} className="hover:text-primary transition-colors no-underline text-muted-foreground">{category.name}</Link>
+          <Link to={`/category/${categorySlug}`} className="hover:text-primary transition-colors no-underline text-muted-foreground shrink-0">{category.name}</Link>
           <span>›</span>
-          <span className="text-foreground font-semibold">{product.name}</span>
+          <span className="text-foreground font-semibold truncate">{product.name}</span>
         </div>
       </div>
 
       {/* Main Product Section */}
-      <div className="bg-parch paper-bg px-6 lg:px-12 py-10 lg:py-16">
+      <div className="bg-parch paper-bg px-4 sm:px-6 lg:px-12 py-8 lg:py-16">
         <div className="max-w-[1440px] mx-auto">
-          <Link to={`/category/${categorySlug}`} className="inline-flex items-center gap-2 font-display italic text-sm text-muted-foreground hover:text-primary transition-colors no-underline mb-6">
+          <Link to={`/category/${categorySlug}`} className="inline-flex items-center gap-2 font-display italic text-sm text-muted-foreground hover:text-primary transition-colors no-underline mb-4 lg:mb-6">
             <ArrowLeft size={16} /> Back to {category.name}
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-12">
             {/* LEFT — Image Gallery */}
             <div>
               {/* Main image */}
-              <div className="relative aspect-square overflow-hidden border-[3px] border-dark rounded-sm bg-surface mb-3" style={{ boxShadow: "var(--shadow-brutal)" }}>
+              <div className="relative aspect-square overflow-hidden border-[3px] border-dark rounded-sm bg-surface mb-2 sm:mb-3" style={{ boxShadow: "var(--shadow-brutal)" }}>
                 {productImg ? (
                   <img src={productImg} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
                 ) : (
@@ -161,11 +161,11 @@ const ProductPage = () => {
               <p className="text-sm text-foreground/70 leading-relaxed mb-6">{product.longDescription}</p>
 
               {/* Price */}
-              <div className="flex items-center gap-3 mb-6 pb-6 border-b-2 border-dark/10">
-                <span className="font-display font-black text-[2.5rem] text-primary leading-none">€{product.price}</span>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-5 sm:mb-6 pb-5 sm:pb-6 border-b-2 border-dark/10">
+                <span className="font-display font-black text-[2rem] sm:text-[2.5rem] text-primary leading-none">€{product.price}</span>
                 {product.originalPrice && (
                   <>
-                    <span className="font-serif italic text-xl text-muted-foreground line-through">€{product.originalPrice}</span>
+                    <span className="font-serif italic text-lg sm:text-xl text-muted-foreground line-through">€{product.originalPrice}</span>
                     <span className="bg-accent text-foreground font-display italic text-xs font-bold px-3 py-1 border-2 border-dark rounded-full">
                       -{Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
                     </span>
@@ -174,8 +174,8 @@ const ProductPage = () => {
               </div>
 
               {/* Qty + Add to Cart */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex items-center border-[3px] border-dark rounded-sm overflow-hidden shadow-[3px_3px_0_hsl(var(--dark))]">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5 sm:mb-6">
+                <div className="flex items-center border-[3px] border-dark rounded-sm overflow-hidden shadow-[3px_3px_0_hsl(var(--dark))] self-start">
                   <button type="button" onClick={() => setQty(Math.max(1, qty - 1))} className="px-4 py-3 bg-cream text-foreground font-bold hover:bg-parch transition-colors text-lg">−</button>
                   <span className="px-5 py-3 bg-cream text-foreground font-display font-bold text-lg min-w-[50px] text-center">{qty}</span>
                   <button type="button" onClick={() => setQty(qty + 1)} className="px-4 py-3 bg-cream text-foreground font-bold hover:bg-parch transition-colors text-lg">+</button>
@@ -183,14 +183,14 @@ const ProductPage = () => {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="red-texture-fill flex-1 border-[3px] border-dark px-6 py-3 font-display italic text-[1.05rem] font-bold shadow-[5px_5px_0_hsl(var(--dark))] rounded-sm hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[8px_8px_0_hsl(var(--dark))] transition-all flex items-center justify-center gap-2"
+                  className="red-texture-fill flex-1 border-[3px] border-dark px-5 py-3 font-display italic text-[0.95rem] sm:text-[1.05rem] font-bold shadow-[5px_5px_0_hsl(var(--dark))] rounded-sm hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[8px_8px_0_hsl(var(--dark))] transition-all flex items-center justify-center gap-2"
                 >
                   <ShoppingCart size={20} /> Add to Bag — €{(product.price * qty).toFixed(2)}
                 </button>
               </div>
 
               {/* Trust badges */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6">
+              <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mb-5 sm:mb-6">
                 {[
                   { icon: <Truck size={16} />, text: "Free Shipping", sub: "Orders €50+" },
                   { icon: <Package size={16} />, text: "Discreet Box", sub: "No branding" },
@@ -216,15 +216,15 @@ const ProductPage = () => {
           </div>
 
           {/* Tabs Section */}
-          <div className="mt-14 border-[3px] border-dark bg-cream rounded-sm" style={{ boxShadow: "var(--shadow-brutal)" }}>
+          <div className="mt-10 sm:mt-14 border-[3px] border-dark bg-cream rounded-sm" style={{ boxShadow: "var(--shadow-brutal)" }}>
             {/* Tab header */}
-            <div className="flex border-b-[3px] border-dark overflow-x-auto">
+            <div className="flex border-b-[3px] border-dark overflow-x-auto scrollbar-none">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 lg:px-8 py-4 font-display italic font-bold text-[0.88rem] transition-colors whitespace-nowrap border-r-[3px] border-dark last:border-r-0 ${
+                  className={`px-4 sm:px-6 lg:px-8 py-3 sm:py-4 font-display italic font-bold text-[0.78rem] sm:text-[0.88rem] transition-colors whitespace-nowrap border-r-[3px] border-dark last:border-r-0 ${
                     activeTab === tab.id
                       ? "bg-dark text-cream"
                       : "bg-cream text-foreground hover:bg-parch"
@@ -236,7 +236,7 @@ const ProductPage = () => {
             </div>
 
             {/* Tab content */}
-            <div className="p-6 lg:p-10">
+            <div className="p-4 sm:p-6 lg:p-10">
               {activeTab === "description" && (
                 <div className="max-w-3xl">
                   <p className="font-serif italic text-lg text-muted-foreground leading-relaxed mb-4">{product.description}</p>

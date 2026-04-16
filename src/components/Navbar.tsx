@@ -80,6 +80,19 @@ const Navbar = () => {
             </Link>
           )}
 
+          {/* Mobile bag button */}
+          <button
+            type="button"
+            className="sm:hidden relative text-cream p-2"
+            onClick={() => setIsOpen(true)}
+          >
+            <ShoppingBag size={22} />
+            {itemCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-[18px] h-[18px] bg-primary text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center border border-dark">
+                {itemCount}
+              </span>
+            )}
+          </button>
           <button
             type="button"
             className="hidden sm:inline-flex items-center gap-2 red-texture-fill border-2 border-dark px-5 py-2.5 font-display italic text-[0.9rem] rounded-[2px] transition-all"
