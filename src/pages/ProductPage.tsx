@@ -6,9 +6,11 @@ import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { ArrowLeft, ShoppingCart, Truck, Shield, RotateCcw, Star, Heart, Package, Clock, Check, ChevronDown } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const ProductPage = () => {
   const { categorySlug, productSlug } = useParams<{ categorySlug: string; productSlug: string }>();
@@ -21,6 +23,21 @@ const ProductPage = () => {
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
   const imgRef = useRef<HTMLDivElement>(null);
   const { addItem, setIsOpen } = useCart();
+  const { user } = useAuth();
+  const [dbReviews, setDbReviews] = useState<Array<{ id: string; rating: number; review_text: string | null; verified_purchase: boolean; created_at: string; user_id: string }>>([]);
+  const [stockQty, setStockQty] = useState<number | null>(null);
+  const [newReview, setNewReview] = useState({ rating: 5, text: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  useEffect(() => {
+    if (!productSlug) return;
+    supabase.from("product_reviews").select("*").eq("product_slug", productSlug).order("created_at", { ascending: false }).then(({ data }) => {
+      if (data) setDbReviews(data as typeof dbReviews);
+    });
+    supabase.from("product_stock").select("quantity").eq("product_slug", productSlug).maybeSingle().then(({ data }) => {
+      if (data) setStockQty(data.quantity);
+    });
+  }, [productSlug]);
 
   if (!product || !category) {
     return (
@@ -273,7 +290,13 @@ const ProductPage = () => {
               <div className="flex items-center gap-2 text-sm">
                 <span className={`w-2.5 h-2.5 rounded-full ${product.inStock ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
                 <span className="font-display italic text-foreground text-[0.82rem]">
-                  {product.inStock ? "In Stock — Ships today if ordered before 3 PM" : "Out of Stock"}
+                  {stockQty !== null
+                    ? stockQty > 10
+                      ? `In Stock (${stockQty} left) — Ships today`
+                      : stockQty > 0
+                      ? `Only ${stockQty} left! Ships today`
+                      : "Out of Stock"
+                    : product.inStock ? "In Stock — Ships today if ordered before 3 PM" : "Out of Stock"}
                 </span>
               </div>
             </div>
@@ -369,13 +392,89 @@ const ProductPage = () => {
                     </div>
                   </div>
 
+                  {/* Write a review form */}
+                  {user && (
+                    <div className="bg-parch border-2 border-dark/10 rounded-sm p-5 mb-6">
+                      <h4 className="font-display italic font-bold text-sm text-foreground mb-3">Write a review</h4>
+                      <div className="flex gap-1 mb-3">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <button key={s} type="button" onClick={() => setNewReview({ ...newReview, rating: s })}>
+                            <Star size={20} className={s <= newReview.rating ? "fill-accent text-accent" : "text-muted-foreground/30"} />
+                          </button>
+                        ))}
+                      </div>
+                      <textarea
+                        value={newReview.text}
+                        onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+                        placeholder="Share your experience..."
+                        className="w-full bg-cream border-2 border-dark/10 rounded-sm p-3 text-sm font-serif italic outline-none focus:border-primary transition-colors resize-none"
+                        rows={3}
+                      />
+                      <button
+                        type="button"
+                        disabled={submittingReview}
+                        onClick={async () => {
+                          setSubmittingReview(true);
+                          const { error } = await supabase.from("product_reviews").insert({
+                            product_slug: productSlug || "",
+                            user_id: user.id,
+                            rating: newReview.rating,
+                            review_text: newReview.text || null,
+                          });
+                          setSubmittingReview(false);
+                          if (error) { toast.error("Failed to submit review"); return; }
+                          toast.success("Review submitted! 🎉");
+                          setNewReview({ rating: 5, text: "" });
+                          // Refresh reviews
+                          const { data } = await supabase.from("product_reviews").select("*").eq("product_slug", productSlug || "").order("created_at", { ascending: false });
+                          if (data) setDbReviews(data as typeof dbReviews);
+                        }}
+                        className="mt-3 cta-primary text-sm px-6 py-2"
+                      >
+                        {submittingReview ? "Submitting..." : "Submit Review"}
+                      </button>
+                    </div>
+                  )}
+                  {!user && (
+                    <div className="bg-parch border-2 border-dark/10 rounded-sm p-4 mb-6 text-center">
+                      <Link to="/auth" className="font-display italic text-primary text-sm no-underline hover:underline">Sign in to leave a review →</Link>
+                    </div>
+                  )}
+
+                  {/* Static + DB reviews */}
                   <div className="space-y-4">
+                    {/* Show DB reviews first */}
+                    {dbReviews.map((review) => (
+                      <div key={review.id} className="bg-parch border-2 border-dark/10 rounded-sm p-5">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="w-8 h-8 bg-primary/10 border-2 border-dark/10 rounded-full flex items-center justify-center font-display font-bold text-xs text-primary">
+                              U
+                            </span>
+                            <span className="font-display italic font-bold text-sm text-foreground">User</span>
+                            {review.verified_purchase && (
+                              <span className="flex items-center gap-0.5 text-[0.6rem] text-green-700 font-bold">
+                                <Check size={10} strokeWidth={3} /> Verified
+                              </span>
+                            )}
+                            <div className="flex gap-0.5">
+                              {[...Array(5)].map((_, j) => (
+                                <Star key={j} size={11} className={j < review.rating ? "fill-accent text-accent" : "text-muted-foreground/30"} />
+                              ))}
+                            </div>
+                          </div>
+                          <span className="text-[0.68rem] text-muted-foreground">{new Date(review.created_at).toLocaleDateString("pt-PT")}</span>
+                        </div>
+                        {review.review_text && <p className="font-serif italic text-sm text-foreground/80 leading-relaxed ml-10">{review.review_text}</p>}
+                      </div>
+                    ))}
+                    {/* Fallback static reviews */}
                     {[
                       { name: "Sarah M.", rating: 5, text: "Best purchase I've ever made. The quality is amazing and the packaging was super discreet. Highly recommend! 🔥", date: "2 weeks ago", verified: true },
                       { name: "Ana R.", rating: 5, text: "Exceeded all my expectations. Arrived fast and the product is even better than described.", date: "1 month ago", verified: true },
                       { name: "Guest", rating: 4, text: "Great product, just wish there were more colour options. But the quality is top-notch.", date: "2 months ago", verified: false },
                     ].map((review, i) => (
-                      <div key={i} className="bg-parch border-2 border-dark/10 rounded-sm p-5">
+                      <div key={`static-${i}`} className="bg-parch border-2 border-dark/10 rounded-sm p-5">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="w-8 h-8 bg-primary/10 border-2 border-dark/10 rounded-full flex items-center justify-center font-display font-bold text-xs text-primary">

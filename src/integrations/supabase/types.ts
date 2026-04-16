@@ -14,6 +14,179 @@ export type Database = {
   }
   public: {
     Tables: {
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          current_uses: number
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          min_order_value: number | null
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          current_uses?: number
+          discount_type: string
+          discount_value: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          min_order_value?: number | null
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          current_uses?: number
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          min_order_value?: number | null
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          product_name: string
+          product_slug: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          product_name: string
+          product_slug: string
+          quantity: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_name?: string
+          product_slug?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          coupon_code: string | null
+          created_at: string
+          discount: number
+          id: string
+          shipping: number
+          shipping_address: Json | null
+          status: string
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          coupon_code?: string | null
+          created_at?: string
+          discount?: number
+          id?: string
+          shipping?: number
+          shipping_address?: Json | null
+          status?: string
+          subtotal: number
+          total: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          coupon_code?: string | null
+          created_at?: string
+          discount?: number
+          id?: string
+          shipping?: number
+          shipping_address?: Json | null
+          status?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      product_reviews: {
+        Row: {
+          created_at: string
+          id: string
+          product_slug: string
+          rating: number
+          review_text: string | null
+          user_id: string
+          verified_purchase: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_slug: string
+          rating: number
+          review_text?: string | null
+          user_id: string
+          verified_purchase?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_slug?: string
+          rating?: number
+          review_text?: string | null
+          user_id?: string
+          verified_purchase?: boolean
+        }
+        Relationships: []
+      }
+      product_stock: {
+        Row: {
+          id: string
+          low_stock_threshold: number
+          product_slug: string
+          quantity: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          low_stock_threshold?: number
+          product_slug: string
+          quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          low_stock_threshold?: number
+          product_slug?: string
+          quantity?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

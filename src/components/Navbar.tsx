@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X, User, LogOut, Search } from "lucide-react";
+import { Menu, ShoppingBag, X, User, LogOut, Search, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/hooks/useAuth";
 import SearchOverlay from "@/components/SearchOverlay";
@@ -61,15 +61,25 @@ const Navbar = () => {
 
           {/* Auth button */}
           {user ? (
-            <button
-              type="button"
-              onClick={signOut}
-              className="hidden sm:inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem]"
-              title="Sign out"
-            >
-              <LogOut size={15} />
-              <span className="hidden md:inline">Sign Out</span>
-            </button>
+            <div className="hidden sm:flex items-center gap-3">
+              <Link
+                to="/orders"
+                className="inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
+                title="My Orders"
+              >
+                <Package size={15} />
+                <span className="hidden md:inline">Orders</span>
+              </Link>
+              <button
+                type="button"
+                onClick={signOut}
+                className="inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem]"
+                title="Sign out"
+              >
+                <LogOut size={15} />
+                <span className="hidden md:inline">Sign Out</span>
+              </button>
+            </div>
           ) : (
             <Link
               to="/auth"
@@ -117,9 +127,14 @@ const Navbar = () => {
           ))}
           <div className="pt-4">
             {user ? (
-              <button onClick={() => { signOut(); setMobileOpen(false); }} className="text-white/50 font-display italic text-sm flex items-center gap-2">
-                <LogOut size={15} /> Sign Out
-              </button>
+              <div className="flex flex-col gap-3">
+                <Link to="/orders" onClick={() => setMobileOpen(false)} className="text-white/50 font-display italic text-sm flex items-center gap-2 no-underline">
+                  <Package size={15} /> My Orders
+                </Link>
+                <button onClick={() => { signOut(); setMobileOpen(false); }} className="text-white/50 font-display italic text-sm flex items-center gap-2">
+                  <LogOut size={15} /> Sign Out
+                </button>
+              </div>
             ) : (
               <Link to="/auth" onClick={() => setMobileOpen(false)} className="text-accent font-display italic text-sm flex items-center gap-2 no-underline">
                 <User size={15} /> Sign In

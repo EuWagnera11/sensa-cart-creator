@@ -1,14 +1,19 @@
-import { ArrowLeft, Minus, Plus, ShieldCheck, ShoppingBag, Trash2, Truck } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShieldCheck, ShoppingBag, Tag, Trash2, Truck, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { useCart } from "@/context/CartContext";
+import { useCoupon } from "@/hooks/useCoupon";
 
 const CartPage = () => {
   const navigate = useNavigate();
   const { items, itemCount, subtotal, shipping, total, updateQuantity, removeItem, clearCart } = useCart();
+  const { coupon, couponCode, setCouponCode, loading: couponLoading, applyCoupon, removeCoupon, calculateDiscount } = useCoupon();
+
+  const discount = calculateDiscount(subtotal);
+  const finalTotal = total - discount;
 
   return (
     <>
@@ -105,7 +110,46 @@ const CartPage = () => {
               </div>
             </div>
 
-            <div className="space-y-4 border-y border-white/10 py-5">
+            {/* Coupon section */}
+            <div className="mb-5 pb-5 border-b border-white/10">
+              <div className="flex items-center gap-2 mb-3">
+                <Tag size={14} className="text-accent" />
+                <span className="font-display italic text-sm text-white/70">Have a coupon?</span>
+              </div>
+              {coupon ? (
+                <div className="flex items-center justify-between bg-accent/20 rounded-[12px] px-4 py-3">
+                  <div>
+                    <span className="font-display italic font-bold text-accent text-sm">{coupon.code}</span>
+                    <span className="text-white/50 text-xs ml-2">
+                      -{coupon.discount_type === "percentage" ? `${coupon.discount_value}%` : `€${coupon.discount_value}`}
+                    </span>
+                  </div>
+                  <button type="button" onClick={removeCoupon} className="text-white/50 hover:text-white transition-colors">
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="WELCOME10"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    className="flex-1 bg-white/10 text-white placeholder:text-white/30 border-2 border-white/10 rounded-[12px] px-4 py-2.5 font-display italic text-sm outline-none focus:border-accent transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => applyCoupon(couponCode, subtotal)}
+                    disabled={couponLoading || items.length === 0}
+                    className="bg-accent text-foreground font-display italic font-bold text-sm px-5 py-2.5 rounded-[12px] border-2 border-dark hover:brightness-110 transition-all disabled:opacity-50"
+                  >
+                    {couponLoading ? "..." : "Apply"}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4 border-b border-white/10 pb-5">
               <div className="flex items-center justify-between text-white/75">
                 <span>Subtotal</span>
                 <span className="font-display font-bold text-white">€{subtotal.toFixed(2)}</span>
@@ -114,9 +158,15 @@ const CartPage = () => {
                 <span>Shipping</span>
                 <span className="font-display font-bold text-white">{shipping === 0 ? "Free" : `€${shipping.toFixed(2)}`}</span>
               </div>
+              {discount > 0 && (
+                <div className="flex items-center justify-between text-accent">
+                  <span className="font-display italic">Discount</span>
+                  <span className="font-display font-bold">-€{discount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex items-center justify-between text-white text-xl">
                 <span className="font-display italic">Total</span>
-                <span className="font-display font-black text-accent text-3xl">€{total.toFixed(2)}</span>
+                <span className="font-display font-black text-accent text-3xl">€{finalTotal.toFixed(2)}</span>
               </div>
             </div>
 
