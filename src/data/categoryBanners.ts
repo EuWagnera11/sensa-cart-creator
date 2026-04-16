@@ -10,6 +10,14 @@ import newbieBanner1 from "@/assets/banners/newbie-banner-1.jpg";
 import newbieBanner2 from "@/assets/banners/newbie-banner-2.jpg";
 import oopsBanner1 from "@/assets/banners/oops-banner-1.jpg";
 import oopsBanner2 from "@/assets/banners/oops-banner-2.jpg";
+import justInBanner1 from "@/assets/banners/just-in-banner-1.jpg";
+import justInBanner2 from "@/assets/banners/just-in-banner-2.jpg";
+import soloBanner1 from "@/assets/banners/solo-banner-1.jpg";
+import soloBanner2 from "@/assets/banners/solo-banner-2.jpg";
+import pushItBanner1 from "@/assets/banners/push-it-banner-1.jpg";
+import pushItBanner2 from "@/assets/banners/push-it-banner-2.jpg";
+import playtimeBanner1 from "@/assets/banners/playtime-banner-1.jpg";
+import playtimeBanner2 from "@/assets/banners/playtime-banner-2.jpg";
 
 export interface BannerSlide {
   image: string;
@@ -41,6 +49,22 @@ const categoryBanners: Record<string, BannerSlide[]> = {
   oops: [
     { image: oopsBanner1, headline: "Flash Sale.", sub: "Up to 52% off." },
     { image: oopsBanner2, headline: "Grab before gone.", sub: "Limited stock deals." },
+  ],
+  "just-in": [
+    { image: justInBanner1, headline: "Fresh trouble.", sub: "Just landed. First dibs." },
+    { image: justInBanner2, headline: "Unwrap the new.", sub: "Premium drops, hot off the shelf." },
+  ],
+  solo: [
+    { image: soloBanner1, headline: "Me, myself & wow.", sub: "No audience needed." },
+    { image: soloBanner2, headline: "Self-care levelled up.", sub: "Treat yourself. You deserve it." },
+  ],
+  "push-it": [
+    { image: pushItBanner1, headline: "A little further.", sub: "Kink & sensation, refined." },
+    { image: pushItBanner2, headline: "Blindfold the ordinary.", sub: "Explore what excites you." },
+  ],
+  playtime: [
+    { image: playtimeBanner1, headline: "You make the rules.", sub: "Accessories & play essentials." },
+    { image: playtimeBanner2, headline: "Game on.", sub: "Set the mood. Roll the dice." },
   ],
 };
 
