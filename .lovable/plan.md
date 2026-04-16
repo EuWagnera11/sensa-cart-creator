@@ -1,19 +1,9 @@
 
 
-# Trocar fundo da seção "Our Best Kept Secrets" para marrom escuro
+# Adicionar linha preta de 4px embaixo do MarqueeBand
 
 ## Mudança
 
-### `src/components/Products.tsx` — Linha 43
-Trocar `bg-black`, `border-black` e `border-b-black` por `bg-dark`, `border-dark` e `border-b-dark`:
-
-```
-bg-black border-t-[5px] border-black border-b-[5px] border-b-black
-```
-→
-```
-bg-dark border-t-[5px] border-dark border-b-[5px] border-b-dark
-```
-
-Resultado: fundo volta ao marrom escuro da identidade visual OoohMy (`hsl(23, 100%, 5%)`).
+### `src/components/MarqueeBand.tsx` — Linha 13
+Trocar `shadow-[0_3px_0_0_hsl(var(--dark))]` por `shadow-[0_4px_0_0_hsl(var(--dark))]` para igualar a espessura da linha preta do TrustBar (4px).
 
