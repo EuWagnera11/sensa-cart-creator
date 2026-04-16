@@ -6,9 +6,11 @@ import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { ArrowLeft, ShoppingCart, Truck, Shield, RotateCcw, Star, Heart, Package, Clock, Check, ChevronDown } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const ProductPage = () => {
   const { categorySlug, productSlug } = useParams<{ categorySlug: string; productSlug: string }>();
