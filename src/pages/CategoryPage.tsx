@@ -55,24 +55,33 @@ const CategoryPage = () => {
       <AnnounceBanner />
       <Navbar />
 
-      {/* Hero */}
-      <div className={`${category.color} border-b-[5px] border-dark relative overflow-hidden`}>
-        <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: "radial-gradient(circle, rgba(0,0,0,.1) 1px, transparent 1px)",
-          backgroundSize: "18px 18px",
-        }} />
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24 relative z-[2]">
-          <Link to="/" className={`inline-flex items-center gap-2 font-display italic text-sm mb-6 no-underline transition-colors ${category.darkText ? "text-foreground/60 hover:text-foreground" : "text-white/60 hover:text-white"}`}>
-            <ArrowLeft size={16} /> Back to Home
-          </Link>
-          <span className="text-6xl block mb-4">{category.emoji}</span>
-          <h1 className={`font-display font-black italic leading-none mb-2 ${category.darkText ? "text-foreground" : "text-white"}`} style={{ fontSize: "clamp(3rem,5vw,5rem)", textShadow: category.darkText ? "none" : "3px 3px 0 rgba(0,0,0,.2)" }}>
-            {category.name}.
-          </h1>
-          <p className={`font-display italic text-lg mb-1 ${category.darkText ? "text-foreground/60" : "text-white/70"}`}>{category.collection}</p>
-          <p className={`text-xs tracking-[3px] uppercase font-bold ${category.darkText ? "text-foreground/40" : "text-white/40"}`}>{category.desc} · {categoryProducts.length} products</p>
+      {/* Hero Banner */}
+      {getCategoryBanners(categorySlug || "").length > 0 ? (
+        <CategoryHeroBanner
+          slides={getCategoryBanners(categorySlug || "")}
+          categoryName={category.name}
+          categoryEmoji={category.emoji}
+          categoryCollection={category.collection}
+          categoryDesc={category.desc}
+          productCount={categoryProducts.length}
+          darkText={category.darkText}
+        />
+      ) : (
+        <div className={`${category.color} border-b-[5px] border-dark relative overflow-hidden`}>
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage: "radial-gradient(circle, rgba(0,0,0,.1) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+          }} />
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24 relative z-[2]">
+            <span className="text-6xl block mb-4">{category.emoji}</span>
+            <h1 className={`font-display font-black italic leading-none mb-2 ${category.darkText ? "text-foreground" : "text-white"}`} style={{ fontSize: "clamp(3rem,5vw,5rem)", textShadow: category.darkText ? "none" : "3px 3px 0 rgba(0,0,0,.2)" }}>
+              {category.name}.
+            </h1>
+            <p className={`font-display italic text-lg mb-1 ${category.darkText ? "text-foreground/60" : "text-white/70"}`}>{category.collection}</p>
+            <p className={`text-xs tracking-[3px] uppercase font-bold ${category.darkText ? "text-foreground/40" : "text-white/40"}`}>{category.desc} · {categoryProducts.length} products</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Breadcrumb */}
       <div className="bg-cream paper-bg border-b-[3px] border-dark px-6 lg:px-12 py-3">
