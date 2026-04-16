@@ -19,6 +19,9 @@ const AffiliatesPage = lazy(() => import("./pages/AffiliatesPage.tsx"));
 const PressPage = lazy(() => import("./pages/PressPage.tsx"));
 const FaqPage = lazy(() => import("./pages/FaqPage.tsx"));
 const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
+const AuthPage = lazy(() => import("./pages/AuthPage.tsx"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage.tsx"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient();
@@ -106,6 +109,9 @@ const App = () => (
               <Route path="/press" element={<PressPage />} />
               <Route path="/faq" element={<FaqPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/category/:categorySlug" element={<CategoryPage />} />
               <Route path="/category/:categorySlug/product/:productSlug" element={<ProductPage />} />
               <Route path="*" element={<NotFound />} />
