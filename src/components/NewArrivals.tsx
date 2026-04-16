@@ -192,15 +192,18 @@ const newProducts = [
   },
 ];
 
+const CARD_WIDTH = 220; // xl width
+const GAP = 16;
+
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
   const [productIndex, setProductIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const { addItem, setIsOpen } = useCart();
   const count = newProducts.length;
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + banners.length) % banners.length), []);
 
   useEffect(() => {
     const id = setInterval(next, 4500);
@@ -211,28 +214,29 @@ const NewArrivals = () => {
     if (isAnimating) return;
     setIsAnimating(true);
     setProductIndex((i) => i + 1);
-    setTimeout(() => setIsAnimating(false), 500);
+    setTimeout(() => setIsAnimating(false), 450);
   }, [isAnimating]);
 
   const prevProduct = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
     setProductIndex((i) => i - 1);
-    setTimeout(() => setIsAnimating(false), 500);
+    setTimeout(() => setIsAnimating(false), 450);
   }, [isAnimating]);
 
-  // Auto-rotate products
   useEffect(() => {
     const id = setInterval(nextProduct, 3500);
     return () => clearInterval(id);
   }, [nextProduct]);
 
-  const getProduct = (offset: number) => {
-    const idx = ((productIndex + offset) % count + count) % count;
-    return newProducts[idx];
+  const getWrapped = (index: number) => {
+    const i = ((index % count) + count) % count;
+    return newProducts[i];
   };
 
-  const handleAdd = (p: (typeof newProducts)[number]) => {
+  const handleAdd = (p: (typeof newProducts)[number], e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem({
       id: p.slug,
       name: p.name,
@@ -255,100 +259,8 @@ const NewArrivals = () => {
     toast.success(`${p.name} added to bag ✨`);
   };
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const isResetting = useRef(false);
-
-  // Render 3 copies for infinite loop
-  const loopProducts = [...newProducts, ...newProducts, ...newProducts];
-
-  // On mount, scroll to middle set
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const oneSetWidth = el.scrollWidth / 3;
-    el.scrollLeft = oneSetWidth;
-  }, []);
-
-  // When scroll nears edges, jump to middle set seamlessly
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const handleScroll = () => {
-      if (isResetting.current) return;
-      const oneSetWidth = el.scrollWidth / 3;
-      if (el.scrollLeft < oneSetWidth * 0.15) {
-        isResetting.current = true;
-        el.style.scrollBehavior = "auto";
-        el.scrollLeft += oneSetWidth;
-        el.style.scrollBehavior = "";
-        isResetting.current = false;
-      } else if (el.scrollLeft > oneSetWidth * 1.85) {
-        isResetting.current = true;
-        el.style.scrollBehavior = "auto";
-        el.scrollLeft -= oneSetWidth;
-        el.style.scrollBehavior = "";
-        isResetting.current = false;
-      }
-    };
-    el.addEventListener("scroll", handleScroll);
-    return () => el.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollBy = (dir: number) => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({ left: dir * 300, behavior: "smooth" });
-  };
-
-  const renderCard = (product: (typeof newProducts)[number], idx: number) => {
-    return (
-      <Link
-        key={`${product.slug}-${idx}`}
-        to={`/category/${product.categorySlug}/product/${product.slug}`}
-        className="group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-all duration-300 w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px] xl:w-[220px] hover:scale-[1.03]"
-        style={{ boxShadow: "4px 4px 0 hsl(var(--dark))" }}
-      >
-        <div className="relative aspect-[3/4]">
-          <img
-            src={product.image}
-            alt={product.name}
-            loading="eager"
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-          <div
-            className="absolute top-2 right-2 bg-accent text-foreground font-display italic font-bold text-[0.48rem] sm:text-[0.55rem] px-2 py-0.5 border-2 border-dark rounded-full z-[2]"
-            style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
-          >
-            {product.sticker}
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
-            <div
-              className="font-display font-black italic text-white leading-none mb-0.5 text-[0.75rem] sm:text-[0.9rem]"
-              style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
-            >
-              {product.name}
-            </div>
-            <div className="flex items-center gap-1 mb-1">
-              <span className="text-accent text-[0.6rem]">★</span>
-              <span className="font-display font-bold text-white text-[0.55rem]">{product.rating}</span>
-            </div>
-            <div className="flex items-center justify-between gap-2">
-              <div className="font-display font-black text-[0.9rem] sm:text-[1.1rem] text-accent">{product.price}</div>
-              <button
-                type="button"
-                className="bg-cream text-foreground border-2 border-dark px-2 py-0.5 sm:px-2.5 sm:py-1 font-display italic text-[0.5rem] sm:text-[0.6rem] font-bold rounded-full transition-colors hover:bg-accent"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(product); }}
-              >
-                Add 🛒
-              </button>
-            </div>
-          </div>
-        </div>
-      </Link>
-    );
-  };
+  // Render enough cards to cover viewport + overflow on both sides
+  const slots = Array.from({ length: count + 4 }, (_, i) => productIndex - Math.floor((count + 4) / 2) + i);
 
   return (
     <section id="new-arrivals" className="bg-cream paper-bg">
@@ -398,26 +310,80 @@ const NewArrivals = () => {
         </div>
       </div>
 
-      <div className="relative pb-14 lg:pb-20 pt-6">
-        {/* Scrollable row */}
+      <div className="relative pb-14 lg:pb-20 pt-6 overflow-hidden" ref={containerRef}>
         <div
-          ref={scrollRef}
-          className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide px-10 sm:px-16 pb-2"
-          style={{ scrollSnapType: "x mandatory" }}
+          className="flex justify-center transition-transform duration-500 ease-in-out"
+          style={{
+            transform: `translateX(${-productIndex * (CARD_WIDTH + GAP)}px)`,
+          }}
         >
-          {loopProducts.map((product, idx) => renderCard(product, idx))}
+          {slots.map((slotIndex) => {
+            const product = getWrapped(slotIndex);
+            return (
+              <Link
+                key={`${slotIndex}`}
+                to={`/category/${product.categorySlug}/product/${product.slug}`}
+                className="group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-all duration-300 hover:scale-[1.03]"
+                style={{
+                  width: `${CARD_WIDTH}px`,
+                  marginRight: `${GAP}px`,
+                  boxShadow: "4px 4px 0 hsl(var(--dark))",
+                }}
+              >
+                <div className="relative aspect-[3/4]">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    loading="eager"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                  <div
+                    className="absolute top-2 right-2 bg-accent text-foreground font-display italic font-bold text-[0.48rem] sm:text-[0.55rem] px-2 py-0.5 border-2 border-dark rounded-full z-[2]"
+                    style={{ transform: "rotate(3deg)", boxShadow: "2px 2px 0 hsl(var(--dark))" }}
+                  >
+                    {product.sticker}
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
+                    <div
+                      className="font-display font-black italic text-white leading-none mb-0.5 text-[0.75rem] sm:text-[0.9rem]"
+                      style={{ textShadow: "2px 2px 0 rgba(0,0,0,.3)" }}
+                    >
+                      {product.name}
+                    </div>
+                    <div className="flex items-center gap-1 mb-1">
+                      <span className="text-accent text-[0.6rem]">★</span>
+                      <span className="font-display font-bold text-white text-[0.55rem]">{product.rating}</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="font-display font-black text-[0.9rem] sm:text-[1.1rem] text-accent">{product.price}</div>
+                      <button
+                        type="button"
+                        className="bg-cream text-foreground border-2 border-dark px-2 py-0.5 sm:px-2.5 sm:py-1 font-display italic text-[0.5rem] sm:text-[0.6rem] font-bold rounded-full transition-colors hover:bg-accent"
+                        onClick={(e) => handleAdd(product, e)}
+                      >
+                        Add 🛒
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Arrows */}
         <button
-          onClick={() => scrollBy(-1)}
+          onClick={prevProduct}
           className="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
           aria-label="Previous product"
         >
           <ChevronLeft size={16} />
         </button>
         <button
-          onClick={() => scrollBy(1)}
+          onClick={nextProduct}
           className="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
           aria-label="Next product"
         >
