@@ -40,7 +40,7 @@ const Products = () => {
   };
 
   return (
-    <div id="best-sellers" className="bg-dark border-t-[5px] border-dark border-b-[5px] border-b-primary px-6 lg:px-12 py-20 lg:py-24">
+    <div id="best-sellers" className="bg-dark border-t-[5px] border-dark border-b-[3px] border-b-primary px-6 lg:px-12 py-20 lg:py-24">
       <div className="max-w-[1440px] mx-auto">
         <p className="section-kicker text-accent mb-2.5">The Goods</p>
         <h2 className="font-display font-black italic text-cream leading-none mb-14" style={{ fontSize: "clamp(2.2rem,3.5vw,3.5rem)" }}>
