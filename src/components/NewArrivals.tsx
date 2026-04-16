@@ -192,16 +192,18 @@ const newProducts = [
   },
 ];
 
-const CARD_WIDTH = 220; // xl width
+const CARD_WIDTH = 220;
 const GAP = 16;
+const CARD_STEP = CARD_WIDTH + GAP;
+const AUTO_SCROLL_SPEED = 60;
 
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
-  const [productIndex, setProductIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
   const { addItem, setIsOpen } = useCart();
-  const count = newProducts.length;
-  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<number>();
+  const lastTimeRef = useRef<number | null>(null);
+  const offsetRef = useRef(0);
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % banners.length), []);
 
@@ -210,29 +212,65 @@ const NewArrivals = () => {
     return () => clearInterval(id);
   }, [next]);
 
+  const cycleWidth = newProducts.length * CARD_STEP;
+  const marqueeProducts = [...newProducts, ...newProducts];
+
+  const applyOffset = useCallback((offset: number) => {
+    if (!trackRef.current) return;
+    trackRef.current.style.transform = `translate3d(-${offset}px, 0, 0)`;
+  }, []);
+
+  const setOffset = useCallback(
+    (nextOffset: number) => {
+      const wrappedOffset = ((nextOffset % cycleWidth) + cycleWidth) % cycleWidth;
+      offsetRef.current = wrappedOffset;
+      applyOffset(wrappedOffset);
+    },
+    [applyOffset, cycleWidth],
+  );
+
   const nextProduct = useCallback(() => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setProductIndex((i) => i + 1);
-    setTimeout(() => setIsAnimating(false), 450);
-  }, [isAnimating]);
+    const snappedOffset = Math.round(offsetRef.current / CARD_STEP) * CARD_STEP;
+    lastTimeRef.current = null;
+    setOffset(snappedOffset + CARD_STEP);
+  }, [setOffset]);
 
   const prevProduct = useCallback(() => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setProductIndex((i) => i - 1);
-    setTimeout(() => setIsAnimating(false), 450);
-  }, [isAnimating]);
+    const snappedOffset = Math.round(offsetRef.current / CARD_STEP) * CARD_STEP;
+    lastTimeRef.current = null;
+    setOffset(snappedOffset - CARD_STEP);
+  }, [setOffset]);
 
   useEffect(() => {
-    const id = setInterval(nextProduct, 3500);
-    return () => clearInterval(id);
-  }, [nextProduct]);
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    applyOffset(offsetRef.current);
 
-  const getWrapped = (index: number) => {
-    const i = ((index % count) + count) % count;
-    return newProducts[i];
-  };
+    if (prefersReducedMotion.matches) {
+      return;
+    }
+
+    const animate = (time: number) => {
+      if (lastTimeRef.current === null) {
+        lastTimeRef.current = time;
+        frameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const delta = time - lastTimeRef.current;
+      lastTimeRef.current = time;
+      setOffset(offsetRef.current + (delta * AUTO_SCROLL_SPEED) / 1000);
+      frameRef.current = requestAnimationFrame(animate);
+    };
+
+    frameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (frameRef.current !== undefined) {
+        cancelAnimationFrame(frameRef.current);
+      }
+      lastTimeRef.current = null;
+    };
+  }, [applyOffset, setOffset]);
 
   const handleAdd = (p: (typeof newProducts)[number], e: React.MouseEvent) => {
     e.preventDefault();
@@ -259,12 +297,8 @@ const NewArrivals = () => {
     toast.success(`${p.name} added to bag ✨`);
   };
 
-  // Render enough cards to cover viewport + overflow on both sides
-  const slots = Array.from({ length: count + 4 }, (_, i) => productIndex - Math.floor((count + 4) / 2) + i);
-
   return (
     <section id="new-arrivals" className="bg-cream paper-bg">
-      {/* Full-width rotating banner */}
       <div className="relative w-full overflow-hidden border-y-[3px] border-dark">
         <div
           className="flex transition-transform duration-700 ease-in-out"
@@ -297,7 +331,6 @@ const NewArrivals = () => {
         </div>
       </div>
 
-      {/* Products carousel */}
       <div className="px-6 lg:px-12 pt-14 pb-4 lg:pt-20 lg:pb-6">
         <div className="max-w-[1440px] mx-auto text-center">
           <p className="section-kicker text-primary mb-2.5">Fresh off the shelf</p>
@@ -310,23 +343,20 @@ const NewArrivals = () => {
         </div>
       </div>
 
-      <div className="relative pb-14 lg:pb-20 pt-6 overflow-hidden" ref={containerRef}>
-        <div
-          className="flex justify-center transition-transform duration-500 ease-in-out"
-          style={{
-            transform: `translateX(${-productIndex * (CARD_WIDTH + GAP)}px)`,
-          }}
-        >
-          {slots.map((slotIndex) => {
-            const product = getWrapped(slotIndex);
-            return (
+      <div className="relative pb-14 lg:pb-20 pt-6 overflow-hidden">
+        <div className="overflow-hidden px-14 sm:px-20">
+          <div
+            ref={trackRef}
+            className="flex w-max gap-4 will-change-transform"
+            style={{ transform: "translate3d(0, 0, 0)" }}
+          >
+            {marqueeProducts.map((product, index) => (
               <Link
-                key={`${slotIndex}`}
+                key={`${product.slug}-${index}`}
                 to={`/category/${product.categorySlug}/product/${product.slug}`}
-                className="group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-all duration-300 hover:scale-[1.03]"
+                className="group relative overflow-hidden flex-shrink-0 no-underline border-[3px] border-dark rounded-sm transition-transform duration-300 hover:scale-[1.03]"
                 style={{
                   width: `${CARD_WIDTH}px`,
-                  marginRight: `${GAP}px`,
                   boxShadow: "4px 4px 0 hsl(var(--dark))",
                 }}
               >
@@ -370,11 +400,10 @@ const NewArrivals = () => {
                   </div>
                 </div>
               </Link>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
-        {/* Arrows */}
         <button
           onClick={prevProduct}
           className="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-cream/90 border-[3px] border-dark rounded-full flex items-center justify-center shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent transition-colors z-20"
