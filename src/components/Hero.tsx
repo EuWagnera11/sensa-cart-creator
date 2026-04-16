@@ -4,7 +4,7 @@ import heroImage from "@/assets/hero-image.webp";
 
 
 const Hero = () => (
-  <section className="min-h-[85vh] bg-parch paper-bg grid grid-cols-1 lg:grid-cols-[1fr_1fr] border-b-[5px] border-dark relative overflow-hidden">
+  <section className="min-h-[85vh] bg-parch paper-bg grid grid-cols-1 lg:grid-cols-[1fr_1fr] border-b-[3px] border-dark relative overflow-hidden">
     {/* Halftone overlay */}
     <div
       className="absolute inset-0 opacity-[0.06] pointer-events-none"
@@ -64,7 +64,7 @@ const Hero = () => (
     </div>
 
     {/* Right — image */}
-    <div className="border-l-0 lg:border-l-[5px] border-t-[5px] lg:border-t-0 border-dark relative overflow-hidden flex items-center justify-center min-h-[40vh] sm:min-h-[55vh] lg:min-h-0">
+    <div className="border-l-0 lg:border-l-[3px] border-t-[3px] lg:border-t-0 border-dark relative overflow-hidden flex items-center justify-center min-h-[40vh] sm:min-h-[55vh] lg:min-h-0">
       <img
         src={heroImage}
         alt="Confidential shopping"

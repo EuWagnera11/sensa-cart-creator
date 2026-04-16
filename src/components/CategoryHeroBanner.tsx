@@ -65,7 +65,7 @@ const CategoryHeroBanner = ({
   return (
     <>
       <PreloadImages slides={slides} />
-      <div className="relative h-[320px] sm:h-[380px] lg:h-[420px] overflow-hidden border-b-[5px] border-dark">
+      <div className="relative h-[320px] sm:h-[380px] lg:h-[420px] overflow-hidden border-b-[3px] border-dark">
         {/* Slides */}
         {slides.map((slide, i) => (
           <div

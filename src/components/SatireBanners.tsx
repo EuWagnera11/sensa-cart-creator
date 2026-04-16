@@ -3,7 +3,7 @@ import satireHer from "@/assets/satire-her.webp";
 import satireHim from "@/assets/satire/why-not.webp";
 
 const SatireBanners = () => (
-  <div className="border-y-[5px] border-dark">
+  <div className="border-y-[3px] border-dark">
     <div className="grid grid-cols-2">
       {/* Left — Her */}
       <Link to="/category/newbie" className="relative overflow-hidden border-r-[3px] border-dark group block no-underline">
