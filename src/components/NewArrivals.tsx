@@ -157,9 +157,10 @@ const NewArrivals = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 border-[3px] border-dark">
             {newProducts.map((product, i) => (
-              <div
+              <Link
                 key={product.slug}
-                className={`group relative overflow-hidden flex flex-col aspect-[3/4] ${
+                to={`/category/${product.categorySlug}/product/${product.slug}`}
+                className={`group relative overflow-hidden flex flex-col aspect-[3/4] no-underline ${
                   i < 2 ? "sm:border-r-[3px] border-dark" : ""
                 }`}
               >
@@ -211,20 +212,17 @@ const NewArrivals = () => {
                     <button
                       type="button"
                       className="bg-cream text-foreground border-2 border-dark px-[18px] py-2 font-display italic text-[0.85rem] font-bold rounded-full transition-colors hover:bg-accent"
-                      onClick={() => handleAdd(product)}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(product); }}
                     >
                       Add 🛒
                     </button>
                   </div>
 
-                  <Link
-                    to={`/category/${product.categorySlug}/product/${product.slug}`}
-                    className="font-serif italic text-[0.78rem] no-underline mt-3 text-white/55 inline-block"
-                  >
+                  <span className="font-serif italic text-[0.78rem] mt-3 text-white/55 inline-block">
                     Discover →
-                  </Link>
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
