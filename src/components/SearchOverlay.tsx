@@ -31,8 +31,8 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
         navigate(`/products?q=${encodeURIComponent(query)}`);
       }
     };
-    if (isOpen) document.addEventListener("keydown", handleEsc);
-    return () => document.removeEventListener("keydown", handleEsc);
+    if (isOpen) document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
