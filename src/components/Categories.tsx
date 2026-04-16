@@ -18,7 +18,7 @@ const categoriesDisplay = [
 ];
 
 const Categories = () => (
-  <div id="categories" className="border-y-[3px] border-dark">
+  <div id="categories">
     <div className="bg-cream paper-bg">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 pt-16 pb-14 relative z-[1]">
         <h2 className="font-display font-black italic text-foreground leading-none mb-0" style={{ fontSize: "clamp(2.2rem,3.5vw,3.5rem)" }}>
