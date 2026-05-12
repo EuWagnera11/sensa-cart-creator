@@ -5,17 +5,28 @@ import type { ShopifyProduct } from "@/lib/shopify";
 // collapse to the same key.
 export function normalizeTitle(raw: string): string {
   let t = (raw || "").toLowerCase();
+  // strip accents
   t = t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  // drop parens / brackets content (often holds the variant qualifier)
   t = t.replace(/\([^)]*\)/g, " ").replace(/\[[^\]]*\]/g, " ");
+  // drop suffix after a separator like "Title - Strawberry 100ml"
   t = t.split(/[-–—|:]/)[0];
+  // strip size/volume/quantity tokens
   t = t.replace(
-    /\b\d+([.,]\d+)?\s*(ml|cl|l|g|kg|oz|cm|mm|m|"|''|inch|pcs?|un|unidades?|pack|x)\b/g,
+    /\b\d+([.,]\d+)?\s*(ml|cl|l|g|kg|oz|cm|mm|m|"|''|inch|pcs?|un|unidades?|pack|x)\b/gi,
     " "
   );
+  // strip standalone numbers (e.g. "12" in "HEX 12")
   t = t.replace(/\b\d+([.,]\d+)?\b/g, " ");
+  // collapse non-alphanumerics
   t = t.replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
-  const words = t.split(" ").filter(Boolean).slice(0, 3);
-  return words.join(" ");
+  // Keep the FULL normalized title as the signature so two products only
+  // collapse together when they truly are the same product with a
+  // size/flavor/color variation (and that variation lives in the parts we
+  // already stripped above). Using only the first N words led to
+  // unrelated products being grouped (e.g. "lelo caixa de preservativo"
+  // vs "lelo caixa de massagem" both reducing to "lelo caixa de").
+  return t;
 }
 
 // Derives a short label (e.g. "100ml", "Strawberry", "Red") for a sibling
