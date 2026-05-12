@@ -53,6 +53,15 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center gap-3">
+          {/* Shop link */}
+          <Link
+            to="/shop"
+            className="hidden sm:inline-flex items-center gap-1.5 text-white/60 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
+            title="Shop"
+          >
+            <Store size={15} /> Shop
+          </Link>
+
           {/* Search */}
           <button
             type="button"
@@ -91,16 +100,17 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Bag button */}
+          {/* Shopify Bag button */}
           <button
             type="button"
             className="relative text-cream p-2"
-            onClick={() => setIsOpen(true)}
+            onClick={() => setShopifyOpen(true)}
+            title="Shop bag"
           >
             <ShoppingBag size={22} />
-            {itemCount > 0 && (
+            {shopifyCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-[18px] h-[18px] bg-primary text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center border border-dark">
-                {itemCount}
+                {shopifyCount}
               </span>
             )}
           </button>
