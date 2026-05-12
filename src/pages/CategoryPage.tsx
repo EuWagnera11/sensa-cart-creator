@@ -73,8 +73,7 @@ const CategoryPage = () => {
     );
   }
 
-  const hasMore = visibleCount < listing_handles.length;
-  const initialLoading = sectionLoading || (productsLoading && deduped.length === 0);
+  const initialLoading = (!isCatchAll && sectionLoading) || (productsLoading && deduped.length === 0);
 
   return (
     <>
