@@ -53,8 +53,12 @@ const ShopifyProductsSection = ({ query, count = 8, title, kicker, emoji }: Prop
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {products.map((p) => (
-              <ShopifyProductCard key={p.node.id} product={p} />
+            {products.map((g) => (
+              <ShopifyProductCard
+                key={g.product.node.id}
+                product={g.product}
+                sticker={g.groupSize > 1 ? `+${g.groupSize} variants` : undefined}
+              />
             ))}
           </div>
         )}
