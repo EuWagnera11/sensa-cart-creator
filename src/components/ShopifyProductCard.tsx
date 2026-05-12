@@ -1,16 +1,33 @@
 import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { ShopifyProduct } from "@/lib/shopify";
 import { useShopifyCart } from "@/stores/shopifyCart";
+
+interface SiblingOption {
+  product: ShopifyProduct;
+  label: string;
+}
 
 interface Props {
   product: ShopifyProduct;
   variant?: "marquee" | "grid";
   sticker?: string;
+  // When passed (length > 1) the card renders chips to switch between
+  // grouped sibling products (same product, different size/flavor/color
+  // sold as separate Shopify products).
+  siblings?: SiblingOption[];
 }
 
-const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
-  const node = product.node;
+const ShopifyProductCard = ({ product, variant = "grid", sticker, siblings }: Props) => {
+  const hasSiblings = (siblings?.length ?? 0) > 1;
+  const [activeId, setActiveId] = useState<string>(product.node.id);
+  const active = useMemo(() => {
+    if (!hasSiblings) return product;
+    return siblings!.find((s) => s.product.node.id === activeId)?.product ?? product;
+  }, [hasSiblings, siblings, activeId, product]);
+
+  const node = active.node;
   const image = node.images.edges[0]?.node;
   const firstVariant = node.variants.edges[0]?.node;
   const price = firstVariant?.price ?? node.priceRange.minVariantPrice;
@@ -29,7 +46,7 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
       return;
     }
     await addItem({
-      product,
+      product: active,
       variantId: firstVariant.id,
       variantTitle: firstVariant.title,
       price: firstVariant.price,
