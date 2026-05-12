@@ -54,26 +54,50 @@ export interface GroupedProduct {
   groupSize: number;
 }
 
+// Similarity threshold (0-1). Two products are considered the "same product
+// with a different variant" only when their normalized titles share at least
+// this much character-bigram overlap (Dice coefficient).
+const SIMILARITY_THRESHOLD = 0.9;
+
+function bigrams(s: string): Set<string> {
+  const clean = s.replace(/\s+/g, "");
+  const set = new Set<string>();
+  for (let i = 0; i < clean.length - 1; i++) set.add(clean.slice(i, i + 2));
+  return set;
+}
+
+function diceSimilarity(a: string, b: string): number {
+  if (!a || !b) return 0;
+  if (a === b) return 1;
+  const A = bigrams(a);
+  const B = bigrams(b);
+  if (A.size === 0 || B.size === 0) return 0;
+  let inter = 0;
+  for (const g of A) if (B.has(g)) inter++;
+  return (2 * inter) / (A.size + B.size);
+}
+
 export function groupSimilarProducts(products: ShopifyProduct[]): GroupedProduct[] {
-  const map = new Map<
-    string,
-    { rep: ShopifyProduct; baseKey: string; items: ShopifyProduct[] }
-  >();
+  const groups: { rep: ShopifyProduct; baseKey: string; key: string; items: ShopifyProduct[] }[] = [];
 
   for (const p of products) {
     const key = normalizeTitle(p.node.title) || p.node.id;
-    const existing = map.get(key);
-    if (!existing) {
-      map.set(key, { rep: p, baseKey: key, items: [p] });
+    // Find the first existing group whose key is ≥ threshold similar.
+    const match = groups.find((g) => diceSimilarity(g.key, key) >= SIMILARITY_THRESHOLD);
+    if (!match) {
+      groups.push({ rep: p, baseKey: key, key, items: [p] });
     } else {
-      existing.items.push(p);
-      const existingImgs = existing.rep.node.images?.edges?.length ?? 0;
+      match.items.push(p);
+      const existingImgs = match.rep.node.images?.edges?.length ?? 0;
       const candidateImgs = p.node.images?.edges?.length ?? 0;
-      if (candidateImgs > existingImgs) existing.rep = p;
+      if (candidateImgs > existingImgs) match.rep = p;
+      // Keep the shortest key as base so deriveVariantLabel strips the
+      // common stem cleanly.
+      if (key.length < match.baseKey.length) match.baseKey = key;
     }
   }
 
-  return Array.from(map.values()).map(({ rep, baseKey, items }) => ({
+  return groups.map(({ rep, baseKey, items }) => ({
     product: rep,
     groupSize: items.length,
     siblings: items.map((it) => ({
