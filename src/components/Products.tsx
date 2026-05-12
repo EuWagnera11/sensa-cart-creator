@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { useDisplayedProducts } from "@/stores/displayedProducts";
-import { groupSimilarProducts } from "@/lib/groupProducts";
+import { dedupeProducts } from "@/lib/productGroups";
 import ShopifyProductCard from "./ShopifyProductCard";
 
 const BEST_SELLERS_QUERY = "inventory_total:>100";
@@ -14,7 +14,7 @@ const Products = () => {
   const displayedIds = useDisplayedProducts((s) => s.ids);
   const products = useMemo(() => {
     const filtered = pool.filter((p) => !displayedIds.has(p.node.id));
-    return groupSimilarProducts(filtered).slice(0, 8).map((g) => g.product);
+    return dedupeProducts(filtered).slice(0, 8);
   }, [pool, displayedIds]);
 
   return (
