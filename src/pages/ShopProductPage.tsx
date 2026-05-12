@@ -151,33 +151,46 @@ const ShopProductPage = () => {
                 <p className="font-serif italic text-base text-muted-foreground leading-relaxed whitespace-pre-line">{product.description}</p>
               </div>
 
-              {/* Variant selectors */}
+              {/* Variant selectors — one button per unique option value */}
               {product.options.map((opt) => {
                 if (opt.values.length <= 1) return null;
                 return (
                   <div key={opt.name} className="mb-4">
-                    <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground uppercase tracking-wider">{opt.name}</p>
+                    <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground uppercase tracking-wider">
+                      {opt.name}: <span className="text-foreground not-italic">{selectedOptions[opt.name]}</span>
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      {product.variants.edges.map((v) => {
-                        const optValue = v.node.selectedOptions.find((o) => o.name === opt.name)?.value;
-                        if (!optValue) return null;
-                        const isSelected = v.node.id === selectedVariantId;
+                      {opt.values.map((value) => {
+                        // A value is available if combining it with the other currently
+                        // selected options matches at least one in-stock variant.
+                        const candidateOptions = { ...selectedOptions, [opt.name]: value };
+                        const matchingVariant = product.variants.edges.find((v) =>
+                          v.node.selectedOptions.every((o) => candidateOptions[o.name] === o.value)
+                        )?.node;
+                        const isAvailable = !!matchingVariant?.availableForSale;
+                        const isSelected = selectedOptions[opt.name] === value;
                         return (
                           <button
-                            key={v.node.id + opt.name}
+                            key={opt.name + value}
                             type="button"
-                            onClick={() => setSelectedVariantId(v.node.id)}
-                            disabled={!v.node.availableForSale}
-                            className={`px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all disabled:opacity-40 ${
-                              isSelected ? "bg-dark text-cream" : "bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] hover:bg-accent"
+                            onClick={() => setSelectedOptions((prev) => ({ ...prev, [opt.name]: value }))}
+                            disabled={!isAvailable}
+                            title={!isAvailable ? "Sem estoque" : undefined}
+                            className={`relative px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all ${
+                              isSelected
+                                ? "bg-dark text-cream"
+                                : isAvailable
+                                ? "bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] hover:bg-accent"
+                                : "bg-cream/50 text-muted-foreground line-through cursor-not-allowed opacity-50"
                             }`}
                           >
-                            {optValue}
+                            {value}
                           </button>
                         );
                       })}
                     </div>
                   </div>
+
                 );
               })}
 
