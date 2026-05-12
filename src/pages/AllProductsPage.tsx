@@ -8,7 +8,7 @@ import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import { categories } from "@/data/products";
 import ShopifyProductsSection from "@/components/ShopifyProductsSection";
-import { CATEGORY_SHOPIFY_QUERIES } from "@/data/shopifyQueries";
+
 
 const primaryCategorySlugs = ["buzz", "duo", "slippery", "tied", "newbie", "oops"];
 const primaryCategorySet = new Set(primaryCategorySlugs);
@@ -36,24 +36,15 @@ const AllProductsPage = () => {
 
   const initialQuery = searchParams.get("q") || "";
   const [query, setQuery] = useState(initialQuery);
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [selectedCategories] = useState<Set<string>>(new Set());
   const [priceRange, setPriceRange] = useState(0);
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState("popular");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const toggleCategory = (slug: string) => {
-    setSelectedCategories((prev) => {
-      const next = new Set(prev);
-      if (next.has(slug)) next.delete(slug);
-      else next.add(slug);
-      return next;
-    });
-  };
 
   const clearFilters = () => {
     setQuery("");
-    setSelectedCategories(new Set());
     setPriceRange(0);
     setMinRating(0);
     setSortBy("popular");
@@ -62,20 +53,14 @@ const AllProductsPage = () => {
 
   const hasFilters = query.length > 0 || selectedCategories.size > 0 || priceRange > 0 || minRating > 0;
 
-  // Build Shopify Storefront query from selected categories + search text
+  // Build Shopify Storefront query from search text only.
+  // Category chips below navigate to dedicated /category/:slug section pages.
   const shopifyQuery = useMemo(() => {
-    const parts: string[] = [];
-    if (selectedCategories.size > 0) {
-      const cats = Array.from(selectedCategories)
-        .map((s) => CATEGORY_SHOPIFY_QUERIES[s])
-        .filter(Boolean);
-      if (cats.length > 0) parts.push(`(${cats.map((c) => `(${c})`).join(" OR ")})`);
-    }
     if (query.length >= 2) {
-      parts.push(`title:*${query.replace(/[^\p{L}\p{N}\s-]/gu, "")}*`);
+      return `title:*${query.replace(/[^\p{L}\p{N}\s-]/gu, "")}*`;
     }
-    return parts.length > 0 ? parts.join(" AND ") : "inventory_total:>20";
-  }, [selectedCategories, query]);
+    return "inventory_total:>20";
+  }, [query]);
 
   return (
     <>
@@ -129,20 +114,16 @@ const AllProductsPage = () => {
                 <SlidersHorizontal size={14} /> Filters {hasFilters && <span className="w-2 h-2 rounded-full bg-primary" />}
               </button>
 
-              {/* Desktop: Category chips */}
+              {/* Desktop: Category chips — navigate to curated section pages */}
               <div className="hidden lg:flex items-center gap-2 flex-wrap">
                 {primaryCategories.map((cat) => (
-                  <button
+                  <Link
                     key={cat.slug}
-                    onClick={() => toggleCategory(cat.slug)}
-                    className={`px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all ${
-                      selectedCategories.has(cat.slug)
-                        ? "bg-dark text-cream shadow-none translate-x-0 translate-y-0"
-                        : "bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] hover:bg-accent"
-                    }`}
+                    to={`/category/${cat.slug}`}
+                    className="px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] hover:bg-accent no-underline"
                   >
                     {cat.emoji} {cat.name}
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -207,15 +188,13 @@ const AllProductsPage = () => {
                 <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground">Categories</p>
                 <div className="flex flex-wrap gap-2">
                   {primaryCategories.map((cat) => (
-                    <button
+                    <Link
                       key={cat.slug}
-                      onClick={() => toggleCategory(cat.slug)}
-                      className={`px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all ${
-                        selectedCategories.has(cat.slug) ? "bg-dark text-cream" : "bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))]"
-                      }`}
+                      to={`/category/${cat.slug}`}
+                      className="px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] no-underline"
                     >
                       {cat.emoji} {cat.name}
-                    </button>
+                    </Link>
                   ))}
                 </div>
               </div>

@@ -1,4 +1,6 @@
+import { useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Truck, Loader2 } from "lucide-react";
 import { getCategoryBySlug, categories } from "@/data/products";
 import { getCategoryBanners } from "@/data/categoryBanners";
 import Navbar from "@/components/Navbar";
@@ -6,17 +8,27 @@ import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import CategoryHeroBanner from "@/components/CategoryHeroBanner";
-import ShopifyProductsSection from "@/components/ShopifyProductsSection";
-import { CATEGORY_SHOPIFY_QUERIES } from "@/data/shopifyQueries";
-import { Truck } from "lucide-react";
+import ShopifyProductCard from "@/components/ShopifyProductCard";
+import { useSectionFull } from "@/lib/productSections";
+import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
+import { dedupeProducts } from "@/lib/productGroups";
+
+const PAGE_SIZE = 24;
 
 const CategoryPage = () => {
   const { categorySlug } = useParams<{ categorySlug: string }>();
   const category = getCategoryBySlug(categorySlug || "");
-  const shopifyQuery =
-    CATEGORY_SHOPIFY_QUERIES[categorySlug || ""] || "inventory_total:>20";
+  const { section, listing_handles, loading: sectionLoading } = useSectionFull(categorySlug);
 
-  if (!category) {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const visibleHandles = useMemo(
+    () => listing_handles.slice(0, visibleCount),
+    [listing_handles, visibleCount]
+  );
+  const { products, loading: productsLoading } = useShopifyProductsByHandles(visibleHandles);
+  const deduped = useMemo(() => dedupeProducts(products), [products]);
+
+  if (!category || !section) {
     return (
       <>
         <AnnounceBanner />
@@ -40,11 +52,14 @@ const CategoryPage = () => {
     );
   }
 
+  const hasMore = visibleCount < listing_handles.length;
+  const initialLoading = sectionLoading || (productsLoading && deduped.length === 0);
+
   return (
     <>
       <SEOHead
-        title={`${category.name} — ${category.desc}`}
-        description={`Explore ${category.desc.toLowerCase()} at OoohMy. ${category.collection}. Discreet shipping.`}
+        title={`${category.name} — ${section.description}`}
+        description={`${section.subtitle}. ${section.total_in_listing} ${section.description.toLowerCase()} at OoohMy. Discreet shipping.`}
       />
       <AnnounceBanner />
       <Navbar />
@@ -55,9 +70,9 @@ const CategoryPage = () => {
           slides={getCategoryBanners(categorySlug || "")}
           categoryName={category.name}
           categoryEmoji={category.emoji}
-          categoryCollection={category.collection}
-          categoryDesc={category.desc}
-          productCount={0}
+          categoryCollection={section.subtitle}
+          categoryDesc={section.description}
+          productCount={section.total_in_listing}
           darkText={category.darkText}
         />
       ) : (
@@ -88,14 +103,14 @@ const CategoryPage = () => {
                 category.darkText ? "text-foreground/60" : "text-white/70"
               }`}
             >
-              {category.collection}
+              {section.subtitle}
             </p>
             <p
               className={`text-xs tracking-[3px] uppercase font-bold ${
                 category.darkText ? "text-foreground/40" : "text-white/40"
               }`}
             >
-              {category.desc}
+              {section.description} · {section.total_in_listing.toLocaleString()} items
             </p>
           </div>
         </div>
@@ -158,14 +173,64 @@ const CategoryPage = () => {
         </div>
       </div>
 
-      {/* Live Shopify products */}
-      <ShopifyProductsSection
-        query={shopifyQuery}
-        count={24}
-        kicker="Straight from the shop"
-        title={`${category.name} picks`}
-        emoji={category.emoji}
-      />
+      {/* Curated Shopify products */}
+      <section className="bg-parch paper-bg border-y-[3px] border-dark mt-8 px-6 lg:px-12 py-12">
+        <div className="max-w-[1440px] mx-auto">
+          <div className="mb-6 flex items-end justify-between gap-4 flex-wrap">
+            <div>
+              <p className="section-kicker text-primary mb-2">Straight from the shop</p>
+              <h2
+                className="font-display font-black italic text-foreground leading-none"
+                style={{ fontSize: "clamp(1.6rem,2.5vw,2.4rem)" }}
+              >
+                <span className="mr-2">{category.emoji}</span>
+                {category.name} picks
+              </h2>
+            </div>
+            <span className="font-display italic text-sm text-muted-foreground">
+              Showing {deduped.length} of {section.total_in_listing.toLocaleString()}
+            </span>
+          </div>
+
+          {initialLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-[420px] bg-cream border-[3px] border-dark rounded-sm animate-pulse"
+                  style={{ boxShadow: "var(--shadow-brutal)" }}
+                />
+              ))}
+            </div>
+          ) : deduped.length === 0 ? (
+            <p className="font-display italic text-muted-foreground">
+              No live products in this section yet.
+            </p>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {deduped.map((p) => (
+                  <ShopifyProductCard key={p.node.id} product={p} />
+                ))}
+              </div>
+
+              {hasMore && (
+                <div className="text-center mt-10">
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                    disabled={productsLoading}
+                    className="cta-secondary inline-flex items-center gap-2"
+                  >
+                    {productsLoading ? <Loader2 size={16} className="animate-spin" /> : null}
+                    Load more →
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
 
       <Footer />
     </>
