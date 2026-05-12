@@ -208,7 +208,7 @@ const CategoryPage = () => {
               </h2>
             </div>
             <span className="font-display italic text-sm text-muted-foreground">
-              Showing {deduped.length} of {section.total_in_listing.toLocaleString()}
+              Showing {totalLabel}
             </span>
           </div>
 
@@ -238,11 +238,11 @@ const CategoryPage = () => {
                 <div className="text-center mt-10">
                   <button
                     type="button"
-                    onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                    disabled={productsLoading}
+                    onClick={onLoadMore}
+                    disabled={loadingMore}
                     className="cta-secondary inline-flex items-center gap-2"
                   >
-                    {productsLoading ? <Loader2 size={16} className="animate-spin" /> : null}
+                    {loadingMore ? <Loader2 size={16} className="animate-spin" /> : null}
                     Load more →
                   </button>
                 </div>
