@@ -168,37 +168,12 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker, siblings }: Pr
         </div>
 
         {hasSiblings && (
-          <div className="mb-3">
-            <p className="font-display italic text-[0.6rem] text-muted-foreground uppercase tracking-wide mb-1.5">
-              Choose option
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {siblings!.map((s) => {
-                const isActive = s.product.node.id === activeId;
-                const inStock = s.product.node.variants.edges[0]?.node.availableForSale ?? true;
-                return (
-                  <button
-                    key={s.product.node.id}
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setActiveId(s.product.node.id);
-                    }}
-                    disabled={!inStock}
-                    className={`px-2 py-0.5 border-2 border-dark rounded-full font-display italic text-[0.62rem] font-bold transition-all ${
-                      isActive
-                        ? "bg-primary text-cream"
-                        : "bg-cream text-foreground hover:bg-accent"
-                    } ${!inStock ? "opacity-40 line-through cursor-not-allowed" : ""}`}
-                    title={s.product.node.title}
-                  >
-                    {s.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <Link
+            to={`/shop/product/${node.handle}`}
+            className="block mb-3 font-display italic text-[0.65rem] font-bold text-primary uppercase tracking-wide no-underline hover:underline"
+          >
+            +{siblings!.length - 1} more option{siblings!.length - 1 > 1 ? "s" : ""} →
+          </Link>
         )}
 
         <div className="grid grid-cols-2 gap-2">
