@@ -34,7 +34,6 @@ const normalise = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 const AllProductsPage = () => {
-  const { addItem, setIsOpen } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const initialQuery = searchParams.get("q") || "";
@@ -44,58 +43,6 @@ const AllProductsPage = () => {
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState("popular");
   const [filtersOpen, setFiltersOpen] = useState(false);
-
-  const filtered = useMemo(() => {
-    let result = [...allProducts];
-
-    // Text search
-    if (query.length >= 2) {
-      const q = normalise(query);
-      result = result.filter(
-        (p) =>
-          normalise(p.name).includes(q) ||
-          normalise(p.category).includes(q) ||
-          normalise(p.description).includes(q) ||
-          normalise(p.longDescription).includes(q)
-      );
-    }
-
-    // Category filter
-    if (selectedCategories.size > 0) {
-      result = result.filter((p) => selectedCategories.has(p.categorySlug));
-    }
-
-    // Price filter
-    const range = PRICE_RANGES[priceRange];
-    if (range.max !== Infinity || range.min !== 0) {
-      result = result.filter((p) => p.price >= range.min && p.price < (range.max === Infinity ? 99999 : range.max));
-    }
-
-    // Rating filter
-    if (minRating > 0) {
-      result = result.filter((p) => p.rating >= minRating);
-    }
-
-    // Sort
-    switch (sortBy) {
-      case "price-asc":
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case "rating":
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case "newest":
-        result.reverse();
-        break;
-      default:
-        result.sort((a, b) => b.reviews - a.reviews);
-    }
-
-    return result;
-  }, [query, selectedCategories, priceRange, minRating, sortBy]);
 
   const toggleCategory = (slug: string) => {
     setSelectedCategories((prev) => {
@@ -131,14 +78,6 @@ const AllProductsPage = () => {
     }
     return parts.length > 0 ? parts.join(" AND ") : "inventory_total:>20";
   }, [selectedCategories, query]);
-
-  const handleBuy = (productId: string) => {
-    const product = allProducts.find((item) => item.id === productId);
-    if (!product) return;
-    addItem(product, 1);
-    setIsOpen(true);
-    toast.success(`${product.name} added to bag ✨`);
-  };
 
   return (
     <>
