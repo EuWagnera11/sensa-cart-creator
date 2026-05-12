@@ -178,6 +178,42 @@ const ShopProductPage = () => {
                 <p className="font-serif italic text-base text-muted-foreground leading-relaxed whitespace-pre-line">{product.description}</p>
               </div>
 
+              {/* Sibling products — same product sold as separate Shopify
+                  products differing by size / flavor / color. */}
+              {siblingOptions.length > 1 && (
+                <div className="mb-4">
+                  <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground uppercase tracking-wider">
+                    Option: <span className="text-foreground not-italic">{
+                      siblingOptions.find((s) => s.product.node.handle === product.handle)?.label || product.title
+                    }</span>
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {siblingOptions.map((s) => {
+                      const isActive = s.product.node.handle === product.handle;
+                      const inStock = s.product.node.variants.edges.some((v) => v.node.availableForSale);
+                      return (
+                        <button
+                          key={s.product.node.id}
+                          type="button"
+                          onClick={() => !isActive && navigate(`/shop/product/${s.product.node.handle}`)}
+                          disabled={!inStock}
+                          title={s.product.node.title}
+                          className={`relative px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all ${
+                            isActive
+                              ? "bg-dark text-cream"
+                              : inStock
+                              ? "bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] hover:bg-accent"
+                              : "bg-cream/50 text-muted-foreground line-through cursor-not-allowed opacity-50"
+                          }`}
+                        >
+                          {s.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Variant selectors — one button per unique option value */}
               {product.options.map((opt) => {
                 if (opt.values.length <= 1) return null;
