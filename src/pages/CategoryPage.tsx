@@ -141,6 +141,17 @@ const CategoryPage = () => {
         </div>
       </div>
 
+      {/* Live Shopify products for this category */}
+      {CATEGORY_SHOPIFY_QUERIES[categorySlug || ""] && (
+        <ShopifyProductsSection
+          query={CATEGORY_SHOPIFY_QUERIES[categorySlug || ""]}
+          count={8}
+          kicker="Straight from the shop"
+          title={`Real ${category.name} picks`}
+          emoji={category.emoji}
+        />
+      )}
+
       {/* Toolbar — Sort & Filter */}
       <div className="bg-cream border-b-[3px] border-dark px-6 lg:px-12 py-3">
         <div className="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
