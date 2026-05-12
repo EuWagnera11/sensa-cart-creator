@@ -180,80 +180,80 @@ const ShopProductPage = () => {
 
               {/* Sibling products — same product sold as separate Shopify
                   products differing by size / flavor / color. */}
-              {siblingOptions.length > 1 && (
-                <div className="mb-4">
-                  <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground uppercase tracking-wider">
-                    Option: <span className="text-foreground not-italic">{
-                      siblingOptions.find((s) => s.product.node.handle === product.handle)?.label || product.title
-                    }</span>
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {siblingOptions.map((s) => {
-                      const isActive = s.product.node.handle === product.handle;
-                      const inStock = s.product.node.variants.edges.some((v) => v.node.availableForSale);
-                      return (
-                        <button
-                          key={s.product.node.id}
-                          type="button"
-                          onClick={() => !isActive && navigate(`/shop/product/${s.product.node.handle}`)}
-                          disabled={!inStock}
-                          title={s.product.node.title}
-                          className={`relative px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all ${
-                            isActive
-                              ? "bg-dark text-cream"
-                              : inStock
-                              ? "bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] hover:bg-accent"
-                              : "bg-cream/50 text-muted-foreground line-through cursor-not-allowed opacity-50"
-                          }`}
-                        >
-                          {s.label}
-                        </button>
-                      );
-                    })}
+              {siblingOptions.length > 1 && (() => {
+                const current = siblingOptions.find((s) => s.product.node.handle === product.handle);
+                return (
+                  <div className="mb-4">
+                    <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground uppercase tracking-wider">
+                      Option
+                    </p>
+                    <Select
+                      value={current?.product.node.handle || product.handle}
+                      onValueChange={(h) => {
+                        if (h !== product.handle) navigate(`/shop/product/${h}`);
+                      }}
+                    >
+                      <SelectTrigger className="w-full bg-cream border-[2px] border-dark rounded-sm font-display italic text-sm font-bold text-foreground shadow-[2px_2px_0_hsl(var(--dark))] h-11">
+                        <SelectValue placeholder="Choose option" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-cream border-[2px] border-dark rounded-sm">
+                        {siblingOptions.map((s) => {
+                          const inStock = s.product.node.variants.edges.some((v) => v.node.availableForSale);
+                          return (
+                            <SelectItem
+                              key={s.product.node.id}
+                              value={s.product.node.handle}
+                              disabled={!inStock}
+                              className="font-display italic text-sm font-bold"
+                            >
+                              {s.label}{!inStock ? " — sold out" : ""}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
-              {/* Variant selectors — one button per unique option value */}
+              {/* Variant selectors — dropdown per option */}
               {product.options.map((opt) => {
                 if (opt.values.length <= 1) return null;
                 return (
                   <div key={opt.name} className="mb-4">
                     <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground uppercase tracking-wider">
-                      {opt.name}: <span className="text-foreground not-italic">{selectedOptions[opt.name]}</span>
+                      {opt.name}
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {opt.values.map((value) => {
-                        // A value is available if combining it with the other currently
-                        // selected options matches at least one in-stock variant.
-                        const candidateOptions = { ...selectedOptions, [opt.name]: value };
-                        const matchingVariant = product.variants.edges.find((v) =>
-                          v.node.selectedOptions.every((o) => candidateOptions[o.name] === o.value)
-                        )?.node;
-                        const isAvailable = !!matchingVariant?.availableForSale;
-                        const isSelected = selectedOptions[opt.name] === value;
-                        return (
-                          <button
-                            key={opt.name + value}
-                            type="button"
-                            onClick={() => setSelectedOptions((prev) => ({ ...prev, [opt.name]: value }))}
-                            disabled={!isAvailable}
-                            title={!isAvailable ? "Sem estoque" : undefined}
-                            className={`relative px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all ${
-                              isSelected
-                                ? "bg-dark text-cream"
-                                : isAvailable
-                                ? "bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] hover:bg-accent"
-                                : "bg-cream/50 text-muted-foreground line-through cursor-not-allowed opacity-50"
-                            }`}
-                          >
-                            {value}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <Select
+                      value={selectedOptions[opt.name] || ""}
+                      onValueChange={(value) =>
+                        setSelectedOptions((prev) => ({ ...prev, [opt.name]: value }))
+                      }
+                    >
+                      <SelectTrigger className="w-full bg-cream border-[2px] border-dark rounded-sm font-display italic text-sm font-bold text-foreground shadow-[2px_2px_0_hsl(var(--dark))] h-11">
+                        <SelectValue placeholder={`Choose ${opt.name.toLowerCase()}`} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-cream border-[2px] border-dark rounded-sm">
+                        {opt.values.map((value) => {
+                          const candidateOptions = { ...selectedOptions, [opt.name]: value };
+                          const matchingVariant = product.variants.edges.find((v) =>
+                            v.node.selectedOptions.every((o) => candidateOptions[o.name] === o.value)
+                          )?.node;
+                          const isAvailable = !!matchingVariant?.availableForSale;
+                          return (
+                            <SelectItem
+                              key={opt.name + value}
+                              value={value}
+                              disabled={!isAvailable}
+                              className="font-display italic text-sm font-bold"
+                            >
+                              {value}{!isAvailable ? " — sold out" : ""}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </div>
-
                 );
               })}
 
