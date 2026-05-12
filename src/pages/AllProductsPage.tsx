@@ -122,6 +122,21 @@ const AllProductsPage = () => {
 
   const hasFilters = query.length > 0 || selectedCategories.size > 0 || priceRange > 0 || minRating > 0;
 
+  // Build Shopify Storefront query from selected categories + search text
+  const shopifyQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (selectedCategories.size > 0) {
+      const cats = Array.from(selectedCategories)
+        .map((s) => CATEGORY_SHOPIFY_QUERIES[s])
+        .filter(Boolean);
+      if (cats.length > 0) parts.push(`(${cats.map((c) => `(${c})`).join(" OR ")})`);
+    }
+    if (query.length >= 2) {
+      parts.push(`title:*${query.replace(/[^\p{L}\p{N}\s-]/gu, "")}*`);
+    }
+    return parts.length > 0 ? parts.join(" AND ") : "inventory_total:>20";
+  }, [selectedCategories, query]);
+
   const handleBuy = (productId: string) => {
     const product = allProducts.find((item) => item.id === productId);
     if (!product) return;
