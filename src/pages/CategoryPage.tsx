@@ -9,8 +9,9 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import CategoryHeroBanner from "@/components/CategoryHeroBanner";
 import ShopifyProductCard from "@/components/ShopifyProductCard";
-import { useSectionFull } from "@/lib/productSections";
+import { useSectionFull, isCatchAllSection } from "@/lib/productSections";
 import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
+import { useAllShopifyProducts } from "@/hooks/useAllShopifyProducts";
 import { dedupeProducts } from "@/lib/productGroups";
 
 const PAGE_SIZE = 24;
@@ -18,15 +19,35 @@ const PAGE_SIZE = 24;
 const CategoryPage = () => {
   const { categorySlug } = useParams<{ categorySlug: string }>();
   const category = getCategoryBySlug(categorySlug || "");
+  const isCatchAll = isCatchAllSection(categorySlug || "");
   const { section, listing_handles, loading: sectionLoading } = useSectionFull(categorySlug);
 
+  // Curated handles flow (default)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const visibleHandles = useMemo(
     () => listing_handles.slice(0, visibleCount),
     [listing_handles, visibleCount]
   );
-  const { products, loading: productsLoading } = useShopifyProductsByHandles(visibleHandles);
+  const handlesQuery = useShopifyProductsByHandles(isCatchAll ? [] : visibleHandles);
+
+  // Catch-all (whole catalog) flow — used by "oops"
+  const allQuery = useAllShopifyProducts(PAGE_SIZE);
+
+  const products = isCatchAll ? allQuery.products : handlesQuery.products;
+  const productsLoading = isCatchAll ? allQuery.loading : handlesQuery.loading;
+  const loadingMore = isCatchAll ? allQuery.loadingMore : handlesQuery.loading;
+  const hasMore = isCatchAll
+    ? allQuery.hasMore
+    : visibleCount < listing_handles.length;
+  const onLoadMore = () => {
+    if (isCatchAll) allQuery.loadMore();
+    else setVisibleCount((c) => c + PAGE_SIZE);
+  };
   const deduped = useMemo(() => dedupeProducts(products), [products]);
+  const totalLabel = isCatchAll
+    ? `${deduped.length}+`
+    : `${deduped.length} of ${section?.total_in_listing.toLocaleString() ?? 0}`;
+
 
   if (!category || !section) {
     return (
