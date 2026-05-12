@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, ShoppingCart, Truck, Package, RotateCcw, Clock } from "lucide-react";
 import { toast } from "sonner";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
-import { PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { PRODUCTS_QUERY, PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { groupSimilarProducts, normalizeTitle } from "@/lib/groupProducts";
 import { useShopifyCart } from "@/stores/shopifyCart";
 
 const ShopProductPage = () => {
   const { handle } = useParams<{ handle: string }>();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<ShopifyProduct["node"] | null>(null);
+  const [siblings, setSiblings] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [activeImage, setActiveImage] = useState(0);
@@ -23,11 +26,11 @@ const ShopProductPage = () => {
   useEffect(() => {
     if (!handle) return;
     setLoading(true);
+    setSiblings([]);
     storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle })
       .then((data) => {
         const p = data?.data?.product;
         setProduct(p);
-        // Default to the first available-for-sale variant's options.
         const firstAvailable =
           p?.variants?.edges?.find((v: any) => v.node.availableForSale)?.node ||
           p?.variants?.edges?.[0]?.node;
@@ -36,9 +39,33 @@ const ShopProductPage = () => {
           initial[o.name] = o.value;
         });
         setSelectedOptions(initial);
+
+        // Fetch sibling products (same product sold as separate Shopify
+        // products that differ by size/flavor/color) and group them.
+        if (p?.title) {
+          const firstWord = normalizeTitle(p.title).split(" ")[0];
+          if (firstWord && firstWord.length > 2) {
+            storefrontApiRequest(PRODUCTS_QUERY, {
+              first: 50,
+              query: `title:${firstWord}*`,
+            })
+              .then((res) => setSiblings(res?.data?.products?.edges || []))
+              .catch(() => setSiblings([]));
+          }
+        }
       })
       .finally(() => setLoading(false));
   }, [handle]);
+
+  const siblingOptions = useMemo(() => {
+    if (!product || siblings.length === 0) return [];
+    const groups = groupSimilarProducts(siblings);
+    const group = groups.find((g) =>
+      g.siblings.some((s) => s.product.node.handle === product.handle)
+    );
+    if (!group || group.siblings.length < 2) return [];
+    return group.siblings;
+  }, [product, siblings]);
 
 
   if (loading) {
@@ -150,6 +177,42 @@ const ShopProductPage = () => {
               <div className="prose prose-sm max-w-none mb-6">
                 <p className="font-serif italic text-base text-muted-foreground leading-relaxed whitespace-pre-line">{product.description}</p>
               </div>
+
+              {/* Sibling products — same product sold as separate Shopify
+                  products differing by size / flavor / color. */}
+              {siblingOptions.length > 1 && (
+                <div className="mb-4">
+                  <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground uppercase tracking-wider">
+                    Option: <span className="text-foreground not-italic">{
+                      siblingOptions.find((s) => s.product.node.handle === product.handle)?.label || product.title
+                    }</span>
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {siblingOptions.map((s) => {
+                      const isActive = s.product.node.handle === product.handle;
+                      const inStock = s.product.node.variants.edges.some((v) => v.node.availableForSale);
+                      return (
+                        <button
+                          key={s.product.node.id}
+                          type="button"
+                          onClick={() => !isActive && navigate(`/shop/product/${s.product.node.handle}`)}
+                          disabled={!inStock}
+                          title={s.product.node.title}
+                          className={`relative px-3 py-1.5 border-[2px] border-dark rounded-sm font-display italic text-xs font-bold transition-all ${
+                            isActive
+                              ? "bg-dark text-cream"
+                              : inStock
+                              ? "bg-cream text-foreground shadow-[2px_2px_0_hsl(var(--dark))] hover:bg-accent"
+                              : "bg-cream/50 text-muted-foreground line-through cursor-not-allowed opacity-50"
+                          }`}
+                        >
+                          {s.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Variant selectors — one button per unique option value */}
               {product.options.map((opt) => {
