@@ -37,10 +37,6 @@ export const categories: Category[] = [
   { slug: "newbie", name: "Newbie", emoji: "🗝️", collection: "Just start", desc: "Starter kits", count: 5, color: "bg-cat-newbie" },
 
   { slug: "oops", name: "Oops", emoji: "🔥", collection: "Hard to resist", desc: "Sale", count: 10, color: "bg-cat-browsing" },
-  { slug: "just-in", name: "Just In", emoji: "✨", collection: "Fresh trouble", desc: "New arrivals", count: 6, color: "bg-cat-just-in" },
-  { slug: "solo", name: "Solo", emoji: "🎀", collection: "No audience needed", desc: "Solo play", count: 8, color: "bg-cat-solo" },
-  { slug: "push-it", name: "Push It", emoji: "🔗", collection: "A little further", desc: "Kink & sensation", count: 7, color: "bg-cat-push-it" },
-  { slug: "playtime", name: "Playtime", emoji: "🌶️", collection: "You make the rules", desc: "Accessories & play", count: 9, color: "bg-cat-playtime" },
 ];
 
 export const products: Product[] = [
