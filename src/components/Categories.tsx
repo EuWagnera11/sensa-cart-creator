@@ -79,7 +79,7 @@ const Categories = () => {
                     {s.subtitle}
                   </div>
                   <div className="text-[0.62rem] tracking-[2px] uppercase font-bold text-white/50">
-                    {s.description} · {s.total_in_listing.toLocaleString()} items
+                    {s.description} · {s.id === "oops" ? "whole catalog" : `${s.total_in_listing.toLocaleString()} items`}
                   </div>
                   <div className="inline-flex items-center gap-1.5 mt-[18px] font-display italic text-[0.88rem] font-bold transition-all group-hover:gap-3 text-white/90">
                     {s.cta}
