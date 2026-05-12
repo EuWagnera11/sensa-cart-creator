@@ -3,66 +3,71 @@ import type { ShopifyProduct } from "@/lib/shopify";
 // Normalizes a product title so near-duplicate items (same product with
 // different size / flavor / scent / color sold as separate Shopify products)
 // collapse to the same key.
-//
-// Examples that collapse together:
-//   "Lubrificante Morango 100ml"  -> "lubrificante"
-//   "Lubrificante Morango 50ml"   -> "lubrificante"
-//   "Lubrificante - Baunilha"     -> "lubrificante"
-//   "Lubrificante (Cereja) 200ml" -> "lubrificante"
 export function normalizeTitle(raw: string): string {
   let t = (raw || "").toLowerCase();
-
-  // strip accents
   t = t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-  // remove anything inside parens/brackets
   t = t.replace(/\([^)]*\)/g, " ").replace(/\[[^\]]*\]/g, " ");
-
-  // cut everything after a dash / pipe / colon (usually variant info)
   t = t.split(/[-–—|:]/)[0];
-
-  // remove size/volume/weight/count tokens
   t = t.replace(
     /\b\d+([.,]\d+)?\s*(ml|cl|l|g|kg|oz|cm|mm|m|"|''|inch|pcs?|un|unidades?|pack|x)\b/g,
     " "
   );
-
-  // remove standalone numbers
   t = t.replace(/\b\d+([.,]\d+)?\b/g, " ");
-
-  // collapse whitespace + punctuation
   t = t.replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
-
-  // keep only first 3 meaningful words to make the key tighter
   const words = t.split(" ").filter(Boolean).slice(0, 3);
   return words.join(" ");
 }
 
-export interface GroupedProduct {
+// Derives a short label (e.g. "100ml", "Strawberry", "Red") for a sibling
+// product by removing the shared base title.
+function deriveVariantLabel(title: string, baseKey: string): string {
+  const baseWords = new Set(baseKey.split(" ").filter(Boolean));
+  const stripped = (title || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[()[\]]/g, " ");
+  const tokens = stripped.split(/\s+/).filter(Boolean);
+  const remaining = tokens.filter((t) => !baseWords.has(t.toLowerCase()));
+  const label = remaining.join(" ").replace(/^[-–—|:,\s]+/, "").trim();
+  return label || title;
+}
+
+export interface VariantOption {
   product: ShopifyProduct;
-  variantCount: number; // total variants across grouped Shopify products
-  groupSize: number; // how many separate Shopify products were merged
+  label: string;
+}
+
+export interface GroupedProduct {
+  product: ShopifyProduct; // currently representative
+  siblings: VariantOption[]; // all products in the group (incl. representative)
+  groupSize: number;
 }
 
 export function groupSimilarProducts(products: ShopifyProduct[]): GroupedProduct[] {
-  const map = new Map<string, GroupedProduct>();
+  const map = new Map<
+    string,
+    { rep: ShopifyProduct; baseKey: string; items: ShopifyProduct[] }
+  >();
 
   for (const p of products) {
     const key = normalizeTitle(p.node.title) || p.node.id;
     const existing = map.get(key);
-    const ownVariants = p.node.variants?.edges?.length ?? 1;
-
     if (!existing) {
-      map.set(key, { product: p, variantCount: ownVariants, groupSize: 1 });
+      map.set(key, { rep: p, baseKey: key, items: [p] });
     } else {
-      existing.variantCount += ownVariants;
-      existing.groupSize += 1;
-      // Prefer the representative with more images / variants for nicer cards.
-      const existingImgs = existing.product.node.images?.edges?.length ?? 0;
+      existing.items.push(p);
+      const existingImgs = existing.rep.node.images?.edges?.length ?? 0;
       const candidateImgs = p.node.images?.edges?.length ?? 0;
-      if (candidateImgs > existingImgs) existing.product = p;
+      if (candidateImgs > existingImgs) existing.rep = p;
     }
   }
 
-  return Array.from(map.values());
+  return Array.from(map.values()).map(({ rep, baseKey, items }) => ({
+    product: rep,
+    groupSize: items.length,
+    siblings: items.map((it) => ({
+      product: it,
+      label: deriveVariantLabel(it.node.title, baseKey),
+    })),
+  }));
 }
