@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
+import { groupSimilarProducts } from "@/lib/groupProducts";
 import ShopifyProductCard from "./ShopifyProductCard";
 
 interface Props {
@@ -10,7 +12,9 @@ interface Props {
 }
 
 const ShopifyProductsSection = ({ query, count = 8, title, kicker, emoji }: Props) => {
-  const { products, loading, error } = useShopifyProducts(query, count);
+  // Fetch a larger pool so grouping doesn't leave us with too few cards.
+  const { products: pool, loading, error } = useShopifyProducts(query, Math.max(count * 2, 24));
+  const products = useMemo(() => groupSimilarProducts(pool).slice(0, count), [pool, count]);
 
   if (error) return null;
 
