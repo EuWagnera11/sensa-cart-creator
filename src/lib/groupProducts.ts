@@ -79,31 +79,10 @@ function diceSimilarity(a: string, b: string): number {
 }
 
 export function groupSimilarProducts(products: ShopifyProduct[]): GroupedProduct[] {
-  const groups: { rep: ShopifyProduct; baseKey: string; key: string; items: ShopifyProduct[] }[] = [];
-
-  for (const p of products) {
-    const key = normalizeTitle(p.node.title) || p.node.id;
-    // Find the first existing group whose key is ≥ threshold similar.
-    const match = groups.find((g) => diceSimilarity(g.key, key) >= SIMILARITY_THRESHOLD);
-    if (!match) {
-      groups.push({ rep: p, baseKey: key, key, items: [p] });
-    } else {
-      match.items.push(p);
-      const existingImgs = match.rep.node.images?.edges?.length ?? 0;
-      const candidateImgs = p.node.images?.edges?.length ?? 0;
-      if (candidateImgs > existingImgs) match.rep = p;
-      // Keep the shortest key as base so deriveVariantLabel strips the
-      // common stem cleanly.
-      if (key.length < match.baseKey.length) match.baseKey = key;
-    }
-  }
-
-  return groups.map(({ rep, baseKey, items }) => ({
-    product: rep,
-    groupSize: items.length,
-    siblings: items.map((it) => ({
-      product: it,
-      label: deriveVariantLabel(it.node.title, baseKey),
-    })),
+  // Grouping disabled — show every product as-is.
+  return products.map((p) => ({
+    product: p,
+    groupSize: 1,
+    siblings: [{ product: p, label: p.node.title }],
   }));
 }
