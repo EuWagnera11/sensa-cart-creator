@@ -2,18 +2,20 @@ import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { useDisplayedProducts } from "@/stores/displayedProducts";
+import { groupSimilarProducts } from "@/lib/groupProducts";
 import ShopifyProductCard from "./ShopifyProductCard";
 
 const BEST_SELLERS_QUERY = "inventory_total:>100";
 
 const Products = () => {
-  // Fetch a larger pool so we can drop products already shown above.
-  const { products: pool, loading } = useShopifyProducts(BEST_SELLERS_QUERY, 24);
+  // Fetch a larger pool so we can drop products already shown above and
+  // collapse near-duplicate variants (same product, different size/flavor).
+  const { products: pool, loading } = useShopifyProducts(BEST_SELLERS_QUERY, 32);
   const displayedIds = useDisplayedProducts((s) => s.ids);
-  const products = useMemo(
-    () => pool.filter((p) => !displayedIds.has(p.node.id)).slice(0, 8),
-    [pool, displayedIds]
-  );
+  const products = useMemo(() => {
+    const filtered = pool.filter((p) => !displayedIds.has(p.node.id));
+    return groupSimilarProducts(filtered).slice(0, 8).map((g) => g.product);
+  }, [pool, displayedIds]);
 
   return (
     <div id="best-sellers" className="bg-dark border-t-[5px] border-dark border-b-[5px] border-b-dark px-6 lg:px-12 py-20 lg:py-24">

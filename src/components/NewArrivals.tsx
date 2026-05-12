@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { FRESH_PRODUCTS_QUERY } from "@/data/shopifyQueries";
 import { useDisplayedProducts } from "@/stores/displayedProducts";
+import { groupSimilarProducts } from "@/lib/groupProducts";
 import ShopifyProductCard from "./ShopifyProductCard";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
@@ -27,7 +28,11 @@ const NewArrivals = () => {
   const isMobile = useIsMobile();
   const activeBanners = isMobile ? mobileBanners : banners;
 
-  const { products, loading } = useShopifyProducts(FRESH_PRODUCTS_QUERY, 12);
+  const { products: pool, loading } = useShopifyProducts(FRESH_PRODUCTS_QUERY, 24);
+  const products = useMemo(
+    () => groupSimilarProducts(pool).slice(0, 12).map((g) => g.product),
+    [pool]
+  );
 
   // Register displayed product IDs so sibling sections can deduplicate.
   const register = useDisplayedProducts((s) => s.register);
