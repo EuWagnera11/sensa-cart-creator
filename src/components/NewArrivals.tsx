@@ -3,6 +3,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { FRESH_PRODUCTS_QUERY } from "@/data/shopifyQueries";
+import { useDisplayedProducts } from "@/stores/displayedProducts";
 import ShopifyProductCard from "./ShopifyProductCard";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
