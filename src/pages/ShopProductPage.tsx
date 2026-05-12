@@ -13,7 +13,7 @@ const ShopProductPage = () => {
   const { handle } = useParams<{ handle: string }>();
   const [product, setProduct] = useState<ShopifyProduct["node"] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
   const addItem = useShopifyCart((s) => s.addItem);
@@ -27,10 +27,19 @@ const ShopProductPage = () => {
       .then((data) => {
         const p = data?.data?.product;
         setProduct(p);
-        setSelectedVariantId(p?.variants?.edges?.[0]?.node?.id || null);
+        // Default to the first available-for-sale variant's options.
+        const firstAvailable =
+          p?.variants?.edges?.find((v: any) => v.node.availableForSale)?.node ||
+          p?.variants?.edges?.[0]?.node;
+        const initial: Record<string, string> = {};
+        firstAvailable?.selectedOptions?.forEach((o: { name: string; value: string }) => {
+          initial[o.name] = o.value;
+        });
+        setSelectedOptions(initial);
       })
       .finally(() => setLoading(false));
   }, [handle]);
+
 
   if (loading) {
     return (
