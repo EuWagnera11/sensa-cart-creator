@@ -8,6 +8,8 @@ import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import CategoryHeroBanner from "@/components/CategoryHeroBanner";
+import ShopifyProductsSection from "@/components/ShopifyProductsSection";
+import { CATEGORY_SHOPIFY_QUERIES } from "@/data/shopifyQueries";
 import { ChevronDown, Package, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
