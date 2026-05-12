@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { toast } from "sonner";
-import { useCart } from "@/context/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useShopifyProducts } from "@/hooks/useShopifyProducts";
+import { FRESH_PRODUCTS_QUERY } from "@/data/shopifyQueries";
+import ShopifyProductCard from "./ShopifyProductCard";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
 import banner3 from "@/assets/banners/new-arrivals-3.webp";
