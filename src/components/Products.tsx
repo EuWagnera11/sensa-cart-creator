@@ -1,11 +1,19 @@
 import { Link } from "react-router-dom";
+import { useMemo } from "react";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
+import { useDisplayedProducts } from "@/stores/displayedProducts";
 import ShopifyProductCard from "./ShopifyProductCard";
 
 const BEST_SELLERS_QUERY = "inventory_total:>100";
 
 const Products = () => {
-  const { products, loading } = useShopifyProducts(BEST_SELLERS_QUERY, 8);
+  // Fetch a larger pool so we can drop products already shown above.
+  const { products: pool, loading } = useShopifyProducts(BEST_SELLERS_QUERY, 24);
+  const displayedIds = useDisplayedProducts((s) => s.ids);
+  const products = useMemo(
+    () => pool.filter((p) => !displayedIds.has(p.node.id)).slice(0, 8),
+    [pool, displayedIds]
+  );
 
   return (
     <div id="best-sellers" className="bg-dark border-t-[5px] border-dark border-b-[5px] border-b-dark px-6 lg:px-12 py-20 lg:py-24">

@@ -3,6 +3,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { FRESH_PRODUCTS_QUERY } from "@/data/shopifyQueries";
+import { useDisplayedProducts } from "@/stores/displayedProducts";
 import ShopifyProductCard from "./ShopifyProductCard";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
@@ -27,6 +28,16 @@ const NewArrivals = () => {
   const activeBanners = isMobile ? mobileBanners : banners;
 
   const { products, loading } = useShopifyProducts(FRESH_PRODUCTS_QUERY, 12);
+
+  // Register displayed product IDs so sibling sections can deduplicate.
+  const register = useDisplayedProducts((s) => s.register);
+  const unregister = useDisplayedProducts((s) => s.unregister);
+  useEffect(() => {
+    const ids = products.map((p) => p.node.id);
+    if (ids.length === 0) return;
+    register(ids);
+    return () => unregister(ids);
+  }, [products, register, unregister]);
 
   // Banner rotation
   const nextBanner = useCallback(
