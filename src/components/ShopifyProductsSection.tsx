@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
-import { dedupeProducts, getGroupId } from "@/lib/productGroups";
+import { dedupeProducts } from "@/lib/productGroups";
 import ShopifyProductCard from "./ShopifyProductCard";
 
 interface Props {
@@ -53,16 +53,9 @@ const ShopifyProductsSection = ({ query, count = 8, title, kicker, emoji }: Prop
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {products.map((p) => {
-              const grouped = getGroupId(p.node.handle) !== p.node.handle ||
-                (getGroupId(p.node.handle) === p.node.handle && false);
-              return (
-                <ShopifyProductCard
-                  key={p.node.id}
-                  product={p}
-                />
-              );
-            })}
+            {products.map((p) => (
+              <ShopifyProductCard key={p.node.id} product={p} />
+            ))}
           </div>
         )}
       </div>
