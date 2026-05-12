@@ -26,11 +26,11 @@ const ShopProductPage = () => {
   useEffect(() => {
     if (!handle) return;
     setLoading(true);
+    setSiblings([]);
     storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle })
       .then((data) => {
         const p = data?.data?.product;
         setProduct(p);
-        // Default to the first available-for-sale variant's options.
         const firstAvailable =
           p?.variants?.edges?.find((v: any) => v.node.availableForSale)?.node ||
           p?.variants?.edges?.[0]?.node;
@@ -39,9 +39,33 @@ const ShopProductPage = () => {
           initial[o.name] = o.value;
         });
         setSelectedOptions(initial);
+
+        // Fetch sibling products (same product sold as separate Shopify
+        // products that differ by size/flavor/color) and group them.
+        if (p?.title) {
+          const firstWord = normalizeTitle(p.title).split(" ")[0];
+          if (firstWord && firstWord.length > 2) {
+            storefrontApiRequest(PRODUCTS_QUERY, {
+              first: 50,
+              query: `title:${firstWord}*`,
+            })
+              .then((res) => setSiblings(res?.data?.products?.edges || []))
+              .catch(() => setSiblings([]));
+          }
+        }
       })
       .finally(() => setLoading(false));
   }, [handle]);
+
+  const siblingOptions = useMemo(() => {
+    if (!product || siblings.length === 0) return [];
+    const groups = groupSimilarProducts(siblings);
+    const group = groups.find((g) =>
+      g.siblings.some((s) => s.product.node.handle === product.handle)
+    );
+    if (!group || group.siblings.length < 2) return [];
+    return group.siblings;
+  }, [product, siblings]);
 
 
   if (loading) {
