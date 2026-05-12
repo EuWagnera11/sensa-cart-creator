@@ -9,6 +9,7 @@ import SEOHead from "@/components/SEOHead";
 import { PRODUCTS_QUERY, PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { groupSimilarProducts, normalizeTitle } from "@/lib/groupProducts";
 import { useShopifyCart } from "@/stores/shopifyCart";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ShopProductPage = () => {
   const { handle } = useParams<{ handle: string }>();
