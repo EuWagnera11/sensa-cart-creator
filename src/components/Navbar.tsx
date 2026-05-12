@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X, User, LogOut, Search, Package } from "lucide-react";
+import { Menu, ShoppingBag, X, User, LogOut, Search, Package, Store } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useShopifyCart } from "@/stores/shopifyCart";
 import { useAuth } from "@/hooks/useAuth";
 import SearchOverlay from "@/components/SearchOverlay";
 
@@ -18,7 +19,10 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
-  const { itemCount, setIsOpen } = useCart();
+  useCart(); // legacy cart still used by other pages
+  const shopifyItems = useShopifyCart((s) => s.items);
+  const setShopifyOpen = useShopifyCart((s) => s.setIsOpen);
+  const shopifyCount = shopifyItems.reduce((s, i) => s + i.quantity, 0);
   const { user, signOut } = useAuth();
 
   return (
@@ -49,6 +53,15 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center gap-3">
+          {/* Shop link */}
+          <Link
+            to="/shop"
+            className="hidden sm:inline-flex items-center gap-1.5 text-white/60 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
+            title="Shop"
+          >
+            <Store size={15} /> Shop
+          </Link>
+
           {/* Search */}
           <button
             type="button"
@@ -87,16 +100,17 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Bag button */}
+          {/* Shopify Bag button */}
           <button
             type="button"
             className="relative text-cream p-2"
-            onClick={() => setIsOpen(true)}
+            onClick={() => setShopifyOpen(true)}
+            title="Shop bag"
           >
             <ShoppingBag size={22} />
-            {itemCount > 0 && (
+            {shopifyCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-[18px] h-[18px] bg-primary text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center border border-dark">
-                {itemCount}
+                {shopifyCount}
               </span>
             )}
           </button>
