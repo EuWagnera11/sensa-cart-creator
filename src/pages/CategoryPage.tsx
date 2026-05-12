@@ -8,6 +8,8 @@ import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import CategoryHeroBanner from "@/components/CategoryHeroBanner";
+import ShopifyProductsSection from "@/components/ShopifyProductsSection";
+import { CATEGORY_SHOPIFY_QUERIES } from "@/data/shopifyQueries";
 import { ChevronDown, Package, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
@@ -138,6 +140,17 @@ const CategoryPage = () => {
           <span className="text-foreground font-semibold">{category.name}</span>
         </div>
       </div>
+
+      {/* Live Shopify products for this category */}
+      {CATEGORY_SHOPIFY_QUERIES[categorySlug || ""] && (
+        <ShopifyProductsSection
+          query={CATEGORY_SHOPIFY_QUERIES[categorySlug || ""]}
+          count={8}
+          kicker="Straight from the shop"
+          title={`Real ${category.name} picks`}
+          emoji={category.emoji}
+        />
+      )}
 
       {/* Toolbar — Sort & Filter */}
       <div className="bg-cream border-b-[3px] border-dark px-6 lg:px-12 py-3">
