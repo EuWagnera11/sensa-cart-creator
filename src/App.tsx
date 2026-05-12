@@ -31,6 +31,11 @@ import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
+const CartSyncMount = () => {
+  useCartSync();
+  return null;
+};
+
 const ScrollManager = () => {
   const location = useLocation();
 
