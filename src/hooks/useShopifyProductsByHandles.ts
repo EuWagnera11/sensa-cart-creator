@@ -1,23 +1,53 @@
 import { useEffect, useState } from "react";
-import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 
 const CHUNK_SIZE = 30;
 
-function buildHandleQuery(handles: string[]): string {
-  return handles.map((h) => `handle:"${h}"`).join(" OR ");
+const PRODUCT_FRAGMENT = `
+  id
+  title
+  description
+  handle
+  priceRange { minVariantPrice { amount currencyCode } }
+  images(first: 5) { edges { node { url altText } } }
+  variants(first: 10) {
+    edges {
+      node {
+        id
+        title
+        price { amount currencyCode }
+        availableForSale
+        selectedOptions { name value }
+      }
+    }
+  }
+  options { name values }
+`;
+
+function buildAliasedQuery(handles: string[]): { query: string; variables: Record<string, string> } {
+  const variables: Record<string, string> = {};
+  const varDefs: string[] = [];
+  const aliases: string[] = [];
+  handles.forEach((h, i) => {
+    const v = `h${i}`;
+    variables[v] = h;
+    varDefs.push(`$${v}: String!`);
+    aliases.push(`p${i}: product(handle: $${v}) { ${PRODUCT_FRAGMENT} }`);
+  });
+  const query = `query GetProductsByHandles(${varDefs.join(", ")}) { ${aliases.join("\n")} }`;
+  return { query, variables };
 }
 
 /**
- * Fetch Shopify products by an explicit list of handles. Splits into chunks
- * (~30 per query) to stay under Storefront query-length limits, then
- * preserves the original handle order in the returned array.
+ * Fetch Shopify products by an explicit list of handles. Uses aliased
+ * `product(handle: ...)` lookups (chunked) for reliable exact matching,
+ * preserving the input order in the output array.
  */
 export function useShopifyProductsByHandles(handles: string[]) {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Stable key so we don't re-fetch on every render (handles is a slice).
   const key = handles.join("|");
 
   useEffect(() => {
@@ -36,21 +66,21 @@ export function useShopifyProductsByHandles(handles: string[]) {
     }
 
     Promise.all(
-      chunks.map((c) =>
-        storefrontApiRequest(PRODUCTS_QUERY, {
-          first: c.length,
-          query: buildHandleQuery(c),
-        })
-      )
+      chunks.map((c) => {
+        const { query, variables } = buildAliasedQuery(c);
+        return storefrontApiRequest(query, variables).then((res) => ({ chunk: c, res }));
+      })
     )
       .then((results) => {
         if (cancelled) return;
         const byHandle = new Map<string, ShopifyProduct>();
-        for (const r of results) {
-          const edges = (r?.data?.products?.edges ?? []) as ShopifyProduct[];
-          for (const e of edges) byHandle.set(e.node.handle, e);
+        for (const { chunk, res } of results) {
+          const data = res?.data ?? {};
+          chunk.forEach((h, i) => {
+            const node = data[`p${i}`];
+            if (node) byHandle.set(h, { node } as ShopifyProduct);
+          });
         }
-        // Preserve original input order.
         const ordered = handles
           .map((h) => byHandle.get(h))
           .filter((p): p is ShopifyProduct => !!p);
