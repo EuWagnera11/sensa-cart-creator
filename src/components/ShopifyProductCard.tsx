@@ -1,33 +1,16 @@
 import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { ShopifyProduct } from "@/lib/shopify";
 import { useShopifyCart } from "@/stores/shopifyCart";
-
-interface SiblingOption {
-  product: ShopifyProduct;
-  label: string;
-}
 
 interface Props {
   product: ShopifyProduct;
   variant?: "marquee" | "grid";
   sticker?: string;
-  // When passed (length > 1) the card renders chips to switch between
-  // grouped sibling products (same product, different size/flavor/color
-  // sold as separate Shopify products).
-  siblings?: SiblingOption[];
 }
 
-const ShopifyProductCard = ({ product, variant = "grid", sticker, siblings }: Props) => {
-  const hasSiblings = (siblings?.length ?? 0) > 1;
-  const [activeId, setActiveId] = useState<string>(product.node.id);
-  const active = useMemo(() => {
-    if (!hasSiblings) return product;
-    return siblings!.find((s) => s.product.node.id === activeId)?.product ?? product;
-  }, [hasSiblings, siblings, activeId, product]);
-
-  const node = active.node;
+const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
+  const node = product.node;
   const image = node.images.edges[0]?.node;
   const firstVariant = node.variants.edges[0]?.node;
   const price = firstVariant?.price ?? node.priceRange.minVariantPrice;
@@ -46,7 +29,7 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker, siblings }: Pr
       return;
     }
     await addItem({
-      product: active,
+      product,
       variantId: firstVariant.id,
       variantTitle: firstVariant.title,
       price: firstVariant.price,
@@ -69,7 +52,7 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker, siblings }: Pr
             <img
               src={image.url}
               alt={image.altText || node.title}
-              loading="lazy"
+              loading="eager"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
@@ -124,7 +107,7 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker, siblings }: Pr
             <img
               src={image.url}
               alt={image.altText || node.title}
-              loading="lazy"
+              loading="eager"
               decoding="async"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -166,15 +149,6 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker, siblings }: Pr
             </span>
           )}
         </div>
-
-        {hasSiblings && (
-          <Link
-            to={`/shop/product/${node.handle}`}
-            className="block mb-3 font-display italic text-[0.65rem] font-bold text-primary uppercase tracking-wide no-underline hover:underline"
-          >
-            +{siblings!.length - 1} more option{siblings!.length - 1 > 1 ? "s" : ""} →
-          </Link>
-        )}
 
         <div className="grid grid-cols-2 gap-2">
           <button
