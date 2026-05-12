@@ -1,16 +1,33 @@
 import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { ShopifyProduct } from "@/lib/shopify";
 import { useShopifyCart } from "@/stores/shopifyCart";
+
+interface SiblingOption {
+  product: ShopifyProduct;
+  label: string;
+}
 
 interface Props {
   product: ShopifyProduct;
   variant?: "marquee" | "grid";
   sticker?: string;
+  // When passed (length > 1) the card renders chips to switch between
+  // grouped sibling products (same product, different size/flavor/color
+  // sold as separate Shopify products).
+  siblings?: SiblingOption[];
 }
 
-const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
-  const node = product.node;
+const ShopifyProductCard = ({ product, variant = "grid", sticker, siblings }: Props) => {
+  const hasSiblings = (siblings?.length ?? 0) > 1;
+  const [activeId, setActiveId] = useState<string>(product.node.id);
+  const active = useMemo(() => {
+    if (!hasSiblings) return product;
+    return siblings!.find((s) => s.product.node.id === activeId)?.product ?? product;
+  }, [hasSiblings, siblings, activeId, product]);
+
+  const node = active.node;
   const image = node.images.edges[0]?.node;
   const firstVariant = node.variants.edges[0]?.node;
   const price = firstVariant?.price ?? node.priceRange.minVariantPrice;
@@ -29,7 +46,7 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
       return;
     }
     await addItem({
-      product,
+      product: active,
       variantId: firstVariant.id,
       variantTitle: firstVariant.title,
       price: firstVariant.price,
@@ -149,6 +166,40 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
             </span>
           )}
         </div>
+
+        {hasSiblings && (
+          <div className="mb-3">
+            <p className="font-display italic text-[0.6rem] text-muted-foreground uppercase tracking-wide mb-1.5">
+              Choose option
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {siblings!.map((s) => {
+                const isActive = s.product.node.id === activeId;
+                const inStock = s.product.node.variants.edges[0]?.node.availableForSale ?? true;
+                return (
+                  <button
+                    key={s.product.node.id}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveId(s.product.node.id);
+                    }}
+                    disabled={!inStock}
+                    className={`px-2 py-0.5 border-2 border-dark rounded-full font-display italic text-[0.62rem] font-bold transition-all ${
+                      isActive
+                        ? "bg-primary text-cream"
+                        : "bg-cream text-foreground hover:bg-accent"
+                    } ${!inStock ? "opacity-40 line-through cursor-not-allowed" : ""}`}
+                    title={s.product.node.title}
+                  >
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-2">
           <button

@@ -57,7 +57,8 @@ const ShopifyProductsSection = ({ query, count = 8, title, kicker, emoji }: Prop
               <ShopifyProductCard
                 key={g.product.node.id}
                 product={g.product}
-                sticker={g.groupSize > 1 ? `+${g.groupSize} variants` : undefined}
+                siblings={g.siblings}
+                sticker={g.groupSize > 1 ? `${g.groupSize} options` : undefined}
               />
             ))}
           </div>
