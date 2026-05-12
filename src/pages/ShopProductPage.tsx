@@ -174,35 +174,36 @@ const ShopProductPage = () => {
                 <p className="font-serif italic text-base text-muted-foreground leading-relaxed whitespace-pre-line">{product.description}</p>
               </div>
 
-              {/* Sibling products — same product sold as separate Shopify
-                  products differing by size / flavor / color. */}
-              {siblingOptions.length > 1 && (() => {
-                const current = siblingOptions.find((s) => s.product.node.handle === product.handle);
+              {/* Grouped variants — different Shopify products that share the
+                  same base item (Cor / Tamanho / Sabor / Embalagem). */}
+              {isGrouped && group && axes.map((axis) => {
+                const values = Array.from(
+                  new Set(group.variants.map((v) => v.attributes[axis]).filter(Boolean) as string[])
+                );
+                if (values.length <= 1) return null;
                 return (
-                  <div className="mb-4">
+                  <div key={axis} className="mb-4">
                     <p className="font-display italic text-xs font-bold mb-2 text-muted-foreground uppercase tracking-wider">
-                      Option
+                      {axis}
                     </p>
                     <Select
-                      value={current?.product.node.handle || product.handle}
-                      onValueChange={(h) => {
-                        if (h !== product.handle) navigate(`/shop/product/${h}`);
-                      }}
+                      value={groupSelected[axis] || ""}
+                      onValueChange={(value) => setGroupOption(axis, value)}
                     >
                       <SelectTrigger className="w-full bg-cream border-[2px] border-dark rounded-sm font-display italic text-sm font-bold text-foreground shadow-[2px_2px_0_hsl(var(--dark))] h-11">
-                        <SelectValue placeholder="Choose option" />
+                        <SelectValue placeholder={`Choose ${axis.toLowerCase()}`} />
                       </SelectTrigger>
                       <SelectContent className="bg-cream border-[2px] border-dark rounded-sm">
-                        {siblingOptions.map((s) => {
-                          const inStock = s.product.node.variants.edges.some((v) => v.node.availableForSale);
+                        {values.map((value) => {
+                          const ok = isGroupOptionAvailable(axis, value);
                           return (
                             <SelectItem
-                              key={s.product.node.id}
-                              value={s.product.node.handle}
-                              disabled={!inStock}
+                              key={axis + value}
+                              value={value}
+                              disabled={!ok}
                               className="font-display italic text-sm font-bold"
                             >
-                              {s.label}{!inStock ? " — sold out" : ""}
+                              {value}{!ok ? " — n/a" : ""}
                             </SelectItem>
                           );
                         })}
@@ -210,7 +211,7 @@ const ShopProductPage = () => {
                     </Select>
                   </div>
                 );
-              })()}
+              })}
 
               {/* Variant selectors — dropdown per option */}
               {product.options.map((opt) => {
