@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import CartSheet from "@/components/CartSheet";
+import ShopifyCartDrawer from "@/components/ShopifyCartDrawer";
+import { useCartSync } from "@/hooks/useCartSync";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { CartProvider } from "@/context/CartContext";
@@ -23,6 +25,8 @@ import AuthPage from "./pages/AuthPage.tsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import OrdersPage from "./pages/OrdersPage.tsx";
+import ShopPage from "./pages/ShopPage.tsx";
+import ShopProductPage from "./pages/ShopProductPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -132,11 +136,15 @@ const App = () => (
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/shop" element={<ShopPage />} />
+              <Route path="/shop/product/:handle" element={<ShopProductPage />} />
               <Route path="/category/:categorySlug" element={<CategoryPage />} />
               <Route path="/category/:categorySlug/product/:productSlug" element={<ProductPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           <CartSheet />
+          <ShopifyCartDrawer />
+          <CartSyncMount />
         </CartProvider>
       </BrowserRouter>
     </TooltipProvider>
