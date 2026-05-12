@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
-import { groupSimilarProducts } from "@/lib/groupProducts";
+import { dedupeProducts, getGroupId } from "@/lib/productGroups";
 import ShopifyProductCard from "./ShopifyProductCard";
 
 interface Props {
@@ -12,9 +12,9 @@ interface Props {
 }
 
 const ShopifyProductsSection = ({ query, count = 8, title, kicker, emoji }: Props) => {
-  // Fetch a larger pool so grouping doesn't leave us with too few cards.
+  // Fetch a larger pool so dedupe doesn't leave us with too few cards.
   const { products: pool, loading, error } = useShopifyProducts(query, Math.max(count * 2, 24));
-  const products = useMemo(() => groupSimilarProducts(pool).slice(0, count), [pool, count]);
+  const products = useMemo(() => dedupeProducts(pool).slice(0, count), [pool, count]);
 
   if (error) return null;
 
@@ -53,14 +53,16 @@ const ShopifyProductsSection = ({ query, count = 8, title, kicker, emoji }: Prop
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {products.map((g) => (
-              <ShopifyProductCard
-                key={g.product.node.id}
-                product={g.product}
-                siblings={g.siblings}
-                sticker={g.groupSize > 1 ? `${g.groupSize} options` : undefined}
-              />
-            ))}
+            {products.map((p) => {
+              const grouped = getGroupId(p.node.handle) !== p.node.handle ||
+                (getGroupId(p.node.handle) === p.node.handle && false);
+              return (
+                <ShopifyProductCard
+                  key={p.node.id}
+                  product={p}
+                />
+              );
+            })}
           </div>
         )}
       </div>
