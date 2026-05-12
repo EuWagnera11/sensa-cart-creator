@@ -1,15 +1,12 @@
 import { useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Search, SlidersHorizontal, X, ChevronDown } from "lucide-react";
-import { toast } from "sonner";
 
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
-import { useCart } from "@/context/CartContext";
-import { categories, products } from "@/data/products";
-import { getProductImage } from "@/data/productImages";
+import { categories } from "@/data/products";
 import ShopifyProductsSection from "@/components/ShopifyProductsSection";
 import { CATEGORY_SHOPIFY_QUERIES } from "@/data/shopifyQueries";
 
