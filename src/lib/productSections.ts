@@ -48,7 +48,13 @@ export function getAllSections(): SectionMeta[] {
 }
 
 export function getVisibleSections(): SectionMeta[] {
-  return getAllSections().filter((s) => s.total_in_listing > 0);
+  // Always include "oops" — it's a catch-all/sale section that surfaces
+  // the whole catalog regardless of curated handles.
+  return getAllSections().filter((s) => s.id === "oops" || s.total_in_listing > 0);
+}
+
+export function isCatchAllSection(id: string): boolean {
+  return id === "oops";
 }
 
 export function getTilePreviewHandles(id: SectionId, n = 4): string[] {
