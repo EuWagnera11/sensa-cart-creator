@@ -1,9 +1,15 @@
+## Fix: handles com hífen retornando zero produtos
 
+**Arquivo:** `src/hooks/useShopifyProductsByHandles.ts`
 
-# Adicionar linha preta de 4px embaixo do MarqueeBand
+**Mudança única** — envolver o handle em aspas duplas para evitar que o `-` seja interpretado como operador NOT pela Storefront Search Syntax:
 
-## Mudança
+```ts
+function buildHandleQuery(handles: string[]): string {
+  return handles.map((h) => `handle:"${h}"`).join(" OR ");
+}
+```
 
-### `src/components/MarqueeBand.tsx` — Linha 13
-Trocar `shadow-[0_3px_0_0_hsl(var(--dark))]` por `shadow-[0_4px_0_0_hsl(var(--dark))]` para igualar a espessura da linha preta do TrustBar (4px).
+O escape é feito automaticamente pelo JSON serializer já que `query` é passado como variável GraphQL (`$query: String`).
 
+**Validação:** abrir `/category/buzz` (ou qualquer seção) e confirmar que os produtos aparecem.

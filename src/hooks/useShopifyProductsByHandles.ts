@@ -4,7 +4,7 @@ import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib
 const CHUNK_SIZE = 30;
 
 function buildHandleQuery(handles: string[]): string {
-  return handles.map((h) => `handle:${h}`).join(" OR ");
+  return handles.map((h) => `handle:"${h}"`).join(" OR ");
 }
 
 /**
