@@ -30,8 +30,6 @@ const SORT_OPTIONS = [
   { label: "Newest", value: "newest" },
 ];
 
-const normalise = (s: string) =>
-  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 const AllProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
