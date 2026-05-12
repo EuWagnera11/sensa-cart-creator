@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, ShoppingCart, Truck, Package, RotateCcw, Clock } from "lucide-react";
 import { toast } from "sonner";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
-import { PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { PRODUCTS_QUERY, PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { groupSimilarProducts, normalizeTitle } from "@/lib/groupProducts";
 import { useShopifyCart } from "@/stores/shopifyCart";
 
 const ShopProductPage = () => {
   const { handle } = useParams<{ handle: string }>();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<ShopifyProduct["node"] | null>(null);
+  const [siblings, setSiblings] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [activeImage, setActiveImage] = useState(0);
