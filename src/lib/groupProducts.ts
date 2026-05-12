@@ -9,8 +9,9 @@ export function normalizeTitle(raw: string): string {
   t = t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   // drop parens / brackets content (often holds the variant qualifier)
   t = t.replace(/\([^)]*\)/g, " ").replace(/\[[^\]]*\]/g, " ");
-  // drop suffix after a separator like "Title - Strawberry 100ml"
-  t = t.split(/[-–—|:]/)[0];
+  // NOTE: do NOT split on dashes/colons — many Shopify titles use the
+  // pattern "BRAND - Product Name 50ml", which would collapse every
+  // product of the same brand into the same key.
   // strip size/volume/quantity tokens
   t = t.replace(
     /\b\d+([.,]\d+)?\s*(ml|cl|l|g|kg|oz|cm|mm|m|"|''|inch|pcs?|un|unidades?|pack|x)\b/gi,
