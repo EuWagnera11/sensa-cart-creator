@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X, User, LogOut, Search, Package } from "lucide-react";
+import { Menu, ShoppingBag, X, User, LogOut, Search, Package, Store } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useShopifyCart } from "@/stores/shopifyCart";
 import { useAuth } from "@/hooks/useAuth";
 import SearchOverlay from "@/components/SearchOverlay";
 
@@ -19,6 +20,9 @@ const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const { itemCount, setIsOpen } = useCart();
+  const shopifyItems = useShopifyCart((s) => s.items);
+  const setShopifyOpen = useShopifyCart((s) => s.setIsOpen);
+  const shopifyCount = shopifyItems.reduce((s, i) => s + i.quantity, 0);
   const { user, signOut } = useAuth();
 
   return (
