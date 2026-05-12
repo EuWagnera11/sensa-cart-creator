@@ -334,6 +334,21 @@ const AllProductsPage = () => {
         </div>
       </div>
 
+      {/* Live Shopify products */}
+      <ShopifyProductsSection
+        query={shopifyQuery}
+        count={12}
+        kicker="Straight from the shop"
+        title={
+          query.length >= 2
+            ? `Live results for "${query}"`
+            : selectedCategories.size > 0
+            ? "Live picks for your filters"
+            : "Live from our shelves"
+        }
+        emoji="🛍️"
+      />
+
       {/* Product grid */}
       <section className="bg-parch paper-bg px-6 lg:px-12 py-8 pb-16">
         <div className="max-w-[1440px] mx-auto">
