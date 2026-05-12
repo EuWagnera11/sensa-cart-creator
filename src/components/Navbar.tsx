@@ -19,7 +19,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
-  const { itemCount, setIsOpen } = useCart();
+  useCart(); // legacy cart still used by other pages
   const shopifyItems = useShopifyCart((s) => s.items);
   const setShopifyOpen = useShopifyCart((s) => s.setIsOpen);
   const shopifyCount = shopifyItems.reduce((s, i) => s + i.quantity, 0);
