@@ -71,7 +71,10 @@ const ShopProductPage = () => {
     );
   }
 
-  const variant = product.variants.edges.find((v) => v.node.id === selectedVariantId)?.node || product.variants.edges[0]?.node;
+  const variant =
+    product.variants.edges.find((v) =>
+      v.node.selectedOptions.every((o) => selectedOptions[o.name] === o.value)
+    )?.node || product.variants.edges[0]?.node;
   const images = product.images.edges;
   const mainImg = images[activeImage]?.node;
   const price = variant?.price || product.priceRange.minVariantPrice;
