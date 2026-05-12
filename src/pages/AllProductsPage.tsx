@@ -10,6 +10,8 @@ import SEOHead from "@/components/SEOHead";
 import { useCart } from "@/context/CartContext";
 import { categories, products } from "@/data/products";
 import { getProductImage } from "@/data/productImages";
+import ShopifyProductsSection from "@/components/ShopifyProductsSection";
+import { CATEGORY_SHOPIFY_QUERIES } from "@/data/shopifyQueries";
 
 const primaryCategorySlugs = ["buzz", "duo", "slippery", "tied", "newbie", "oops"];
 const primaryCategorySet = new Set(primaryCategorySlugs);
