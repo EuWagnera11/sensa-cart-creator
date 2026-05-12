@@ -324,20 +324,10 @@ const AllProductsPage = () => {
         </div>
       </div>
 
-      {/* Results count */}
-      <div className="bg-parch paper-bg px-6 lg:px-12 pt-6">
-        <div className="max-w-[1440px] mx-auto flex items-center justify-between">
-          <p className="font-serif italic text-sm text-muted-foreground">
-            {filtered.length} {filtered.length === 1 ? "product" : "products"} found
-            {query && <span> for "<strong className="text-foreground">{query}</strong>"</span>}
-          </p>
-        </div>
-      </div>
-
       {/* Live Shopify products */}
       <ShopifyProductsSection
         query={shopifyQuery}
-        count={12}
+        count={24}
         kicker="Straight from the shop"
         title={
           query.length >= 2
@@ -348,80 +338,6 @@ const AllProductsPage = () => {
         }
         emoji="🛍️"
       />
-
-      {/* Product grid */}
-      <section className="bg-parch paper-bg px-6 lg:px-12 py-8 pb-16">
-        <div className="max-w-[1440px] mx-auto">
-          {filtered.length === 0 ? (
-            <div className="text-center py-20">
-              <span className="text-6xl block mb-4">🔍</span>
-              <h2 className="font-display font-black italic text-2xl text-foreground mb-2">No products found</h2>
-              <p className="font-serif italic text-muted-foreground mb-6">Try adjusting your filters or search term.</p>
-              <button onClick={clearFilters} className="cta-primary inline-block px-8 py-3">Clear Filters</button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {filtered.map((product) => {
-                const category = categoryMap.get(product.categorySlug);
-                const img = getProductImage(product.id);
-
-                return (
-                  <div
-                    key={product.id}
-                    className="bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_hsl(var(--dark))] group"
-                  >
-                    <Link to={`/category/${product.categorySlug}/product/${product.slug}`} className="block no-underline">
-                      <div className={`${category?.color ?? "bg-parch"} border-b-[3px] border-dark h-48 flex items-center justify-center relative overflow-hidden`}>
-                        {img ? (
-                          <img src={img} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        ) : (
-                          <span className="text-6xl">{product.emoji}</span>
-                        )}
-                        {product.sticker && (
-                          <span className="absolute top-2 right-2 bg-accent text-foreground font-display italic font-bold text-[0.6rem] px-2.5 py-0.5 border-2 border-dark rounded-full shadow-[2px_2px_0_hsl(var(--dark))]" style={{ transform: "rotate(2deg)" }}>
-                            {product.sticker}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="p-4">
-                        <div className="font-display italic text-[0.65rem] text-muted-foreground mb-1 uppercase tracking-wider">
-                          {product.category}
-                        </div>
-                        <h2 className="font-display font-black italic text-lg text-foreground leading-tight mb-1 group-hover:text-primary transition-colors">
-                          {product.name}
-                        </h2>
-                        <p className="font-serif italic text-xs text-muted-foreground leading-relaxed mb-3 line-clamp-2">{product.description}</p>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="font-display font-black text-xl text-primary">€{product.price}</span>
-                            {product.originalPrice && (
-                              <span className="font-serif italic text-xs text-muted-foreground line-through">€{product.originalPrice}</span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <span className="text-accent">★</span> {product.rating}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-
-                    <div className="px-4 pb-4 grid grid-cols-2 gap-2">
-                      <button type="button" className="cta-primary w-full text-xs px-3 py-2.5" onClick={() => handleBuy(product.id)}>
-                        Buy now
-                      </button>
-                      <Link to={`/category/${product.categorySlug}/product/${product.slug}`} className="cta-secondary w-full text-xs px-3 py-2.5 no-underline text-center">
-                        Details
-                      </Link>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
 
       <Footer />
     </>
