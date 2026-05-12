@@ -13,8 +13,6 @@ import { CATEGORY_SHOPIFY_QUERIES } from "@/data/shopifyQueries";
 const primaryCategorySlugs = ["buzz", "duo", "slippery", "tied", "newbie", "oops"];
 const primaryCategorySet = new Set(primaryCategorySlugs);
 const primaryCategories = categories.filter((c) => primaryCategorySet.has(c.slug));
-const allProducts = products.filter((p) => primaryCategorySet.has(p.categorySlug));
-const categoryMap = new Map(primaryCategories.map((c) => [c.slug, c]));
 
 const PRICE_RANGES = [
   { label: "All Prices", min: 0, max: Infinity },
