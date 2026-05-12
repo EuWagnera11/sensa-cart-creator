@@ -10,6 +10,8 @@ import SEOHead from "@/components/SEOHead";
 import { useCart } from "@/context/CartContext";
 import { categories, products } from "@/data/products";
 import { getProductImage } from "@/data/productImages";
+import ShopifyProductsSection from "@/components/ShopifyProductsSection";
+import { CATEGORY_SHOPIFY_QUERIES } from "@/data/shopifyQueries";
 
 const primaryCategorySlugs = ["buzz", "duo", "slippery", "tied", "newbie", "oops"];
 const primaryCategorySet = new Set(primaryCategorySlugs);
@@ -119,6 +121,21 @@ const AllProductsPage = () => {
   };
 
   const hasFilters = query.length > 0 || selectedCategories.size > 0 || priceRange > 0 || minRating > 0;
+
+  // Build Shopify Storefront query from selected categories + search text
+  const shopifyQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (selectedCategories.size > 0) {
+      const cats = Array.from(selectedCategories)
+        .map((s) => CATEGORY_SHOPIFY_QUERIES[s])
+        .filter(Boolean);
+      if (cats.length > 0) parts.push(`(${cats.map((c) => `(${c})`).join(" OR ")})`);
+    }
+    if (query.length >= 2) {
+      parts.push(`title:*${query.replace(/[^\p{L}\p{N}\s-]/gu, "")}*`);
+    }
+    return parts.length > 0 ? parts.join(" AND ") : "inventory_total:>20";
+  }, [selectedCategories, query]);
 
   const handleBuy = (productId: string) => {
     const product = allProducts.find((item) => item.id === productId);
@@ -316,6 +333,21 @@ const AllProductsPage = () => {
           </p>
         </div>
       </div>
+
+      {/* Live Shopify products */}
+      <ShopifyProductsSection
+        query={shopifyQuery}
+        count={12}
+        kicker="Straight from the shop"
+        title={
+          query.length >= 2
+            ? `Live results for "${query}"`
+            : selectedCategories.size > 0
+            ? "Live picks for your filters"
+            : "Live from our shelves"
+        }
+        emoji="🛍️"
+      />
 
       {/* Product grid */}
       <section className="bg-parch paper-bg px-6 lg:px-12 py-8 pb-16">
