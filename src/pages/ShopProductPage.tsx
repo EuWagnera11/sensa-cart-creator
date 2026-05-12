@@ -6,8 +6,8 @@ import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
-import { PRODUCTS_QUERY, PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
-import { groupSimilarProducts, normalizeTitle } from "@/lib/groupProducts";
+import { PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { useProductDetail } from "@/lib/productGroups";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -15,7 +15,6 @@ const ShopProductPage = () => {
   const { handle } = useParams<{ handle: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<ShopifyProduct["node"] | null>(null);
-  const [siblings, setSiblings] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [activeImage, setActiveImage] = useState(0);
@@ -24,10 +23,21 @@ const ShopProductPage = () => {
   const setCartOpen = useShopifyCart((s) => s.setIsOpen);
   const isLoading = useShopifyCart((s) => s.isLoading);
 
+  // Grouped variants (different products in Shopify that share the same
+  // base product, differing by Cor/Tamanho/Sabor/Embalagem).
+  const {
+    group,
+    isGrouped,
+    selected: groupSelected,
+    setOption: setGroupOption,
+    activeVariant: groupActiveVariant,
+    isAvailable: isGroupOptionAvailable,
+    axes,
+  } = useProductDetail(handle);
+
   useEffect(() => {
     if (!handle) return;
     setLoading(true);
-    setSiblings([]);
     storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle })
       .then((data) => {
         const p = data?.data?.product;
@@ -40,33 +50,18 @@ const ShopProductPage = () => {
           initial[o.name] = o.value;
         });
         setSelectedOptions(initial);
-
-        // Fetch sibling products (same product sold as separate Shopify
-        // products that differ by size/flavor/color) and group them.
-        if (p?.title) {
-          const firstWord = normalizeTitle(p.title).split(" ")[0];
-          if (firstWord && firstWord.length > 2) {
-            storefrontApiRequest(PRODUCTS_QUERY, {
-              first: 50,
-              query: `title:${firstWord}*`,
-            })
-              .then((res) => setSiblings(res?.data?.products?.edges || []))
-              .catch(() => setSiblings([]));
-          }
-        }
+        setActiveImage(0);
       })
       .finally(() => setLoading(false));
   }, [handle]);
 
-  const siblingOptions = useMemo(() => {
-    if (!product || siblings.length === 0) return [];
-    const groups = groupSimilarProducts(siblings);
-    const group = groups.find((g) =>
-      g.siblings.some((s) => s.product.node.handle === product.handle)
-    );
-    if (!group || group.siblings.length < 2) return [];
-    return group.siblings;
-  }, [product, siblings]);
+  // When a grouped axis is changed, navigate to the resulting variant handle.
+  useEffect(() => {
+    if (!isGrouped || !groupActiveVariant || !handle) return;
+    if (groupActiveVariant.handle !== handle) {
+      navigate(`/shop/product/${groupActiveVariant.handle}`);
+    }
+  }, [isGrouped, groupActiveVariant, handle, navigate]);
 
 
   if (loading) {
