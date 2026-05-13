@@ -91,14 +91,6 @@ const Navbar = () => {
               >
                 <Package size={15} />
               </Link>
-              <button
-                type="button"
-                onClick={signOut}
-                className="inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem]"
-                title="Sign out"
-              >
-                <LogOut size={15} />
-              </button>
             </div>
           ) : (
             <Link
