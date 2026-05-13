@@ -47,6 +47,7 @@ html {
     --neon-purple: 261 100% 59%;
     --dark: 23 100% 5%;
     --cream: 38 90% 94%;
+    --success: 152 60% 32%;
     --shadow-brutal: 6px 6px 0 hsl(var(--dark) / 0.92);
     --shadow-premium: 0 24px 60px -28px hsl(var(--dark) / 0.35);
     --shadow-soft: 0 14px 32px -20px hsl(var(--dark) / 0.28);
