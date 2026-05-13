@@ -165,15 +165,8 @@ const ShopPage = () => {
               </div>
 
               {hasNext && (
-                <div className="flex justify-center mt-12">
-                  <button
-                    type="button"
-                    onClick={loadMore}
-                    disabled={loadingMore}
-                    className="cta-primary inline-flex items-center gap-2 disabled:opacity-60"
-                  >
-                    {loadingMore && <Loader2 className="h-4 w-4 animate-spin" />} Load more
-                  </button>
+                <div ref={sentinelRef} className="flex justify-center mt-12 py-8">
+                  {loadingMore && <Loader2 className="h-6 w-6 animate-spin text-primary" />}
                 </div>
               )}
             </>
