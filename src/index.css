@@ -224,7 +224,7 @@ body::after {
   width: 12px;
   height: 12px;
   position: fixed;
-  z-index: 9999;
+  z-index: 10001;
   pointer-events: none;
   border-radius: 9999px;
   background: white;
