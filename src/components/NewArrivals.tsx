@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useShopifyProducts } from "@/hooks/useShopifyProducts";
-import { FRESH_PRODUCTS_QUERY } from "@/data/shopifyQueries";
+import { useAllShopifyProducts } from "@/hooks/useAllShopifyProducts";
 import { useDisplayedProducts } from "@/stores/displayedProducts";
-import { dedupeProducts, filterToValidHandles } from "@/lib/productGroups";
+import { dedupeProducts } from "@/lib/productGroups";
 import ShopifyProductCard from "./ShopifyProductCard";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
@@ -22,17 +21,32 @@ const CARD_WIDTH = 220;
 const CARD_GAP = 16;
 const CARD_STEP = CARD_WIDTH + CARD_GAP;
 const SPEED = 40; // px per second
+const DISPLAY_COUNT = 12;
+
+// Fisher–Yates shuffle (non-mutating). Re-runs on every page load so
+// the section feels fresh on each visit / F5.
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
 
 const NewArrivals = () => {
   const [current, setCurrent] = useState(0);
   const isMobile = useIsMobile();
   const activeBanners = isMobile ? mobileBanners : banners;
 
-  const { products: pool, loading } = useShopifyProducts(FRESH_PRODUCTS_QUERY, 24);
+  // Pull a large pool from the full catalog so each F5 surfaces a
+  // different mix of products (not just the latest 24).
+  const { products: pool, loading } = useAllShopifyProducts(100);
   const products = useMemo(
-    () => dedupeProducts(filterToValidHandles(pool)).slice(0, 12),
+    () => shuffle(dedupeProducts(pool)).slice(0, DISPLAY_COUNT),
     [pool]
   );
+
 
   // Register displayed product IDs so sibling sections can deduplicate.
   const register = useDisplayedProducts((s) => s.register);
