@@ -1,12 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Loader2, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Loader2, ShoppingBag, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
+import FilterSidebar from "@/components/filters/FilterSidebar";
+import FilterDrawer from "@/components/filters/FilterDrawer";
+import SortDropdown from "@/components/filters/SortDropdown";
+import ActiveFiltersChips from "@/components/filters/ActiveFiltersChips";
 import { ALL_LISTING_HANDLES } from "@/lib/productGroups";
+import { useFiltersAndSort } from "@/hooks/useFiltersAndSort";
 import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import type { ShopifyProduct } from "@/lib/shopify";
@@ -15,33 +20,25 @@ const PAGE_SIZE = 24;
 
 const ShopPage = () => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const filters = useFiltersAndSort({ sourceHandles: ALL_LISTING_HANDLES });
+  const { filteredHandles, state, activeCount, setSort, ...rest } = filters;
+
+  // Reset pagination when filter set changes
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filteredHandles]);
+
   const visibleHandles = useMemo(
-    () => ALL_LISTING_HANDLES.slice(0, visibleCount),
-    [visibleCount]
+    () => filteredHandles.slice(0, visibleCount),
+    [filteredHandles, visibleCount]
   );
   const { products, loading } = useShopifyProductsByHandles(visibleHandles);
-  const hasMore = visibleCount < ALL_LISTING_HANDLES.length;
-  const loadingMore = loading && products.length > 0;
+  const hasMore = visibleCount < filteredHandles.length;
 
   const addItem = useShopifyCart((s) => s.addItem);
   const setCartOpen = useShopifyCart((s) => s.setIsOpen);
-
-  // Infinite scroll sentinel
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el || !hasMore || loading) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setVisibleCount((c) => Math.min(c + PAGE_SIZE, ALL_LISTING_HANDLES.length));
-        }
-      },
-      { rootMargin: "600px 0px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [hasMore, loading]);
 
   const handleAdd = async (p: ShopifyProduct) => {
     const variant = p.node.variants.edges[0]?.node;
@@ -84,78 +81,121 @@ const ShopPage = () => {
         </div>
       </section>
 
-      {/* Grid */}
-      <section className="bg-parch paper-bg px-6 lg:px-12 py-10 pb-16">
+      <section className="bg-parch paper-bg px-4 lg:px-12 py-8 pb-16">
         <div className="max-w-[1440px] mx-auto">
-          {loading && products.length === 0 ? (
-            <div className="flex justify-center py-32">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : products.length === 0 ? (
-            <div className="text-center py-20">
-              <span className="text-6xl block mb-4">🛍️</span>
-              <h2 className="font-display font-black italic text-2xl text-foreground mb-2">No products found</h2>
-              <p className="font-serif italic text-muted-foreground">Add products to your store to see them here.</p>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {products.map((p) => {
-                  const img = p.node.images?.edges?.[0]?.node;
-                  const price = p.node.priceRange.minVariantPrice;
-                  const variant = p.node.variants.edges[0]?.node;
-                  const available = variant?.availableForSale ?? false;
-                  return (
-                    <div
-                      key={p.node.id}
-                      className="bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_hsl(var(--dark))] group flex flex-col"
-                    >
-                      <Link to={`/shop/product/${p.node.handle}`} className="block no-underline">
-                        <div className="bg-parch border-b-[3px] border-dark h-56 flex items-center justify-center relative overflow-hidden">
-                          {img ? (
-                            <img src={img.url} alt={img.altText || p.node.title} loading="eager" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                          ) : (
-                            <span className="text-6xl">🛍️</span>
-                          )}
-                        </div>
-                        <div className="p-4">
-                          <h2 className="font-display font-black italic text-lg text-foreground leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
-                            {p.node.title}
-                          </h2>
-                          <p className="font-serif italic text-xs text-muted-foreground leading-relaxed mb-3 line-clamp-2">
-                            {p.node.description}
-                          </p>
-                          <div className="font-display font-black text-xl text-primary">
-                            {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
-                          </div>
-                        </div>
-                      </Link>
+          {/* Mobile top bar */}
+          <div className="flex lg:hidden items-center justify-between mb-4 gap-3">
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="cta-secondary inline-flex items-center gap-2 px-4 py-2.5 text-xs"
+            >
+              <SlidersHorizontal size={14} />
+              Filter{activeCount > 0 && ` (${activeCount})`}
+            </button>
+            <SortDropdown sort={state.sort} setSort={setSort} />
+          </div>
 
-                      <div className="px-4 pb-4 mt-auto grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          disabled={!available}
-                          className="cta-primary w-full text-xs px-3 py-2.5 inline-flex items-center justify-center gap-1 disabled:opacity-50"
-                          onClick={() => handleAdd(p)}
-                        >
-                          <ShoppingBag size={12} /> Add
-                        </button>
-                        <Link to={`/shop/product/${p.node.handle}`} className="cta-secondary w-full text-xs px-3 py-2.5 no-underline text-center">
-                          Details
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                })}
+          <div className="flex gap-8">
+            {/* Desktop sidebar */}
+            <div className="hidden lg:block">
+              <FilterSidebar
+                state={state}
+                activeCount={activeCount}
+                resultCount={filteredHandles.length}
+                {...rest}
+              />
+            </div>
+
+            {/* Mobile drawer */}
+            <FilterDrawer
+              isOpen={drawerOpen}
+              onClose={() => setDrawerOpen(false)}
+              state={state}
+              activeCount={activeCount}
+              resultCount={filteredHandles.length}
+              {...rest}
+            />
+
+            {/* Right column */}
+            <div className="flex-1 min-w-0">
+              <div className="hidden lg:flex items-center justify-between mb-4 gap-4">
+                <p className="font-serif italic text-sm text-muted-foreground">
+                  {filteredHandles.length.toLocaleString()} product{filteredHandles.length === 1 ? "" : "s"}
+                </p>
+                <SortDropdown sort={state.sort} setSort={setSort} />
               </div>
 
-              {hasMore && (
-                <div ref={sentinelRef} className="flex justify-center mt-12 py-8">
-                  {loadingMore && <Loader2 className="h-6 w-6 animate-spin text-primary" />}
+              <ActiveFiltersChips state={state} {...rest} />
+
+              {loading && products.length === 0 ? (
+                <div className="flex justify-center py-32">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
+              ) : filteredHandles.length === 0 ? (
+                <div className="text-center py-20">
+                  <span className="text-6xl block mb-4">🔍</span>
+                  <h2 className="font-display font-black italic text-2xl text-foreground mb-2">No matches</h2>
+                  <p className="font-serif italic text-muted-foreground">
+                    Try clearing some filters to see more products.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                    {products.map((p) => {
+                      const img = p.node.images?.edges?.[0]?.node;
+                      const price = p.node.priceRange.minVariantPrice;
+                      const variant = p.node.variants.edges[0]?.node;
+                      const available = variant?.availableForSale ?? false;
+                      return (
+                        <div key={p.node.id} className="bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_hsl(var(--dark))] group flex flex-col">
+                          <Link to={`/shop/product/${p.node.handle}`} className="block no-underline">
+                            <div className="bg-parch border-b-[3px] border-dark h-56 flex items-center justify-center relative overflow-hidden">
+                              {img ? (
+                                <img src={img.url} alt={img.altText || p.node.title} loading="eager" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                              ) : (
+                                <span className="text-6xl">🛍️</span>
+                              )}
+                            </div>
+                            <div className="p-4">
+                              <h2 className="font-display font-black italic text-lg text-foreground leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
+                                {p.node.title}
+                              </h2>
+                              <div className="font-display font-black text-xl text-primary">
+                                {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
+                              </div>
+                            </div>
+                          </Link>
+                          <div className="px-4 pb-4 mt-auto grid grid-cols-2 gap-2">
+                            <button type="button" disabled={!available} className="cta-primary w-full text-xs px-3 py-2.5 inline-flex items-center justify-center gap-1 disabled:opacity-50" onClick={() => handleAdd(p)}>
+                              <ShoppingBag size={12} /> Add
+                            </button>
+                            <Link to={`/shop/product/${p.node.handle}`} className="cta-secondary w-full text-xs px-3 py-2.5 no-underline text-center">
+                              Details
+                            </Link>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {hasMore && (
+                    <div className="flex justify-center mt-12">
+                      <button
+                        type="button"
+                        onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                        disabled={loading}
+                        className="cta-primary inline-flex items-center gap-2 disabled:opacity-60"
+                      >
+                        {loading && <Loader2 className="h-4 w-4 animate-spin" />} Load more
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </div>
       </section>
 
