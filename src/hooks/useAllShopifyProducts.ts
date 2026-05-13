@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { filterToValidHandles } from "@/lib/productGroups";
 
 /**
  * Cursor-paginated fetch of all Shopify products. Used by catch-all
@@ -20,7 +21,9 @@ export function useAllShopifyProducts(pageSize = 24) {
         after,
         query: null,
       });
-      const edges = (data?.data?.products?.edges ?? []) as ShopifyProduct[];
+      const edges = filterToValidHandles(
+        (data?.data?.products?.edges ?? []) as ShopifyProduct[]
+      );
       const pageInfo = data?.data?.products?.pageInfo ?? { hasNextPage: false, endCursor: null };
       cursorRef.current = pageInfo.endCursor;
       setHasMore(!!pageInfo.hasNextPage);
