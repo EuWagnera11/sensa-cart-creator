@@ -28,6 +28,8 @@ import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import OrdersPage from "./pages/OrdersPage.tsx";
 import ShopPage from "./pages/ShopPage.tsx";
 import ShopProductPage from "./pages/ShopProductPage.tsx";
+import AccountPage from "./pages/AccountPage.tsx";
+import WishlistPage from "./pages/WishlistPage.tsx";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx";
 import TermsOfUsePage from "./pages/TermsOfUsePage.tsx";
 import RefundPolicyPage from "./pages/RefundPolicyPage.tsx";
@@ -155,6 +157,8 @@ const App = () => (
               <Route path="/orders" element={<OrdersPage />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/shop/product/:handle" element={<ShopProductPage />} />
+              <Route path="/account" element={<AccountPage />} />
+              <Route path="/account/wishlist" element={<WishlistPage />} />
               <Route path="/category/:categorySlug" element={<CategoryPage />} />
               <Route path="/category/:categorySlug/product/:productSlug" element={<ProductPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />

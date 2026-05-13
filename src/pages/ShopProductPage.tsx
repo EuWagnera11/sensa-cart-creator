@@ -25,6 +25,7 @@ import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { useSmartBack } from "@/hooks/useSmartBack";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { useProductBreadcrumbs } from "@/hooks/useProductBreadcrumbs";
+import WishlistHeart from "@/components/WishlistHeart";
 
 const ShopProductPage = () => {
   const { handle } = useParams<{ handle: string }>();
@@ -222,8 +223,16 @@ const ShopProductPage = () => {
                 {product.title}
               </h1>
 
-              {/* Share (no fake ratings — real reviews go in the section below) */}
-              <div className="flex items-center justify-end mb-5">
+              {/* Share + Wishlist */}
+              <div className="flex items-center justify-end gap-2 mb-5">
+                {handle && (
+                  <WishlistHeart
+                    handle={handle}
+                    productTitle={product.title}
+                    size="lg"
+                    variant="filled"
+                  />
+                )}
                 <ShareButton productTitle={product.title} productUrl={productUrl} />
               </div>
 

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X, User, LogOut, Search, Package, Store } from "lucide-react";
+import { Menu, ShoppingBag, X, User, LogOut, Search, Package, Store, Heart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import { useAuth } from "@/hooks/useAuth";
+import { useWishlist } from "@/hooks/useWishlist";
 import SearchOverlay from "@/components/SearchOverlay";
 
 const navItems = [
@@ -24,6 +25,7 @@ const Navbar = () => {
   const setShopifyOpen = useShopifyCart((s) => s.setIsOpen);
   const shopifyCount = shopifyItems.reduce((s, i) => s + i.quantity, 0);
   const { user, signOut } = useAuth();
+  const { count: wishlistCount } = useWishlist();
 
   return (
     <nav className="bg-dark border-b-4 border-primary sticky top-0 z-[100]">
@@ -99,6 +101,20 @@ const Navbar = () => {
               <User size={15} />
             </Link>
           )}
+
+          {/* Wishlist */}
+          <Link
+            to="/account/wishlist"
+            aria-label={`Wishlist (${wishlistCount} item${wishlistCount === 1 ? "" : "s"})`}
+            className="relative inline-flex items-center justify-center w-10 h-10 text-white/60 hover:text-accent transition-colors no-underline"
+          >
+            <Heart size={18} />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-primary text-cream rounded-full font-display italic font-black text-[10px] tabular-nums border-[2px] border-dark">
+                {wishlistCount > 99 ? "99+" : wishlistCount}
+              </span>
+            )}
+          </Link>
 
           {/* Shopify Bag button */}
           <button
