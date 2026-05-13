@@ -44,6 +44,22 @@ const ShopPage = () => {
     setLoadingMore(false);
   };
 
+  // Infinite scroll sentinel
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasNext || loading) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      { rootMargin: "600px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasNext, loading, loadingMore, cursor]);
+
   const handleAdd = async (p: ShopifyProduct) => {
     const variant = p.node.variants.edges[0]?.node;
     if (!variant) return;
