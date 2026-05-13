@@ -6,15 +6,27 @@ import { dedupeProducts } from "@/lib/productGroups";
 import ShopifyProductCard from "./ShopifyProductCard";
 
 const BEST_SELLERS_QUERY = "inventory_total:>100";
+const DISPLAY_COUNT = 8;
+
+// Fisher–Yates shuffle (non-mutating). Re-runs on every page load so
+// the section surfaces a different mix on each F5.
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
 
 const Products = () => {
   // Fetch a larger pool so we can drop products already shown above and
   // collapse near-duplicate variants (same product, different size/flavor).
-  const { products: pool, loading } = useShopifyProducts(BEST_SELLERS_QUERY, 32);
+  const { products: pool, loading } = useShopifyProducts(BEST_SELLERS_QUERY, 100);
   const displayedIds = useDisplayedProducts((s) => s.ids);
   const products = useMemo(() => {
     const filtered = pool.filter((p) => !displayedIds.has(p.node.id));
-    return dedupeProducts(filtered).slice(0, 8);
+    return shuffle(dedupeProducts(filtered)).slice(0, DISPLAY_COUNT);
   }, [pool, displayedIds]);
 
   return (
