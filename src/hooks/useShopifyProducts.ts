@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { filterToValidHandles } from "@/lib/productGroups";
 
 export function useShopifyProducts(query: string | undefined, count = 8) {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
@@ -19,7 +20,7 @@ export function useShopifyProducts(query: string | undefined, count = 8) {
         });
         if (cancelled) return;
         const edges = (data?.data?.products?.edges ?? []) as ShopifyProduct[];
-        setProducts(edges);
+        setProducts(filterToValidHandles(edges));
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load products");
       } finally {

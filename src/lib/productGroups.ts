@@ -57,6 +57,18 @@ export function isDisplayHandle(handle: string): boolean {
  * Deduplicate a Shopify products list: keep singles + only the display
  * handle of each group. Use on the listing page.
  */
+/**
+ * Filter out products whose handle is not in the curated catalog
+ * (e.g. clothing items removed from visual listings but still in
+ * Shopify backend). Use BEFORE dedupeProducts on any listing pulled
+ * directly from Shopify Storefront API.
+ */
+export function filterToValidHandles<T extends { node: { handle: string } }>(
+  products: T[]
+): T[] {
+  return products.filter((p) => handleToGroup[p.node.handle] !== undefined);
+}
+
 export function dedupeProducts<T extends { node: { handle: string } }>(products: T[]): T[] {
   const seen = new Set<string>();
   const out: T[] = [];

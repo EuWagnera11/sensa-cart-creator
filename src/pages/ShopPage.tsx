@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { filterToValidHandles, dedupeProducts } from "@/lib/productGroups";
 import { useShopifyCart } from "@/stores/shopifyCart";
 
 const PAGE_SIZE = 24;
@@ -23,7 +24,8 @@ const ShopPage = () => {
   const load = async (after: string | null) => {
     const data = await storefrontApiRequest(PRODUCTS_QUERY, { first: PAGE_SIZE, after });
     if (!data) return;
-    const edges: ShopifyProduct[] = data?.data?.products?.edges || [];
+    const rawEdges: ShopifyProduct[] = data?.data?.products?.edges || [];
+    const edges = dedupeProducts(filterToValidHandles(rawEdges));
     const pageInfo = data?.data?.products?.pageInfo || { hasNextPage: false, endCursor: null };
     setProducts((prev) => (after ? [...prev, ...edges] : edges));
     setCursor(pageInfo.endCursor);

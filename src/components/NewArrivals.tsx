@@ -4,7 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { FRESH_PRODUCTS_QUERY } from "@/data/shopifyQueries";
 import { useDisplayedProducts } from "@/stores/displayedProducts";
-import { dedupeProducts } from "@/lib/productGroups";
+import { dedupeProducts, filterToValidHandles } from "@/lib/productGroups";
 import ShopifyProductCard from "./ShopifyProductCard";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
@@ -29,7 +29,10 @@ const NewArrivals = () => {
   const activeBanners = isMobile ? mobileBanners : banners;
 
   const { products: pool, loading } = useShopifyProducts(FRESH_PRODUCTS_QUERY, 24);
-  const products = useMemo(() => dedupeProducts(pool).slice(0, 12), [pool]);
+  const products = useMemo(
+    () => dedupeProducts(filterToValidHandles(pool)).slice(0, 12),
+    [pool]
+  );
 
   // Register displayed product IDs so sibling sections can deduplicate.
   const register = useDisplayedProducts((s) => s.register);

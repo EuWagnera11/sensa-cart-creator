@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Search, X, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { filterToValidHandles } from "@/lib/productGroups";
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -51,7 +52,9 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
           query: `title:*${sanitized}*`,
         });
         if (cancelled) return;
-        setResults((data?.data?.products?.edges ?? []) as ShopifyProduct[]);
+        setResults(
+          filterToValidHandles((data?.data?.products?.edges ?? []) as ShopifyProduct[])
+        );
       } catch (e) {
         if (!cancelled) setResults([]);
       } finally {
