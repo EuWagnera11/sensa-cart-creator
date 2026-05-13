@@ -27,11 +27,23 @@ const CategoryPage = () => {
   const isCatchAll = isCatchAllSection(categorySlug || "");
   const { section, listing_handles, loading: sectionLoading } = useSectionFull(categorySlug);
 
+  // Filters (only used in curated flow)
+  const filters = useFiltersAndSort({
+    sourceHandles: listing_handles,
+    forcedCategory: categorySlug,
+  });
+  const { filteredHandles, state, activeCount, setSort, ...filterRest } = filters;
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   // Curated handles flow (default)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filteredHandles]);
+
   const visibleHandles = useMemo(
-    () => listing_handles.slice(0, visibleCount),
-    [listing_handles, visibleCount]
+    () => filteredHandles.slice(0, visibleCount),
+    [filteredHandles, visibleCount]
   );
   const handlesQuery = useShopifyProductsByHandles(isCatchAll ? [] : visibleHandles);
 
@@ -43,7 +55,7 @@ const CategoryPage = () => {
   const loadingMore = isCatchAll ? allQuery.loadingMore : handlesQuery.loading;
   const hasMore = isCatchAll
     ? allQuery.hasMore
-    : visibleCount < listing_handles.length;
+    : visibleCount < filteredHandles.length;
   const onLoadMore = () => {
     if (isCatchAll) allQuery.loadMore();
     else setVisibleCount((c) => c + PAGE_SIZE);
@@ -51,7 +63,7 @@ const CategoryPage = () => {
   const deduped = useMemo(() => dedupeProducts(products), [products]);
   const totalLabel = isCatchAll
     ? `${deduped.length}+`
-    : `${deduped.length} of ${section?.total_in_listing.toLocaleString() ?? 0}`;
+    : `${deduped.length} of ${filteredHandles.length.toLocaleString()}`;
 
 
   if (!category || !section) {
