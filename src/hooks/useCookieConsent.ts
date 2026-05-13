@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 
 const KEY = "om_cookie_consent";
 const TTL_MS = 13 * 30 * 24 * 60 * 60 * 1000; // 13 months (CNIL)
+const TTL_SECONDS = Math.floor(TTL_MS / 1000);
 
 export interface CookieConsent {
   essential: true;
@@ -29,14 +30,35 @@ export const DEFAULT_ACCEPTED: CookieConsent = {
   personalization: true,
 };
 
-function read(): CookieConsent | null {
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`));
+  return match ? decodeURIComponent(match.split("=").slice(1).join("=")) : null;
+}
+
+function clearLegacyStorage() {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(KEY);
+    localStorage.removeItem(KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+function expireCookie() {
+  if (typeof document === "undefined") return;
+  document.cookie = `${KEY}=; Max-Age=0; Path=/; SameSite=Lax`;
+}
+
+function read(): CookieConsent | null {
+  try {
+    const raw = getCookie(KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Stored;
     if (Date.now() - parsed.ts > TTL_MS) {
-      localStorage.removeItem(KEY);
+      expireCookie();
       return null;
     }
     return { ...parsed.consent, essential: true };
@@ -48,7 +70,9 @@ function read(): CookieConsent | null {
 function write(consent: CookieConsent) {
   try {
     const data: Stored = { consent, ts: Date.now() };
-    localStorage.setItem(KEY, JSON.stringify(data));
+    const secure = typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `${KEY}=${encodeURIComponent(JSON.stringify(data))}; Max-Age=${TTL_SECONDS}; Path=/; SameSite=Lax${secure}`;
+    clearLegacyStorage();
     window.dispatchEvent(new CustomEvent("om-consent-changed", { detail: consent }));
   } catch {
     /* ignore */
@@ -64,6 +88,7 @@ export function useCookieConsent() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    clearLegacyStorage();
     setConsent(read());
     setHydrated(true);
     const sync = () => setConsent(read());
@@ -84,11 +109,9 @@ export function useCookieConsent() {
   const rejectAll = useCallback(() => save(DEFAULT_REJECTED), [save]);
 
   const reset = useCallback(() => {
-    try {
-      localStorage.removeItem(KEY);
-    } catch {
-      /* ignore */
-    }
+    expireCookie();
+    clearLegacyStorage();
+    window.dispatchEvent(new Event("om-consent-changed"));
     setConsent(null);
   }, []);
 
