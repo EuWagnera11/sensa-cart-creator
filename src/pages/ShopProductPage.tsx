@@ -23,6 +23,8 @@ import {
 } from "@/components/product/ProductBadges";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { useSmartBack } from "@/hooks/useSmartBack";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { useProductBreadcrumbs } from "@/hooks/useProductBreadcrumbs";
 
 const ShopProductPage = () => {
   const { handle } = useParams<{ handle: string }>();
@@ -39,6 +41,7 @@ const ShopProductPage = () => {
 
   const { track } = useRecentlyViewed();
   const goBack = useSmartBack("/shop");
+  const breadcrumbs = useProductBreadcrumbs(handle, product?.title || "");
 
   const ctaRef = useRef<HTMLDivElement>(null);
 
@@ -173,16 +176,8 @@ const ShopProductPage = () => {
 
       {/* Breadcrumbs */}
       <div className="bg-cream paper-bg border-b-[3px] border-dark px-4 sm:px-6 lg:px-12 py-3">
-        <div className="max-w-[1440px] mx-auto flex items-center gap-2 text-xs font-serif italic text-muted-foreground">
-          <Link to="/" className="hover:text-primary transition-colors no-underline text-muted-foreground">
-            Home
-          </Link>
-          <span>›</span>
-          <Link to="/shop" className="hover:text-primary transition-colors no-underline text-muted-foreground">
-            Shop
-          </Link>
-          <span>›</span>
-          <span className="text-foreground font-semibold truncate">{product.title}</span>
+        <div className="max-w-[1440px] mx-auto">
+          <Breadcrumbs items={breadcrumbs} />
         </div>
       </div>
 

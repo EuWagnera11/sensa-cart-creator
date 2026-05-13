@@ -5,6 +5,7 @@ import { HelmetProvider } from "react-helmet-async";
 import CartSheet from "@/components/CartSheet";
 import ShopifyCartDrawer from "@/components/ShopifyCartDrawer";
 import { useCartSync } from "@/hooks/useCartSync";
+import { useNavigationTracker } from "@/hooks/useNavigationTracker";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { CartProvider } from "@/context/CartContext";
@@ -39,6 +40,11 @@ const queryClient = new QueryClient();
 
 const CartSyncMount = () => {
   useCartSync();
+  return null;
+};
+
+const NavigationTrackerMount = () => {
+  useNavigationTracker();
   return null;
 };
 
@@ -160,6 +166,7 @@ const App = () => (
           <CartSheet />
           <ShopifyCartDrawer />
           <CartSyncMount />
+          <NavigationTrackerMount />
           <CookieBanner />
           <AgeGate />
         </CartProvider>
