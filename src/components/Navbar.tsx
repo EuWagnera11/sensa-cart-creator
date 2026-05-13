@@ -102,6 +102,20 @@ const Navbar = () => {
             </Link>
           )}
 
+          {/* Wishlist */}
+          <Link
+            to="/account/wishlist"
+            aria-label={`Wishlist (${wishlistCount} item${wishlistCount === 1 ? "" : "s"})`}
+            className="relative inline-flex items-center justify-center w-10 h-10 text-white/60 hover:text-accent transition-colors no-underline"
+          >
+            <Heart size={18} />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-primary text-cream rounded-full font-display italic font-black text-[10px] tabular-nums border-[2px] border-dark">
+                {wishlistCount > 99 ? "99+" : wishlistCount}
+              </span>
+            )}
+          </Link>
+
           {/* Shopify Bag button */}
           <button
             type="button"
