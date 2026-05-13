@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
@@ -6,59 +6,42 @@ import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
-import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
-import { filterToValidHandles, dedupeProducts } from "@/lib/productGroups";
+import { ALL_LISTING_HANDLES } from "@/lib/productGroups";
+import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
 import { useShopifyCart } from "@/stores/shopifyCart";
+import type { ShopifyProduct } from "@/lib/shopify";
 
 const PAGE_SIZE = 24;
 
 const ShopPage = () => {
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
-  const [cursor, setCursor] = useState<string | null>(null);
-  const [hasNext, setHasNext] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const visibleHandles = useMemo(
+    () => ALL_LISTING_HANDLES.slice(0, visibleCount),
+    [visibleCount]
+  );
+  const { products, loading } = useShopifyProductsByHandles(visibleHandles);
+  const hasMore = visibleCount < ALL_LISTING_HANDLES.length;
+  const loadingMore = loading && products.length > 0;
+
   const addItem = useShopifyCart((s) => s.addItem);
   const setCartOpen = useShopifyCart((s) => s.setIsOpen);
-
-  const load = async (after: string | null) => {
-    const data = await storefrontApiRequest(PRODUCTS_QUERY, { first: PAGE_SIZE, after });
-    if (!data) return;
-    const rawEdges: ShopifyProduct[] = data?.data?.products?.edges || [];
-    const edges = dedupeProducts(filterToValidHandles(rawEdges));
-    const pageInfo = data?.data?.products?.pageInfo || { hasNextPage: false, endCursor: null };
-    setProducts((prev) => (after ? [...prev, ...edges] : edges));
-    setCursor(pageInfo.endCursor);
-    setHasNext(pageInfo.hasNextPage);
-  };
-
-  useEffect(() => {
-    setLoading(true);
-    load(null).finally(() => setLoading(false));
-  }, []);
-
-  const loadMore = async () => {
-    if (!hasNext || loadingMore) return;
-    setLoadingMore(true);
-    await load(cursor);
-    setLoadingMore(false);
-  };
 
   // Infinite scroll sentinel
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = sentinelRef.current;
-    if (!el || !hasNext || loading) return;
+    if (!el || !hasMore || loading) return;
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) loadMore();
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((c) => Math.min(c + PAGE_SIZE, ALL_LISTING_HANDLES.length));
+        }
       },
       { rootMargin: "600px 0px" }
     );
     io.observe(el);
     return () => io.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasNext, loading, loadingMore, cursor]);
+  }, [hasMore, loading]);
 
   const handleAdd = async (p: ShopifyProduct) => {
     const variant = p.node.variants.edges[0]?.node;
@@ -95,14 +78,16 @@ const ShopPage = () => {
           <h1 className="font-display font-black italic text-cream leading-none mb-4" style={{ fontSize: "clamp(2.2rem, 5vw, 4.5rem)" }}>
             Shop.
           </h1>
-          <p className="font-serif italic text-cream/60 max-w-xl">Real products. Real checkout. Discreet box always.</p>
+          <p className="font-serif italic text-cream/60 max-w-xl">
+            {ALL_LISTING_HANDLES.length.toLocaleString()} products. Real checkout. Discreet box always.
+          </p>
         </div>
       </section>
 
       {/* Grid */}
       <section className="bg-parch paper-bg px-6 lg:px-12 py-10 pb-16">
         <div className="max-w-[1440px] mx-auto">
-          {loading ? (
+          {loading && products.length === 0 ? (
             <div className="flex justify-center py-32">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
@@ -128,7 +113,7 @@ const ShopPage = () => {
                       <Link to={`/shop/product/${p.node.handle}`} className="block no-underline">
                         <div className="bg-parch border-b-[3px] border-dark h-56 flex items-center justify-center relative overflow-hidden">
                           {img ? (
-                            <img src={img.url} alt={img.altText || p.node.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <img src={img.url} alt={img.altText || p.node.title} loading="eager" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                           ) : (
                             <span className="text-6xl">🛍️</span>
                           )}
@@ -164,7 +149,7 @@ const ShopPage = () => {
                 })}
               </div>
 
-              {hasNext && (
+              {hasMore && (
                 <div ref={sentinelRef} className="flex justify-center mt-12 py-8">
                   {loadingMore && <Loader2 className="h-6 w-6 animate-spin text-primary" />}
                 </div>
