@@ -1,71 +1,54 @@
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
-import { useShopifyProducts } from "@/hooks/useShopifyProducts";
+import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 import { useDisplayedProducts } from "@/stores/displayedProducts";
-import { dedupeProducts } from "@/lib/productGroups";
 import ShopifyProductCard from "./ShopifyProductCard";
 
-const BEST_SELLERS_QUERY = "inventory_total:>100";
-const DISPLAY_COUNT = 8;
-
-// Fisher–Yates shuffle (non-mutating). Re-runs on every page load so
-// the section surfaces a different mix on each F5.
-function shuffle<T>(arr: T[]): T[] {
-  const out = [...arr];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
-
 const Products = () => {
-  // Fetch a larger pool so we can drop products already shown above and
-  // collapse near-duplicate variants (same product, different size/flavor).
-  const { products: pool, loading } = useShopifyProducts(BEST_SELLERS_QUERY, 100);
+  // Pull 12 from curated "the_goods" pool, then drop ones already shown
+  // by other sections (e.g. NewArrivals) and trim to 8.
+  const { products: pool, loading } = useFeaturedProducts("goods", 12);
   const displayedIds = useDisplayedProducts((s) => s.ids);
   const products = useMemo(() => {
-    const filtered = pool.filter((p) => !displayedIds.has(p.node.id));
-    return shuffle(dedupeProducts(filtered)).slice(0, DISPLAY_COUNT);
+    return pool.filter((p) => !displayedIds.has(p.node.id)).slice(0, 8);
   }, [pool, displayedIds]);
 
   return (
-    <div id="best-sellers" className="bg-dark border-t-[5px] border-dark border-b-[5px] border-b-dark px-6 lg:px-12 py-20 lg:py-24">
+    <div
+      id="best-sellers"
+      className="bg-dark border-t-[5px] border-dark border-b-[5px] border-b-dark px-6 lg:px-12 py-20 lg:py-24"
+    >
       <div className="max-w-[1440px] mx-auto">
         <p className="section-kicker text-accent mb-2.5">The Goods</p>
         <h2
           className="font-display font-black italic text-cream leading-none mb-14"
-          style={{ fontSize: "clamp(2.2rem,3.5vw,3.5rem)" }}
+          style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)" }}
         >
           Our Best Kept Secrets.
         </h2>
 
-        {loading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-square bg-cream/5 border-[3px] border-cream/10 rounded-sm animate-pulse"
-              />
-            ))}
+        {loading && products.length === 0 ? (
+          <div className="text-center text-cream/60 font-serif italic py-12">
+            Loading the goods…
           </div>
         ) : products.length === 0 ? (
-          <p className="font-display italic text-cream/60">No live products available right now.</p>
+          <div className="text-center text-cream/60 font-serif italic py-12">
+            More secrets coming soon.
+          </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
             {products.map((p) => (
-              <ShopifyProductCard key={p.node.id} product={p} variant="marquee" />
+              <ShopifyProductCard key={p.node.id} product={p} variant="grid" />
             ))}
           </div>
         )}
 
         <div className="text-center mt-12">
           <Link
-            to="/products"
-            className="cta-secondary no-underline"
-            style={{ borderColor: "rgba(255,255,255,.2)", boxShadow: "4px 4px 0 rgba(255,255,255,.1)" }}
+            to="/shop"
+            className="cta-primary inline-block no-underline px-8 py-3.5"
           >
-            View all products →
+            View all →
           </Link>
         </div>
       </div>
