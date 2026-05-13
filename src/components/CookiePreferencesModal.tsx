@@ -174,7 +174,7 @@ const CookiePreferencesModal = ({ open, onClose }: Props) => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="cookie-prefs-title"
-      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center px-3 sm:px-6 py-4 sm:py-8"
+      className="fixed inset-0 z-[10000] flex items-end sm:items-center justify-center px-3 sm:px-6 py-4 sm:py-8"
     >
       <div
         className="absolute inset-0 bg-dark/75 backdrop-blur-sm"
