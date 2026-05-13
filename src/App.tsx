@@ -27,7 +27,13 @@ import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import OrdersPage from "./pages/OrdersPage.tsx";
 import ShopPage from "./pages/ShopPage.tsx";
 import ShopProductPage from "./pages/ShopProductPage.tsx";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx";
+import TermsOfUsePage from "./pages/TermsOfUsePage.tsx";
+import RefundPolicyPage from "./pages/RefundPolicyPage.tsx";
+import ImpressumPage from "./pages/ImpressumPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import AgeGate from "@/components/AgeGate";
+import CookieBanner from "@/components/CookieBanner";
 
 const queryClient = new QueryClient();
 
@@ -145,11 +151,17 @@ const App = () => (
               <Route path="/shop/product/:handle" element={<ShopProductPage />} />
               <Route path="/category/:categorySlug" element={<CategoryPage />} />
               <Route path="/category/:categorySlug/product/:productSlug" element={<ProductPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsOfUsePage />} />
+              <Route path="/refund-policy" element={<RefundPolicyPage />} />
+              <Route path="/impressum" element={<ImpressumPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           <CartSheet />
           <ShopifyCartDrawer />
           <CartSyncMount />
+          <CookieBanner />
+          <AgeGate />
         </CartProvider>
       </BrowserRouter>
     </TooltipProvider>

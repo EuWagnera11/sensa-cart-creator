@@ -18,16 +18,23 @@ const companyLinks = [
 
 const helpLinks = [
   { label: "Discreet Shipping", to: "/faq" },
-  { label: "Returns", to: "/faq" },
+  { label: "Returns", to: "/refund-policy" },
   { label: "FAQ", to: "/faq" },
   { label: "Contact", to: "/contact" },
+];
+
+const legalLinks = [
+  { label: "Privacy Policy", to: "/privacy" },
+  { label: "Terms of Use", to: "/terms" },
+  { label: "Refund Policy", to: "/refund-policy" },
+  { label: "Impressum", to: "/impressum" },
 ];
 
 const Footer = () => {
   return (
     <footer className="bg-dark border-t-[3px] border-dark text-white">
       {/* Main content */}
-      <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_0.8fr_0.6fr] gap-8 sm:gap-6">
+      <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_0.8fr_0.6fr_0.7fr] gap-8 sm:gap-6">
         {/* Brand column */}
         <div>
           <div className="font-display font-black italic text-3xl leading-none mb-3">
@@ -73,6 +80,20 @@ const Footer = () => {
           <h5 className="font-display italic text-accent text-sm mb-3">Help</h5>
           <ul className="space-y-1.5 list-none">
             {helpLinks.map((item) => (
+              <li key={item.label}>
+                <Link to={item.to} className="font-serif italic text-[0.75rem] text-white/30 hover:text-accent transition-colors no-underline">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Legal */}
+        <div>
+          <h5 className="font-display italic text-accent text-sm mb-3">Legal</h5>
+          <ul className="space-y-1.5 list-none">
+            {legalLinks.map((item) => (
               <li key={item.label}>
                 <Link to={item.to} className="font-serif italic text-[0.75rem] text-white/30 hover:text-accent transition-colors no-underline">
                   {item.label}
