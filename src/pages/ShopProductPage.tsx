@@ -219,41 +219,10 @@ const ShopProductPage = () => {
                 {product.title}
               </h1>
 
-              {/* Rating summary + Share */}
-              {summary && (
-                <div className="flex items-center justify-between gap-3 mb-5">
-                  <a
-                    href="#reviews"
-                    className="inline-flex items-center gap-2 no-underline group"
-                  >
-                    <span className="inline-flex items-center gap-0.5">
-                      {[1, 2, 3, 4, 5].map((i) => {
-                        const fill = Math.max(0, Math.min(1, summary.average - (i - 1)));
-                        return (
-                          <span key={i} className="relative inline-block" style={{ width: 14, height: 14 }}>
-                            <Star size={14} className="absolute inset-0 text-dark/20" fill="currentColor" strokeWidth={0} />
-                            {fill > 0 && (
-                              <span
-                                className="absolute inset-0 overflow-hidden text-primary"
-                                style={{ width: `${fill * 100}%` }}
-                              >
-                                <Star size={14} fill="currentColor" strokeWidth={0} />
-                              </span>
-                            )}
-                          </span>
-                        );
-                      })}
-                    </span>
-                    <span className="font-serif italic text-sm text-foreground/80 group-hover:text-primary transition-colors">
-                      <strong className="not-italic font-display font-black text-foreground">
-                        {summary.average.toFixed(1)}
-                      </strong>{" "}
-                      ({summary.count} review{summary.count === 1 ? "" : "s"})
-                    </span>
-                  </a>
-                  <ShareButton productTitle={product.title} productUrl={productUrl} />
-                </div>
-              )}
+              {/* Share (no fake ratings — real reviews go in the section below) */}
+              <div className="flex items-center justify-end mb-5">
+                <ShareButton productTitle={product.title} productUrl={productUrl} />
+              </div>
 
               {/* Short description */}
               <p className="font-serif italic text-foreground/80 leading-relaxed mb-6 line-clamp-3">
