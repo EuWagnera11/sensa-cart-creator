@@ -79,6 +79,7 @@ export default {
         },
         dark: "hsl(var(--dark))",
         cream: "hsl(var(--cream))",
+        success: "hsl(var(--success))",
         cat: {
           buzz: "hsl(var(--cat-buzz))",
           duo: "hsl(var(--cat-duo))",
