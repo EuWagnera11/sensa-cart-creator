@@ -1,15 +1,18 @@
-## Fix: handles com hífen retornando zero produtos
+## Substituir 4 JSONs do catálogo (v6)
 
-**Arquivo:** `src/hooks/useShopifyProductsByHandles.ts`
+Trocar os arquivos de dados em `src/data/` pelos novos uploads. Estrutura idêntica à v4 — sem mudanças de código.
 
-**Mudança única** — envolver o handle em aspas duplas para evitar que o `-` seja interpretado como operador NOT pela Storefront Search Syntax:
+### Arquivos a substituir
+- `src/data/handle_to_group.json` ← `user-uploads://handle_to_group_1.json`
+- `src/data/product_groups_full.json` ← `user-uploads://product_groups_full_1.json`
+- `src/data/sections_meta.json` ← `user-uploads://sections_meta_1.json`
+- `src/data/sections_full.json` ← `user-uploads://sections_full_1.json`
 
-```ts
-function buildHandleQuery(handles: string[]): string {
-  return handles.map((h) => `handle:"${h}"`).join(" OR ");
-}
-```
+### O que muda no catálogo (v4 → v6)
+- 2.849 produtos de roupa filtrados das listagens visuais
+- Agrupamento de "modelo N" agora ativo
+- Preservativos CONDOMERIE pintados à mão agrupados por design
+- Totais por seção atualizados (ex.: BUZZ 1822→1785, SLIPPERY 817→807, TIED 885→850, NEWBIE 245→242, DUO 151→147)
 
-O escape é feito automaticamente pelo JSON serializer já que `query` é passado como variável GraphQL (`$query: String`).
-
-**Validação:** abrir `/category/buzz` (ou qualquer seção) e confirmar que os produtos aparecem.
+### Execução
+Copiar os 4 uploads sobrescrevendo os arquivos existentes (em paralelo). Vite recarrega automaticamente — nenhum restart necessário.
