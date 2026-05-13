@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
@@ -43,6 +43,22 @@ const ShopPage = () => {
     await load(cursor);
     setLoadingMore(false);
   };
+
+  // Infinite scroll sentinel
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasNext || loading) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      { rootMargin: "600px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasNext, loading, loadingMore, cursor]);
 
   const handleAdd = async (p: ShopifyProduct) => {
     const variant = p.node.variants.edges[0]?.node;
@@ -149,15 +165,8 @@ const ShopPage = () => {
               </div>
 
               {hasNext && (
-                <div className="flex justify-center mt-12">
-                  <button
-                    type="button"
-                    onClick={loadMore}
-                    disabled={loadingMore}
-                    className="cta-primary inline-flex items-center gap-2 disabled:opacity-60"
-                  >
-                    {loadingMore && <Loader2 className="h-4 w-4 animate-spin" />} Load more
-                  </button>
+                <div ref={sentinelRef} className="flex justify-center mt-12 py-8">
+                  {loadingMore && <Loader2 className="h-6 w-6 animate-spin text-primary" />}
                 </div>
               )}
             </>
