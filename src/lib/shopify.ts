@@ -94,6 +94,7 @@ export const PRODUCT_BY_HANDLE_QUERY = `
       title
       description
       handle
+      vendor
       priceRange { minVariantPrice { amount currencyCode } }
       images(first: 10) { edges { node { url altText } } }
       variants(first: 25) {
@@ -102,6 +103,8 @@ export const PRODUCT_BY_HANDLE_QUERY = `
             id
             title
             price { amount currencyCode }
+            compareAtPrice { amount currencyCode }
+            quantityAvailable
             availableForSale
             selectedOptions { name value }
           }
