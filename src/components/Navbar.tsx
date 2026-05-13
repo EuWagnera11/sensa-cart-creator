@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X, User, LogOut, Search, Package, Store, Heart } from "lucide-react";
+import { Menu, ShoppingBag, X, User, User as UserIcon, LogOut, Search, Package, Store, Heart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import { useAuth } from "@/hooks/useAuth";
