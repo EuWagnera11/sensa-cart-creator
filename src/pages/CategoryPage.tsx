@@ -221,7 +221,7 @@ const CategoryPage = () => {
             </div>
             <Link
               to="/products"
-              className="cta-primary bg-white !text-primary border-dark no-underline px-6 py-2.5 text-sm font-bold shrink-0 hover:bg-cream"
+              className="inline-flex items-center gap-1 bg-white text-dark border-[3px] border-dark rounded-sm no-underline px-6 py-2.5 text-sm font-display italic font-black shrink-0 shadow-[3px_3px_0_hsl(var(--dark))] hover:bg-accent hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[5px_5px_0_hsl(var(--dark))] transition-all"
             >
               Shop All →
             </Link>
