@@ -38,13 +38,7 @@ const NewArrivals = () => {
   const isMobile = useIsMobile();
   const activeBanners = isMobile ? mobileBanners : banners;
 
-  // Pull a large pool from the full catalog so each F5 surfaces a
-  // different mix of products (not just the latest 24).
-  const { products: pool, loading } = useAllShopifyProducts(100);
-  const products = useMemo(
-    () => shuffle(dedupeProducts(pool)).slice(0, DISPLAY_COUNT),
-    [pool]
-  );
+  const { products, loading } = useFeaturedProducts("fresh", 24);
 
 
   // Register displayed product IDs so sibling sections can deduplicate.
