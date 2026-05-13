@@ -93,9 +93,13 @@ export function useAgeVerified() {
     const sync = () => setVerified(read());
     window.addEventListener("om-age-changed", sync);
     window.addEventListener("storage", sync);
+    window.addEventListener("focus", sync);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       window.removeEventListener("om-age-changed", sync);
       window.removeEventListener("storage", sync);
+      window.removeEventListener("focus", sync);
+      document.removeEventListener("visibilitychange", sync);
     };
   }, []);
 
