@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Loader2, ShoppingBag, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, Loader2, SlidersHorizontal } from "lucide-react";
+import ProductCard from "@/components/ProductCard";
 import { toast } from "sonner";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
@@ -142,42 +143,10 @@ const ShopPage = () => {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                    {products.map((p) => {
-                      const img = p.node.images?.edges?.[0]?.node;
-                      const price = p.node.priceRange.minVariantPrice;
-                      const variant = p.node.variants.edges[0]?.node;
-                      const available = variant?.availableForSale ?? false;
-                      return (
-                        <div key={p.node.id} className="bg-cream border-[3px] border-dark rounded-sm overflow-hidden transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_hsl(var(--dark))] group flex flex-col">
-                          <Link to={`/shop/product/${p.node.handle}`} className="block no-underline">
-                            <div className="bg-parch border-b-[3px] border-dark h-56 flex items-center justify-center relative overflow-hidden">
-                              {img ? (
-                                <img src={img.url} alt={img.altText || p.node.title} loading="eager" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                              ) : (
-                                <span className="text-6xl">🛍️</span>
-                              )}
-                            </div>
-                            <div className="p-4">
-                              <h2 className="font-display font-black italic text-lg text-foreground leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
-                                {p.node.title}
-                              </h2>
-                              <div className="font-display font-black text-xl text-primary">
-                                {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
-                              </div>
-                            </div>
-                          </Link>
-                          <div className="px-4 pb-4 mt-auto grid grid-cols-2 gap-2">
-                            <button type="button" disabled={!available} className="cta-primary w-full text-xs px-3 py-2.5 inline-flex items-center justify-center gap-1 disabled:opacity-50" onClick={() => handleAdd(p)}>
-                              <ShoppingBag size={12} /> Add
-                            </button>
-                            <Link to={`/shop/product/${p.node.handle}`} className="cta-secondary w-full text-xs px-3 py-2.5 no-underline text-center">
-                              Details
-                            </Link>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+                    {products.map((p) => (
+                      <ProductCard key={p.node.id} product={p} onAdd={handleAdd} />
+                    ))}
                   </div>
 
                   {hasMore && (
