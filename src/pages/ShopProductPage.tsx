@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, ShoppingCart, Truck, Package, RotateCcw, Clock, Star, Heart } from "lucide-react";
+import { ArrowLeft, Loader2, ShoppingCart, Truck, Package, RotateCcw, Clock, Heart } from "lucide-react";
 import { toast } from "sonner";
 import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
@@ -21,7 +21,6 @@ import {
   StickyMobileCTA,
   ShareButton,
 } from "@/components/product/ProductBadges";
-import { useMockReviews } from "@/hooks/useMockReviews";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 const ShopProductPage = () => {
