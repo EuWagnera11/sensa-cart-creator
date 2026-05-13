@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useCookieConsent } from "@/hooks/useCookieConsent";
 
 interface Props {
-  isOpen: boolean;
+  open: boolean;
   onClose: () => void;
 }
 
@@ -111,25 +111,25 @@ const Toggle = ({ checked, onChange, disabled, label }: ToggleProps) => {
   );
 };
 
-const CookiePreferencesModal = ({ isOpen, onClose }: Props) => {
-  const { consent, updateConsent } = useCookieConsent();
+const CookiePreferencesModal = ({ open, onClose }: Props) => {
+  const { consent, save: saveConsent } = useCookieConsent();
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [personalization, setPersonalization] = useState(false);
 
   useEffect(() => {
-    if (isOpen && consent) {
+    if (open && consent) {
       setAnalytics(!!consent.analytics);
       setMarketing(!!consent.marketing);
       setPersonalization(!!consent.personalization);
     }
-  }, [isOpen, consent]);
+  }, [open, consent]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    if (isOpen) {
+    if (open) {
       document.addEventListener("keydown", handleKey);
       document.body.style.overflow = "hidden";
     }
@@ -137,22 +137,22 @@ const CookiePreferencesModal = ({ isOpen, onClose }: Props) => {
       document.removeEventListener("keydown", handleKey);
       document.body.style.overflow = "";
     };
-  }, [isOpen, onClose]);
+  }, [open, onClose]);
 
-  if (!isOpen) return null;
+  if (!open) return null;
 
   const save = () => {
-    updateConsent({ analytics, marketing, personalization });
+    saveConsent({ essential: true, analytics, marketing, personalization });
     onClose();
   };
 
   const acceptAll = () => {
-    updateConsent({ analytics: true, marketing: true, personalization: true });
+    saveConsent({ essential: true, analytics: true, marketing: true, personalization: true });
     onClose();
   };
 
   const rejectAll = () => {
-    updateConsent({ analytics: false, marketing: false, personalization: false });
+    saveConsent({ essential: true, analytics: false, marketing: false, personalization: false });
     onClose();
   };
 
