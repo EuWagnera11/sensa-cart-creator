@@ -1,0 +1,45 @@
+{
+  "name": "OoohMy — Pleasure, Unfiltered",
+  "short_name": "OoohMy",
+  "description": "Vibrators, lubes, bondage & more — discreet shipping across Europe, zero judgement.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#D63838",
+  "background_color": "#F6EBD3",
+  "lang": "en",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Shop",
+      "url": "/shop",
+      "description": "Browse all products"
+    },
+    {
+      "name": "Wishlist",
+      "url": "/account/wishlist",
+      "description": "Your saved items"
+    }
+  ]
+}
