@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X, User, LogOut, Search, Package, Store, Heart } from "lucide-react";
+import { Menu, ShoppingBag, X, User, User as UserIcon, LogOut, Search, Package, Store, Heart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -77,6 +77,13 @@ const Navbar = () => {
           {/* Auth button */}
           {user ? (
             <div className="flex items-center gap-3">
+              <Link
+                to="/account"
+                className="inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
+                title="My Account"
+              >
+                <UserIcon size={15} />
+              </Link>
               <Link
                 to="/orders"
                 className="inline-flex items-center gap-1.5 text-white/50 hover:text-accent transition-colors font-display italic text-[0.82rem] no-underline"
