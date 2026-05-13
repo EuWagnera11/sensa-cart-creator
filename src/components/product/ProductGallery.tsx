@@ -232,7 +232,5 @@ const Lightbox = ({
   );
 };
 
-// React import — defined here for Lightbox's useEffect
-import React from "react";
 
 export default ProductGallery;
