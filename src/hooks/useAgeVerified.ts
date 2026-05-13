@@ -34,12 +34,20 @@ export function useAgeVerified() {
 
   useEffect(() => {
     setVerified(read());
+    const sync = () => setVerified(read());
+    window.addEventListener("om-age-changed", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("om-age-changed", sync);
+      window.removeEventListener("storage", sync);
+    };
   }, []);
 
   const confirm = useCallback(() => {
     try {
       const data: Stored = { verified: true, ts: Date.now() };
       localStorage.setItem(KEY, JSON.stringify(data));
+      window.dispatchEvent(new Event("om-age-changed"));
     } catch {
       /* ignore */
     }
