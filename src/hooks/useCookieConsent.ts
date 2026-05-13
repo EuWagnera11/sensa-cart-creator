@@ -39,7 +39,7 @@ function getCookie(name: string): string | null {
 }
 
 function clearLegacyStorage() {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(KEY);
   } catch {
@@ -52,13 +52,34 @@ function expireCookie() {
   document.cookie = `${KEY}=; Max-Age=0; Path=/; SameSite=Lax`;
 }
 
+function readFromLocalStorage(): Stored | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as Stored;
+  } catch {
+    return null;
+  }
+}
+
 function read(): CookieConsent | null {
   try {
     const raw = getCookie(KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Stored;
+    let parsed: Stored | null = null;
+    if (raw) {
+      try {
+        parsed = JSON.parse(raw) as Stored;
+      } catch {
+        parsed = null;
+      }
+    }
+    // Fallback to localStorage (iframe / cookie-blocked contexts)
+    if (!parsed) parsed = readFromLocalStorage();
+    if (!parsed) return null;
     if (Date.now() - parsed.ts > TTL_MS) {
       expireCookie();
+      try { localStorage.removeItem(KEY); } catch { /* ignore */ }
       return null;
     }
     return { ...parsed.consent, essential: true };
@@ -70,9 +91,11 @@ function read(): CookieConsent | null {
 function write(consent: CookieConsent) {
   try {
     const data: Stored = { consent, ts: Date.now() };
+    const json = JSON.stringify(data);
     const secure = typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : "";
-    document.cookie = `${KEY}=${encodeURIComponent(JSON.stringify(data))}; Max-Age=${TTL_SECONDS}; Path=/; SameSite=Lax${secure}`;
-    clearLegacyStorage();
+    document.cookie = `${KEY}=${encodeURIComponent(json)}; Max-Age=${TTL_SECONDS}; Path=/; SameSite=Lax${secure}`;
+    // Also persist to localStorage as fallback for iframe / cookie-blocked contexts
+    try { localStorage.setItem(KEY, json); } catch { /* ignore */ }
     window.dispatchEvent(new CustomEvent("om-consent-changed", { detail: consent }));
   } catch {
     /* ignore */
