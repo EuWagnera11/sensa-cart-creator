@@ -211,7 +211,7 @@ const CategoryPage = () => {
       </div>
 
       {/* Curated Shopify products */}
-      <section className="bg-parch paper-bg border-y-[3px] border-dark mt-8 px-6 lg:px-12 py-12">
+      <section className="bg-parch paper-bg border-y-[3px] border-dark mt-8 px-4 lg:px-12 py-12">
         <div className="max-w-[1440px] mx-auto">
           <div className="mb-6 flex items-end justify-between gap-4 flex-wrap">
             <div>
@@ -229,43 +229,101 @@ const CategoryPage = () => {
             </span>
           </div>
 
-          {initialLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-[420px] bg-cream border-[3px] border-dark rounded-sm animate-pulse"
-                  style={{ boxShadow: "var(--shadow-brutal)" }}
-                />
-              ))}
+          {/* Mobile filter/sort bar (hidden in catch-all) */}
+          {!isCatchAll && (
+            <div className="flex lg:hidden items-center justify-between mb-4 gap-3">
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(true)}
+                className="cta-secondary inline-flex items-center gap-2 px-4 py-2.5 text-xs"
+              >
+                <SlidersHorizontal size={14} />
+                Filter{activeCount > 0 && ` (${activeCount})`}
+              </button>
+              <SortDropdown sort={state.sort} setSort={setSort} />
             </div>
-          ) : deduped.length === 0 ? (
-            <p className="font-display italic text-muted-foreground">
-              No live products in this section yet.
-            </p>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {deduped.map((p) => (
-                  <ShopifyProductCard key={p.node.id} product={p} />
-                ))}
-              </div>
-
-              {hasMore && (
-                <div className="text-center mt-10">
-                  <button
-                    type="button"
-                    onClick={onLoadMore}
-                    disabled={loadingMore}
-                    className="cta-secondary inline-flex items-center gap-2"
-                  >
-                    {loadingMore ? <Loader2 size={16} className="animate-spin" /> : null}
-                    Load more →
-                  </button>
-                </div>
-              )}
-            </>
           )}
+
+          <div className="flex gap-8">
+            {/* Desktop sidebar */}
+            {!isCatchAll && (
+              <div className="hidden lg:block">
+                <FilterSidebar
+                  state={state}
+                  activeCount={activeCount}
+                  resultCount={filteredHandles.length}
+                  forcedCategory={categorySlug}
+                  {...filterRest}
+                />
+              </div>
+            )}
+
+            {/* Mobile drawer */}
+            {!isCatchAll && (
+              <FilterDrawer
+                isOpen={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                state={state}
+                activeCount={activeCount}
+                resultCount={filteredHandles.length}
+                forcedCategory={categorySlug}
+                {...filterRest}
+              />
+            )}
+
+            <div className="flex-1 min-w-0">
+              {!isCatchAll && (
+                <>
+                  <div className="hidden lg:flex items-center justify-end mb-4">
+                    <SortDropdown sort={state.sort} setSort={setSort} />
+                  </div>
+                  <ActiveFiltersChips
+                    state={state}
+                    forcedCategory={categorySlug}
+                    {...filterRest}
+                  />
+                </>
+              )}
+
+              {initialLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-[420px] bg-cream border-[3px] border-dark rounded-sm animate-pulse"
+                      style={{ boxShadow: "var(--shadow-brutal)" }}
+                    />
+                  ))}
+                </div>
+              ) : deduped.length === 0 ? (
+                <p className="font-display italic text-muted-foreground">
+                  No live products match these filters.
+                </p>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {deduped.map((p) => (
+                      <ShopifyProductCard key={p.node.id} product={p} />
+                    ))}
+                  </div>
+
+                  {hasMore && (
+                    <div className="text-center mt-10">
+                      <button
+                        type="button"
+                        onClick={onLoadMore}
+                        disabled={loadingMore}
+                        className="cta-secondary inline-flex items-center gap-2"
+                      >
+                        {loadingMore ? <Loader2 size={16} className="animate-spin" /> : null}
+                        Load more →
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
