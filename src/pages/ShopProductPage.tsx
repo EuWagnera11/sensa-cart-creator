@@ -54,19 +54,24 @@ const ShopProductPage = () => {
   useEffect(() => {
     if (!handle) return;
     setLoading(true);
-    storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle }).then((data) => {
-      const p = data?.data?.product;
-      setProduct(p);
-      const firstAvailable =
-        p?.variants?.edges?.find((v: any) => v.node.availableForSale)?.node ||
-        p?.variants?.edges?.[0]?.node;
-      const initial: Record<string, string> = {};
-      firstAvailable?.selectedOptions?.forEach((o: { name: string; value: string }) => {
-        initial[o.name] = o.value;
-      });
-      setSelectedOptions(initial);
-      setLoading(false);
-    });
+    storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle })
+      .then((data) => {
+        const p = data?.data?.product;
+        setProduct(p);
+        const firstAvailable =
+          p?.variants?.edges?.find((v: any) => v.node.availableForSale)?.node ||
+          p?.variants?.edges?.[0]?.node;
+        const initial: Record<string, string> = {};
+        firstAvailable?.selectedOptions?.forEach((o: { name: string; value: string }) => {
+          initial[o.name] = o.value;
+        });
+        setSelectedOptions(initial);
+      })
+      .catch((err) => {
+        console.error("Failed to load product", err);
+        setProduct(null);
+      })
+      .finally(() => setLoading(false));
   }, [handle]);
 
   // Track recently viewed
