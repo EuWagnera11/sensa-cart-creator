@@ -18,9 +18,16 @@ const companyLinks = [
 
 const helpLinks = [
   { label: "Discreet Shipping", to: "/faq" },
-  { label: "Returns", to: "/faq" },
+  { label: "Returns", to: "/refund-policy" },
   { label: "FAQ", to: "/faq" },
   { label: "Contact", to: "/contact" },
+];
+
+const legalLinks = [
+  { label: "Privacy Policy", to: "/privacy" },
+  { label: "Terms of Use", to: "/terms" },
+  { label: "Refund Policy", to: "/refund-policy" },
+  { label: "Impressum", to: "/impressum" },
 ];
 
 const Footer = () => {
