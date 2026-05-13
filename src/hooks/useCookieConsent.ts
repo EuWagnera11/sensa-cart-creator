@@ -63,6 +63,19 @@ function readFromLocalStorage(): Stored | null {
   }
 }
 
+function cookiesAvailable(): boolean {
+  if (typeof document === "undefined" || typeof navigator === "undefined") return false;
+  if (navigator.cookieEnabled === false) return false;
+  try {
+    document.cookie = "om_cookie_probe=1; Max-Age=60; Path=/; SameSite=Lax";
+    const available = document.cookie.includes("om_cookie_probe=1");
+    document.cookie = "om_cookie_probe=; Max-Age=0; Path=/; SameSite=Lax";
+    return available;
+  } catch {
+    return false;
+  }
+}
+
 function read(): CookieConsent | null {
   try {
     const raw = getCookie(KEY);
@@ -74,8 +87,10 @@ function read(): CookieConsent | null {
         parsed = null;
       }
     }
-    // Fallback to localStorage (iframe / cookie-blocked contexts)
-    if (!parsed) parsed = readFromLocalStorage();
+    // If cookies work and no consent cookie exists, respect a manual cookie reset.
+    // localStorage is only a fallback when cookies are blocked (iframes/privacy modes).
+    if (!parsed && !cookiesAvailable()) parsed = readFromLocalStorage();
+    if (!parsed && cookiesAvailable()) clearLegacyStorage();
     if (!parsed) return null;
     if (Date.now() - parsed.ts > TTL_MS) {
       expireCookie();
@@ -116,9 +131,13 @@ export function useCookieConsent() {
     const sync = () => setConsent(read());
     window.addEventListener("om-consent-changed", sync);
     window.addEventListener("storage", sync);
+    window.addEventListener("focus", sync);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       window.removeEventListener("om-consent-changed", sync);
       window.removeEventListener("storage", sync);
+      window.removeEventListener("focus", sync);
+      document.removeEventListener("visibilitychange", sync);
     };
   }, []);
 
