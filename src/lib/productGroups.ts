@@ -5,6 +5,13 @@
 
 import { useEffect, useMemo, useState, useCallback } from "react";
 import handleToGroupData from "@/data/handle_to_group.json";
+import listingHandlesData from "@/data/listing_handles.json";
+
+/**
+ * All canonical listing handles (singles + display handle of each group).
+ * Use this for /shop and any global product browse page.
+ */
+export const ALL_LISTING_HANDLES: string[] = (listingHandlesData as any).handles;
 
 // ============= TYPES =============
 
