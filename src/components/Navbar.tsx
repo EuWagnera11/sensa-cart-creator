@@ -146,12 +146,12 @@ const Navbar = () => {
           <div className="pt-4">
             {user ? (
               <div className="flex flex-col gap-3">
+                <Link to="/account" onClick={() => setMobileOpen(false)} className="text-white/50 font-display italic text-sm flex items-center gap-2 no-underline">
+                  <UserIcon size={15} /> My Account
+                </Link>
                 <Link to="/orders" onClick={() => setMobileOpen(false)} className="text-white/50 font-display italic text-sm flex items-center gap-2 no-underline">
                   <Package size={15} /> My Orders
                 </Link>
-                <button onClick={() => { signOut(); setMobileOpen(false); }} className="text-white/50 font-display italic text-sm flex items-center gap-2">
-                  <LogOut size={15} /> Sign Out
-                </button>
               </div>
             ) : (
               <Link to="/auth" onClick={() => setMobileOpen(false)} className="text-accent font-display italic text-sm flex items-center gap-2 no-underline">
