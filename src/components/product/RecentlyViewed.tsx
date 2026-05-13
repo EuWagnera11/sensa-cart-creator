@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
@@ -12,11 +12,29 @@ const RecentlyViewed = ({ currentHandle }: Props) => {
   const { handles } = useRecentlyViewed(currentHandle);
   const { products, loading } = useShopifyProductsByHandles(handles.slice(0, 8));
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const update = () => {
+      setCanScrollLeft(el.scrollLeft > 5);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [products.length]);
 
   if (handles.length === 0 || (!loading && products.length === 0)) return null;
 
-  const scrollBy = (dx: number) => {
-    scrollerRef.current?.scrollBy({ left: dx, behavior: "smooth" });
+  const scrollByCards = (dir: 1 | -1) => {
+    scrollerRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
   };
 
   return (
@@ -35,17 +53,19 @@ const RecentlyViewed = ({ currentHandle }: Props) => {
         <div className="hidden md:flex items-center gap-2">
           <button
             type="button"
-            onClick={() => scrollBy(-280)}
+            onClick={() => scrollByCards(-1)}
+            disabled={!canScrollLeft}
             aria-label="Scroll left"
-            className="w-9 h-9 inline-flex items-center justify-center border-[2px] border-dark rounded-sm bg-cream hover:bg-accent transition-colors"
+            className="w-9 h-9 inline-flex items-center justify-center border-[2px] border-dark rounded-sm bg-cream hover:bg-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-cream"
           >
             <ChevronLeft size={16} />
           </button>
           <button
             type="button"
-            onClick={() => scrollBy(280)}
+            onClick={() => scrollByCards(1)}
+            disabled={!canScrollRight}
             aria-label="Scroll right"
-            className="w-9 h-9 inline-flex items-center justify-center border-[2px] border-dark rounded-sm bg-cream hover:bg-accent transition-colors"
+            className="w-9 h-9 inline-flex items-center justify-center border-[2px] border-dark rounded-sm bg-cream hover:bg-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-cream"
           >
             <ChevronRight size={16} />
           </button>
@@ -54,8 +74,7 @@ const RecentlyViewed = ({ currentHandle }: Props) => {
 
       <div
         ref={scrollerRef}
-        className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory"
-        style={{ scrollbarWidth: "thin" }}
+        className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide"
       >
         {products.map((p) => {
           const node = p.node;

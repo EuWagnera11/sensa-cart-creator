@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useCrossSell } from "@/hooks/useCrossSell";
@@ -43,17 +43,42 @@ const CarouselSection = ({
 }) => {
   const { products, loading } = useShopifyProductsByHandles(handles);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const scrollBy = (dx: number) => {
-    if (scrollerRef.current) {
-      scrollerRef.current.scrollBy({ left: dx, behavior: "smooth" });
-    }
+  // Track scroll position to enable/disable arrow buttons
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const update = () => {
+      setCanScrollLeft(el.scrollLeft > 5);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [products.length]);
+
+  const scrollByCards = (direction: 1 | -1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    // Scroll by 2 cards (~440px) — feels like Amazon/Zalando
+    el.scrollBy({ left: direction * 440, behavior: "smooth" });
   };
 
   if (loading && products.length === 0) {
     return (
       <section>
-        <Header eyebrow={eyebrow} title={title} />
+        <div className="mb-5">
+          <p className="font-display italic font-black text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
+            {eyebrow}
+          </p>
+          <h2 className="font-display font-black italic text-foreground text-2xl leading-tight">{title}</h2>
+        </div>
         <div className="flex justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
@@ -79,27 +104,29 @@ const CarouselSection = ({
         <div className="hidden md:flex items-center gap-2">
           <button
             type="button"
-            onClick={() => scrollBy(-320)}
+            onClick={() => scrollByCards(-1)}
+            disabled={!canScrollLeft}
             aria-label="Scroll left"
-            className="w-9 h-9 inline-flex items-center justify-center border-[2px] border-dark rounded-sm bg-cream hover:bg-accent transition-colors"
+            className="w-9 h-9 inline-flex items-center justify-center border-[2px] border-dark rounded-sm bg-cream hover:bg-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-cream"
           >
             <ChevronLeft size={16} />
           </button>
           <button
             type="button"
-            onClick={() => scrollBy(320)}
+            onClick={() => scrollByCards(1)}
+            disabled={!canScrollRight}
             aria-label="Scroll right"
-            className="w-9 h-9 inline-flex items-center justify-center border-[2px] border-dark rounded-sm bg-cream hover:bg-accent transition-colors"
+            className="w-9 h-9 inline-flex items-center justify-center border-[2px] border-dark rounded-sm bg-cream hover:bg-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-cream"
           >
             <ChevronRight size={16} />
           </button>
         </div>
       </div>
 
+      {/* Scroller with hidden scrollbar — swipe & arrows still work */}
       <div
         ref={scrollerRef}
-        className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory scrollbar-thin"
-        style={{ scrollbarWidth: "thin" }}
+        className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide"
       >
         {products.map((p) => (
           <MiniProductCard key={p.node.id} product={p} />
@@ -108,15 +135,6 @@ const CarouselSection = ({
     </section>
   );
 };
-
-const Header = ({ eyebrow, title }: { eyebrow: string; title: string }) => (
-  <div className="mb-5">
-    <p className="font-display italic font-black text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
-      {eyebrow}
-    </p>
-    <h2 className="font-display font-black italic text-foreground text-2xl leading-tight">{title}</h2>
-  </div>
-);
 
 const MiniProductCard = ({ product }: { product: any }) => {
   const node = product.node;
