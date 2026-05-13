@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useAllShopifyProducts } from "@/hooks/useAllShopifyProducts";
+import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 import { useDisplayedProducts } from "@/stores/displayedProducts";
-import { dedupeProducts } from "@/lib/productGroups";
 import ShopifyProductCard from "./ShopifyProductCard";
 import banner1 from "@/assets/banners/new-arrivals-1.webp";
 import banner2 from "@/assets/banners/new-arrivals-2.webp";
