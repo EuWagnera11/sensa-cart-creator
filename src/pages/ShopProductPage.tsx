@@ -22,6 +22,7 @@ import {
   ShareButton,
 } from "@/components/product/ProductBadges";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
+import { useSmartBack } from "@/hooks/useSmartBack";
 
 const ShopProductPage = () => {
   const { handle } = useParams<{ handle: string }>();
@@ -37,6 +38,7 @@ const ShopProductPage = () => {
   const isLoading = useShopifyCart((s) => s.isLoading);
 
   const { track } = useRecentlyViewed();
+  const goBack = useSmartBack("/shop");
 
   const ctaRef = useRef<HTMLDivElement>(null);
 
@@ -186,12 +188,13 @@ const ShopProductPage = () => {
 
       <div className="bg-parch paper-bg px-4 sm:px-6 lg:px-12 py-8 lg:py-12 pb-24 lg:pb-12">
         <div className="max-w-[1440px] mx-auto">
-          <Link
-            to="/shop"
-            className="inline-flex items-center gap-2 font-display italic text-sm text-muted-foreground hover:text-primary transition-colors no-underline mb-4 lg:mb-6"
+          <button
+            type="button"
+            onClick={goBack}
+            className="inline-flex items-center gap-2 font-display italic text-sm text-muted-foreground hover:text-primary transition-colors mb-4 lg:mb-6 bg-transparent border-0 p-0 cursor-pointer"
           >
-            <ArrowLeft size={16} /> Back to Shop
-          </Link>
+            <ArrowLeft size={16} /> Back
+          </button>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
             {/* Gallery */}
