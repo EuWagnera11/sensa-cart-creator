@@ -36,7 +36,6 @@ const ShopProductPage = () => {
   const setCartOpen = useShopifyCart((s) => s.setIsOpen);
   const isLoading = useShopifyCart((s) => s.isLoading);
 
-  const { summary } = useMockReviews(handle);
   const { track } = useRecentlyViewed();
 
   const ctaRef = useRef<HTMLDivElement>(null);
