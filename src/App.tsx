@@ -27,7 +27,13 @@ import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import OrdersPage from "./pages/OrdersPage.tsx";
 import ShopPage from "./pages/ShopPage.tsx";
 import ShopProductPage from "./pages/ShopProductPage.tsx";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx";
+import TermsOfUsePage from "./pages/TermsOfUsePage.tsx";
+import RefundPolicyPage from "./pages/RefundPolicyPage.tsx";
+import ImpressumPage from "./pages/ImpressumPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import AgeGate from "@/components/AgeGate";
+import CookieBanner from "@/components/CookieBanner";
 
 const queryClient = new QueryClient();
 
