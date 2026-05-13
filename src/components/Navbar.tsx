@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, ShoppingBag, X, User, LogOut, Search, Package, Store } from "lucide-react";
+import { Menu, ShoppingBag, X, User, LogOut, Search, Package, Store, Heart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import { useAuth } from "@/hooks/useAuth";
+import { useWishlist } from "@/hooks/useWishlist";
 import SearchOverlay from "@/components/SearchOverlay";
 
 const navItems = [
@@ -24,6 +25,7 @@ const Navbar = () => {
   const setShopifyOpen = useShopifyCart((s) => s.setIsOpen);
   const shopifyCount = shopifyItems.reduce((s, i) => s + i.quantity, 0);
   const { user, signOut } = useAuth();
+  const { count: wishlistCount } = useWishlist();
 
   return (
     <nav className="bg-dark border-b-4 border-primary sticky top-0 z-[100]">
