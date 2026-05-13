@@ -8,7 +8,7 @@ import AnnounceBanner from "@/components/AnnounceBanner";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import CategoryHeroBanner from "@/components/CategoryHeroBanner";
-import ShopifyProductCard from "@/components/ShopifyProductCard";
+import ProductCard from "@/components/ProductCard";
 import FilterSidebar from "@/components/filters/FilterSidebar";
 import FilterDrawer from "@/components/filters/FilterDrawer";
 import SortDropdown from "@/components/filters/SortDropdown";
@@ -18,6 +18,9 @@ import { useSectionFull, isCatchAllSection } from "@/lib/productSections";
 import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
 import { useAllShopifyProducts } from "@/hooks/useAllShopifyProducts";
 import { dedupeProducts } from "@/lib/productGroups";
+import { useShopifyCart } from "@/stores/shopifyCart";
+import { toast } from "sonner";
+import type { ShopifyProduct } from "@/lib/shopify";
 
 const PAGE_SIZE = 24;
 
@@ -65,6 +68,22 @@ const CategoryPage = () => {
     ? `${deduped.length}+`
     : `${deduped.length} of ${filteredHandles.length.toLocaleString()}`;
 
+  const addItem = useShopifyCart((s) => s.addItem);
+  const setCartOpen = useShopifyCart((s) => s.setIsOpen);
+  const handleAdd = async (p: ShopifyProduct) => {
+    const variant = p.node.variants.edges[0]?.node;
+    if (!variant) return;
+    await addItem({
+      product: p,
+      variantId: variant.id,
+      variantTitle: variant.title,
+      price: variant.price,
+      quantity: 1,
+      selectedOptions: variant.selectedOptions || [],
+    });
+    setCartOpen(true);
+    toast.success(`${p.node.title} added to bag ✨`);
+  };
 
   if (!category || !section) {
     return (
@@ -303,7 +322,7 @@ const CategoryPage = () => {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {deduped.map((p) => (
-                      <ShopifyProductCard key={p.node.id} product={p} />
+                      <ProductCard key={p.node.id} product={p} onAdd={handleAdd} />
                     ))}
                   </div>
 
