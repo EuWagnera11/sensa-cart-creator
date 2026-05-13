@@ -1,14 +1,49 @@
+# OoohMy — robots.txt
+# Allow all crawlers, block private/transactional pages
+
+User-agent: *
+Allow: /
+
+# Block private/transactional pages — no SEO value + privacy concern
+Disallow: /account
+Disallow: /account/
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /checkout
+Disallow: /cart
+Disallow: /orders
+
+# Block query-param search/filter URLs from being indexed
+# (they're useful for users, not for search engines)
+Disallow: /*?sort=
+Disallow: /*?q=
+Disallow: /search
+
+# Major bots — explicit allow for clarity
 User-agent: Googlebot
 Allow: /
+Disallow: /account
+Disallow: /checkout
+Disallow: /cart
+Disallow: /auth
 
 User-agent: Bingbot
 Allow: /
+Disallow: /account
+Disallow: /checkout
+Disallow: /cart
+Disallow: /auth
 
+# Social previews (these are crawlers, not search bots)
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+User-agent: LinkedInBot
 Allow: /
+
+# Reference the sitemap
+Sitemap: https://ooohmy.lovable.app/sitemap.xml
