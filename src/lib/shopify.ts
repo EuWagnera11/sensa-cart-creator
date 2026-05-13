@@ -14,6 +14,8 @@ export interface ShopifyVariant {
   id: string;
   title: string;
   price: { amount: string; currencyCode: string };
+  compareAtPrice?: { amount: string; currencyCode: string } | null;
+  quantityAvailable?: number | null;
   availableForSale: boolean;
   selectedOptions: Array<{ name: string; value: string }>;
 }
@@ -24,6 +26,7 @@ export interface ShopifyProduct {
     title: string;
     description: string;
     handle: string;
+    vendor?: string;
     priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
     images: { edges: Array<{ node: ShopifyImage }> };
     variants: { edges: Array<{ node: ShopifyVariant }> };
