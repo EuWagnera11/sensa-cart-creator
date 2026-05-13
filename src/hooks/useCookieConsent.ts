@@ -111,7 +111,6 @@ export function useCookieConsent() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    clearLegacyStorage();
     setConsent(read());
     setHydrated(true);
     const sync = () => setConsent(read());
