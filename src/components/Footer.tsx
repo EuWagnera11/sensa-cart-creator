@@ -88,6 +88,20 @@ const Footer = () => {
             ))}
           </ul>
         </div>
+
+        {/* Legal */}
+        <div>
+          <h5 className="font-display italic text-accent text-sm mb-3">Legal</h5>
+          <ul className="space-y-1.5 list-none">
+            {legalLinks.map((item) => (
+              <li key={item.label}>
+                <Link to={item.to} className="font-serif italic text-[0.75rem] text-white/30 hover:text-accent transition-colors no-underline">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       {/* Bottom bar */}
