@@ -66,6 +66,13 @@ export function useCookieConsent() {
   useEffect(() => {
     setConsent(read());
     setHydrated(true);
+    const sync = () => setConsent(read());
+    window.addEventListener("om-consent-changed", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("om-consent-changed", sync);
+      window.removeEventListener("storage", sync);
+    };
   }, []);
 
   const save = useCallback((next: CookieConsent) => {
