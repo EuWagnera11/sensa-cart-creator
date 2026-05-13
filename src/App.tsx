@@ -153,9 +153,21 @@ const App = () => (
               <Route path="/category/:categorySlug/product/:productSlug" element={<ProductPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+              <Route path="/shop" element={<ShopPage />} />
+              <Route path="/shop/product/:handle" element={<ShopProductPage />} />
+              <Route path="/category/:categorySlug" element={<CategoryPage />} />
+              <Route path="/category/:categorySlug/product/:productSlug" element={<ProductPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsOfUsePage />} />
+              <Route path="/refund-policy" element={<RefundPolicyPage />} />
+              <Route path="/impressum" element={<ImpressumPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           <CartSheet />
           <ShopifyCartDrawer />
           <CartSyncMount />
+          <CookieBanner />
+          <AgeGate />
         </CartProvider>
       </BrowserRouter>
     </TooltipProvider>
