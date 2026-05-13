@@ -131,9 +131,13 @@ export function useCookieConsent() {
     const sync = () => setConsent(read());
     window.addEventListener("om-consent-changed", sync);
     window.addEventListener("storage", sync);
+    window.addEventListener("focus", sync);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       window.removeEventListener("om-consent-changed", sync);
       window.removeEventListener("storage", sync);
+      window.removeEventListener("focus", sync);
+      document.removeEventListener("visibilitychange", sync);
     };
   }, []);
 
