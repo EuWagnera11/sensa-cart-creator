@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import type { ShopifyProduct } from "@/lib/shopify";
 import { useShopifyCart } from "@/stores/shopifyCart";
+import WishlistHeart from "@/components/WishlistHeart";
 
 interface Props {
   product: ShopifyProduct;
@@ -69,6 +70,10 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
             </div>
           )}
 
+          <div className={`absolute ${sticker ? "top-2 left-2" : "top-2 right-2"} z-[3]`}>
+            <WishlistHeart handle={node.handle} productTitle={node.title} size="sm" variant="filled" />
+          </div>
+
           <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
             <div
               className="font-display font-black italic text-white leading-tight mb-1 text-[0.7rem] sm:text-[0.82rem] line-clamp-2"
@@ -122,6 +127,9 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
               {sticker}
             </div>
           )}
+          <div className={`absolute ${sticker ? "top-2.5 left-2.5" : "top-2.5 right-2.5"} z-10`}>
+            <WishlistHeart handle={node.handle} productTitle={node.title} size="sm" variant="filled" />
+          </div>
         </div>
       </Link>
 
