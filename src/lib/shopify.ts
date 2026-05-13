@@ -107,7 +107,6 @@ export const PRODUCT_BY_HANDLE_QUERY = `
             title
             price { amount currencyCode }
             compareAtPrice { amount currencyCode }
-            quantityAvailable
             availableForSale
             selectedOptions { name value }
           }
