@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import type { ShopifyProduct } from "@/lib/shopify";
+import { shopifyImg } from "@/lib/shopify";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import WishlistHeart from "@/components/WishlistHeart";
 
@@ -51,9 +52,12 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
         <div className="relative aspect-[3/4] bg-surface">
           {image ? (
             <img
-              src={image.url}
+              src={shopifyImg(image.url, 320)}
               alt={image.altText || node.title}
               loading="eager"
+              decoding="async"
+              width={320}
+              height={427}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
@@ -110,10 +114,12 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
         <div className="relative h-52 overflow-hidden bg-surface">
           {image ? (
             <img
-              src={image.url}
+              src={shopifyImg(image.url, 400)}
               alt={image.altText || node.title}
               loading="eager"
               decoding="async"
+              width={400}
+              height={400}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (

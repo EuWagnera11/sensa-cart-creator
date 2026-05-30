@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
+import { shopifyImg } from "@/lib/shopify";
 
 interface Props {
   currentHandle: string;
@@ -91,9 +92,12 @@ const RecentlyViewed = ({ currentHandle }: Props) => {
                 <div className="aspect-square bg-parch overflow-hidden">
                   {img ? (
                     <img
-                      src={img.url}
+                      src={shopifyImg(img.url, 160)}
                       alt={img.altText || node.title}
-                      loading="lazy"
+                      loading="eager"
+                      decoding="async"
+                      width={160}
+                      height={160}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (

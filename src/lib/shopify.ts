@@ -5,6 +5,31 @@ export const SHOPIFY_STORE_PERMANENT_DOMAIN = "teqchm-19.myshopify.com";
 export const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 export const SHOPIFY_STOREFRONT_TOKEN = "68845b7065718f8a6f8f158ead65f11f";
 
+/**
+ * Resize a Shopify CDN image URL to a target width.
+ * Cuts payload by 10–50x vs full-res originals (typically 1500–2500px wide).
+ *
+ * - Drops any existing width/height params to avoid duplicates
+ * - Keeps the `v=` cache-buster
+ * - For non-Shopify URLs returns the original untouched
+ *
+ * @param url   Original image URL
+ * @param width Target width in CSS px (we'll request 2× for crisp DPR-2 displays)
+ */
+export function shopifyImg(url: string | undefined | null, width: number): string {
+  if (!url) return "";
+  if (!url.includes("cdn.shopify.com")) return url;
+  try {
+    const u = new URL(url);
+    u.searchParams.delete("width");
+    u.searchParams.delete("height");
+    u.searchParams.set("width", String(Math.round(width * 2)));
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 export interface ShopifyImage {
   url: string;
   altText: string | null;

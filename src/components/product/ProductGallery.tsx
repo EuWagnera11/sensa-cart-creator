@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { shopifyImg } from "@/lib/shopify";
 
 interface ImageItem {
   url: string;
@@ -55,8 +56,13 @@ const ProductGallery = ({ images, productTitle }: Props) => {
         onClick={() => setLightboxIdx(activeIdx)}
       >
         <img
-          src={mainImg.url}
+          src={shopifyImg(mainImg.url, 800)}
           alt={mainImg.altText || productTitle}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          width={800}
+          height={800}
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-200 ${
             hover ? "scale-[1.8]" : "scale-100"
           }`}
@@ -99,8 +105,12 @@ const ProductGallery = ({ images, productTitle }: Props) => {
               }`}
             >
               <img
-                src={img.url}
+                src={shopifyImg(img.url, 120)}
                 alt=""
+                loading="eager"
+                decoding="async"
+                width={120}
+                height={120}
                 className="absolute inset-0 w-full h-full object-cover"
               />
               {i === 4 && images.length > 5 && (
@@ -203,8 +213,10 @@ const Lightbox = ({
 
       {/* Image */}
       <img
-        src={images[idx].url}
+        src={shopifyImg(images[idx].url, 1600)}
         alt={images[idx].altText || title}
+        loading="eager"
+        decoding="async"
         className="max-w-[92vw] max-h-[88vh] object-contain"
         onClick={(e) => e.stopPropagation()}
       />

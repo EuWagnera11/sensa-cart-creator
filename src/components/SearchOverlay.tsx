@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, X, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { PRODUCTS_QUERY, storefrontApiRequest, shopifyImg, type ShopifyProduct } from "@/lib/shopify";
 import { filterToValidHandles } from "@/lib/productGroups";
 
 interface SearchOverlayProps {
@@ -115,7 +115,7 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                         >
                           <div className="w-12 h-12 rounded-sm border-2 border-dark/10 overflow-hidden shrink-0 bg-parch">
                             {img ? (
-                              <img src={img.url} alt={img.altText || node.title} loading="eager" className="w-full h-full object-cover" />
+                              <img src={shopifyImg(img.url, 80)} alt={img.altText || node.title} loading="eager" decoding="async" width={80} height={80} className="w-full h-full object-cover" />
                             ) : (
                               <span className="flex items-center justify-center w-full h-full text-xl">🛍️</span>
                             )}

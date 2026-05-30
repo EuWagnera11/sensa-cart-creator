@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Minus, Plus, ShoppingBag, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useShopifyCart } from "@/stores/shopifyCart";
+import { shopifyImg } from "@/lib/shopify";
 
 const ShopifyCartDrawer = () => {
   const { items, isOpen, setIsOpen, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, clearCart } =
@@ -69,7 +70,7 @@ const ShopifyCartDrawer = () => {
                           onClick={() => setIsOpen(false)}
                         >
                           {img ? (
-                            <img src={img.url} alt={img.altText || item.product.node.title} className="h-full w-full object-cover" />
+                            <img src={shopifyImg(img.url, 80)} alt={img.altText || item.product.node.title} loading="eager" decoding="async" width={80} height={80} className="h-full w-full object-cover" />
                           ) : (
                             <span className="text-3xl">🛍️</span>
                           )}
