@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
+import { shopifyImg } from "@/lib/shopify";
 
 interface Props {
   currentHandle: string;
