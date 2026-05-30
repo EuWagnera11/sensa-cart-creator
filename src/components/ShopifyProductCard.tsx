@@ -144,7 +144,7 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
           Live from Shopify
         </div>
         <Link to={`/shop/product/${node.handle}`} className="block no-underline">
-          <h3 className="font-display font-black italic text-[1.05rem] text-foreground leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2 min-h-[2.6rem]">
+          <h3 className="font-sans font-semibold text-[0.95rem] text-foreground leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2 min-h-[2.6rem]">
             {node.title}
           </h3>
         </Link>
