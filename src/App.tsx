@@ -67,15 +67,13 @@ const ScrollManager = () => {
   useEffect(() => {
     if (location.hash) {
       const elementId = location.hash.replace("#", "");
-
       window.requestAnimationFrame(() => {
-        document.getElementById(elementId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.getElementById(elementId)?.scrollIntoView({ block: "start" });
       });
-
       return;
     }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Instant scroll on route change — no smooth animation (felt slow)
+    window.scrollTo(0, 0);
   }, [location.hash, location.pathname]);
 
   return null;
