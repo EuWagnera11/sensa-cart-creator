@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Minus, Plus, ShoppingBag, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useShopifyCart } from "@/stores/shopifyCart";
+import { shopifyImg } from "@/lib/shopify";
 
 const ShopifyCartDrawer = () => {
   const { items, isOpen, setIsOpen, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, clearCart } =
