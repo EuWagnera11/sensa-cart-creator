@@ -151,9 +151,12 @@ const MiniProductCard = ({ product }: { product: any }) => {
         <div className="aspect-square bg-parch overflow-hidden">
           {img ? (
             <img
-              src={img.url}
+              src={shopifyImg(img.url, 200)}
               alt={img.altText || node.title}
-              loading="lazy"
+              loading="eager"
+              decoding="async"
+              width={200}
+              height={200}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
           ) : (
