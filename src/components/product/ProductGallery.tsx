@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { shopifyImg } from "@/lib/shopify";
 
 interface ImageItem {
   url: string;
