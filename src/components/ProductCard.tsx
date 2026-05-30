@@ -35,9 +35,12 @@ const ProductCard = ({ product, onAdd }: Props) => {
         <div className="relative bg-parch overflow-hidden" style={{ aspectRatio: "4 / 5" }}>
           {img ? (
             <img
-              src={img.url}
+              src={shopifyImg(img.url, 400)}
               alt={img.altText || node.title}
-              loading="lazy"
+              loading="eager"
+              decoding="async"
+              width={400}
+              height={500}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
           ) : (
