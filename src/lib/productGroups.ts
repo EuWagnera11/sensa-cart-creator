@@ -6,12 +6,28 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import handleToGroupData from "@/data/handle_to_group.json";
 import listingHandlesData from "@/data/listing_handles.json";
+import hiddenHandlesData from "@/data/hidden_handles.json";
 
 /**
- * All canonical listing handles (singles + display handle of each group).
- * Use this for /shop and any global product browse page.
+ * Handles excluded from the front-end (lingerie/clothing categories the
+ * shop owner does not want to surface). Includes every variant handle of
+ * affected product groups, so PDPs are blocked too.
  */
-export const ALL_LISTING_HANDLES: string[] = (listingHandlesData as any).handles;
+export const HIDDEN_HANDLES: Set<string> = new Set(
+  (hiddenHandlesData as { handles: string[] }).handles
+);
+
+export function isHiddenHandle(handle: string): boolean {
+  return HIDDEN_HANDLES.has(handle);
+}
+
+/**
+ * All canonical listing handles (singles + display handle of each group),
+ * with hidden handles filtered out.
+ */
+export const ALL_LISTING_HANDLES: string[] = (
+  listingHandlesData as { handles: string[] }
+).handles.filter((h) => !HIDDEN_HANDLES.has(h));
 
 // ============= TYPES =============
 
@@ -73,7 +89,11 @@ export function isDisplayHandle(handle: string): boolean {
 export function filterToValidHandles<T extends { node: { handle: string } }>(
   products: T[]
 ): T[] {
-  return products.filter((p) => handleToGroup[p.node.handle] !== undefined);
+  return products.filter(
+    (p) =>
+      handleToGroup[p.node.handle] !== undefined &&
+      !HIDDEN_HANDLES.has(p.node.handle)
+  );
 }
 
 export function dedupeProducts<T extends { node: { handle: string } }>(products: T[]): T[] {
