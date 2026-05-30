@@ -213,8 +213,10 @@ const Lightbox = ({
 
       {/* Image */}
       <img
-        src={images[idx].url}
+        src={shopifyImg(images[idx].url, 1600)}
         alt={images[idx].altText || title}
+        loading="eager"
+        decoding="async"
         className="max-w-[92vw] max-h-[88vh] object-contain"
         onClick={(e) => e.stopPropagation()}
       />
