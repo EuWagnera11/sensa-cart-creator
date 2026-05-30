@@ -89,7 +89,11 @@ export function isDisplayHandle(handle: string): boolean {
 export function filterToValidHandles<T extends { node: { handle: string } }>(
   products: T[]
 ): T[] {
-  return products.filter((p) => handleToGroup[p.node.handle] !== undefined);
+  return products.filter(
+    (p) =>
+      handleToGroup[p.node.handle] !== undefined &&
+      !HIDDEN_HANDLES.has(p.node.handle)
+  );
 }
 
 export function dedupeProducts<T extends { node: { handle: string } }>(products: T[]): T[] {
