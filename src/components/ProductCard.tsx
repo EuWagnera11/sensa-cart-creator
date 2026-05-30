@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag } from "lucide-react";
 import type { ShopifyProduct } from "@/lib/shopify";
+import { shopifyImg } from "@/lib/shopify";
 
 interface Props {
   product: ShopifyProduct;
