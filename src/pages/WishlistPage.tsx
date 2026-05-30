@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
+import { shopifyImg } from "@/lib/shopify";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import { useSmartBack } from "@/hooks/useSmartBack";
 
