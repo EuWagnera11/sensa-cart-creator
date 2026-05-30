@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import type { ShopifyProduct } from "@/lib/shopify";
+import { shopifyImg } from "@/lib/shopify";
 import { useShopifyCart } from "@/stores/shopifyCart";
 import WishlistHeart from "@/components/WishlistHeart";
 
