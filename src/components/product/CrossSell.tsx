@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useCrossSell } from "@/hooks/useCrossSell";
 import { useShopifyProductsByHandles } from "@/hooks/useShopifyProductsByHandles";
+import { shopifyImg } from "@/lib/shopify";
 
 interface Props {
   currentHandle: string;
