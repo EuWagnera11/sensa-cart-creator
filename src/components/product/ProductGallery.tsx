@@ -105,8 +105,12 @@ const ProductGallery = ({ images, productTitle }: Props) => {
               }`}
             >
               <img
-                src={img.url}
+                src={shopifyImg(img.url, 120)}
                 alt=""
+                loading="eager"
+                decoding="async"
+                width={120}
+                height={120}
                 className="absolute inset-0 w-full h-full object-cover"
               />
               {i === 4 && images.length > 5 && (
