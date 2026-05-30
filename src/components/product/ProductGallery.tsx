@@ -56,8 +56,13 @@ const ProductGallery = ({ images, productTitle }: Props) => {
         onClick={() => setLightboxIdx(activeIdx)}
       >
         <img
-          src={mainImg.url}
+          src={shopifyImg(mainImg.url, 800)}
           alt={mainImg.altText || productTitle}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          width={800}
+          height={800}
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-200 ${
             hover ? "scale-[1.8]" : "scale-100"
           }`}
