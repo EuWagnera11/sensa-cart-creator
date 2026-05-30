@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, X, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { PRODUCTS_QUERY, storefrontApiRequest, shopifyImg, type ShopifyProduct } from "@/lib/shopify";
 import { filterToValidHandles } from "@/lib/productGroups";
 
 interface SearchOverlayProps {
