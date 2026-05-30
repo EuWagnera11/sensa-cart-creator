@@ -217,7 +217,7 @@ const ShopProductPage = () => {
 
               {/* Title */}
               <h1
-                className="font-body font-bold tracking-tight text-foreground leading-[1.05] mb-3"
+                className="font-body font-black tracking-tight text-foreground leading-[1.05] mb-3"
                 style={{ fontSize: "clamp(1.75rem, 3.4vw, 2.5rem)" }}
               >
                 {product.title}
