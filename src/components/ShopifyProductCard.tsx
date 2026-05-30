@@ -80,7 +80,7 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
 
           <div className="absolute bottom-0 left-0 right-0 z-[1] p-2.5 sm:p-3">
             <div
-              className="font-sans font-semibold text-white leading-tight mb-1 text-[0.75rem] sm:text-[0.875rem] line-clamp-2"
+              className="font-sans font-bold tracking-tight text-white leading-tight mb-1 text-[0.8rem] sm:text-[0.9rem] line-clamp-2"
               style={{ textShadow: "1px 1px 2px rgba(0,0,0,.6)" }}
             >
               {node.title}
@@ -144,7 +144,7 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
           Live from Shopify
         </div>
         <Link to={`/shop/product/${node.handle}`} className="block no-underline">
-          <h3 className="font-sans font-semibold text-[0.95rem] text-foreground leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2 min-h-[2.6rem]">
+          <h3 className="font-sans font-bold tracking-tight text-[1rem] text-foreground leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2 min-h-[2.6rem]">
             {node.title}
           </h3>
         </Link>
