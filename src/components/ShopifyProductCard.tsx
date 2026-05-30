@@ -114,10 +114,12 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
         <div className="relative h-52 overflow-hidden bg-surface">
           {image ? (
             <img
-              src={image.url}
+              src={shopifyImg(image.url, 400)}
               alt={image.altText || node.title}
               loading="eager"
               decoding="async"
+              width={400}
+              height={400}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
