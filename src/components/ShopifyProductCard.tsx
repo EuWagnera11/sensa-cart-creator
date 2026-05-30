@@ -52,9 +52,12 @@ const ShopifyProductCard = ({ product, variant = "grid", sticker }: Props) => {
         <div className="relative aspect-[3/4] bg-surface">
           {image ? (
             <img
-              src={image.url}
+              src={shopifyImg(image.url, 320)}
               alt={image.altText || node.title}
               loading="eager"
+              decoding="async"
+              width={320}
+              height={427}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
