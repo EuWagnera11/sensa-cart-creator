@@ -14,30 +14,30 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import AgeGate from "@/components/AgeGate";
 import CookieBanner from "@/components/CookieBanner";
 
-// Eager — landing page (always rendered first)
+// Eager — hot path: landing + browse + PDP + cart/checkout (no chunk wait between them)
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ShopPage from "./pages/ShopPage.tsx";
+import ShopProductPage from "./pages/ShopProductPage.tsx";
+import CategoryPage from "./pages/CategoryPage.tsx";
+import ProductPage from "./pages/ProductPage.tsx";
+import AllProductsPage from "./pages/AllProductsPage.tsx";
+import CartPage from "./pages/CartPage.tsx";
+import CheckoutPage from "./pages/CheckoutPage.tsx";
+import AccountPage from "./pages/AccountPage.tsx";
+import WishlistPage from "./pages/WishlistPage.tsx";
+import AuthPage from "./pages/AuthPage.tsx";
 
-// Lazy — code-split per route
-const CategoryPage = lazy(() => import("./pages/CategoryPage.tsx"));
-const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
-const CartPage = lazy(() => import("./pages/CartPage.tsx"));
-const CheckoutPage = lazy(() => import("./pages/CheckoutPage.tsx"));
-const AllProductsPage = lazy(() => import("./pages/AllProductsPage.tsx"));
+// Lazy — low-traffic static / legal / auxiliary pages
 const OurStoryPage = lazy(() => import("./pages/OurStoryPage.tsx"));
 const NoJudgmentPage = lazy(() => import("./pages/NoJudgmentPage.tsx"));
 const AffiliatesPage = lazy(() => import("./pages/AffiliatesPage.tsx"));
 const PressPage = lazy(() => import("./pages/PressPage.tsx"));
 const FaqPage = lazy(() => import("./pages/FaqPage.tsx"));
 const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
-const AuthPage = lazy(() => import("./pages/AuthPage.tsx"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage.tsx"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage.tsx"));
 const OrdersPage = lazy(() => import("./pages/OrdersPage.tsx"));
-const ShopPage = lazy(() => import("./pages/ShopPage.tsx"));
-const ShopProductPage = lazy(() => import("./pages/ShopProductPage.tsx"));
-const AccountPage = lazy(() => import("./pages/AccountPage.tsx"));
-const WishlistPage = lazy(() => import("./pages/WishlistPage.tsx"));
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.tsx"));
 const TermsOfUsePage = lazy(() => import("./pages/TermsOfUsePage.tsx"));
 const RefundPolicyPage = lazy(() => import("./pages/RefundPolicyPage.tsx"));
@@ -67,15 +67,13 @@ const ScrollManager = () => {
   useEffect(() => {
     if (location.hash) {
       const elementId = location.hash.replace("#", "");
-
       window.requestAnimationFrame(() => {
-        document.getElementById(elementId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.getElementById(elementId)?.scrollIntoView({ block: "start" });
       });
-
       return;
     }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Instant scroll on route change — no smooth animation (felt slow)
+    window.scrollTo(0, 0);
   }, [location.hash, location.pathname]);
 
   return null;
