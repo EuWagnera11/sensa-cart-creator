@@ -57,7 +57,7 @@ const ProductCard = ({ product, onAdd }: Props) => {
 
         {/* Text block — clean serif, restrained */}
         <div className="px-4 pt-4 pb-2">
-          <h3 className="font-sans font-semibold text-sm text-foreground leading-snug line-clamp-2 min-h-[2.6em] group-hover:text-primary transition-colors">
+          <h3 className="font-sans font-bold text-[0.95rem] tracking-tight text-foreground leading-snug line-clamp-2 min-h-[2.6em] group-hover:text-primary transition-colors">
             {node.title}
           </h3>
           <p className="mt-2 font-display font-black text-base text-foreground tabular-nums">
